@@ -1,0 +1,920 @@
+﻿<!--
+Copyright (c) 2010, CLARITY: Centre for Sensor Web Technologies, DCU (Dublin City University)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+* Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+* Neither the name of CLARITY: Centre for Sensor Web Technologies, DCU (Dublin City University) nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ -->
+ <ResourceDictionary
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" xmlns:Microsoft_Windows_Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Luna">
+  <!-- Resource dictionary entries should be defined here. -->
+
+
+    <Style x:Key="Display_Images_in_Event" TargetType="{x:Type ListBox}">
+        <Setter Property="ItemTemplate" >
+            <Setter.Value>
+                <!--DataTemplate>
+                    <Image Source="{Binding Path=scaled_image_src}" Width="{Binding ElementName=EventZoomSlider, Path='Value'}" Height="{Binding ElementName=EventZoomSlider, Path='Value'}" />
+                </DataTemplate-->
+                <DataTemplate>
+                    <Grid Width="{Binding ElementName=EventZoomSlider, Path='Value'}" Height="{Binding ElementName=EventZoomSlider, Path='Value'}" Margin="5,5,5,5">
+                        <Image Margin ="0,0,0,0" Source="{Binding Path=scaled_image_src}" Stretch="Fill">
+                            <Image.BitmapEffect>
+                                <DropShadowBitmapEffect Softness="0.25" ShadowDepth="2" Direction="315"/>
+                            </Image.BitmapEffect>
+                        </Image>
+
+                        <StackPanel Margin="0,0,0,0" VerticalAlignment="Bottom" Orientation="Horizontal" Background="#24000000" Opacity="1" >
+                            <TextBlock Text="{Binding Path=short_image_time}" FontSize="16"  Margin="5,0,22,0" Foreground="White"/>                            
+                        </StackPanel>
+                    </Grid>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <WrapPanel />
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="Background" Value="White" />
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+    </Style>
+
+
+
+    <Style x:Key="Display_Annotations" TargetType="{x:Type ListBox}">
+        <Setter Property="ItemTemplate" >
+            <Setter.Value>
+                <DataTemplate>
+                    <Label Content="{Binding Path=annotation_type}" />                                      
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>        
+    </Style>
+
+
+
+    <Style x:Key="Display_Daily_Activity_Summary" TargetType="{x:Type ListBox}">
+        <Setter Property="ItemTemplate" >
+            <Setter.Value>
+                <DataTemplate>
+                    <StackPanel Margin="0,0,0,0" VerticalAlignment="Bottom" Orientation="Horizontal" Background="YellowGreen"  Opacity="0.5" >
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Label Grid.Row="0" Content="{Binding Path=annotation_type}" FontFamily="Times New Roman" FontSize="24" HorizontalAlignment="Center" />
+                            <Label Grid.Row="1" Content="{Binding Path=daily_duration_string}" FontFamily="Times New Roman" FontSize="16" HorizontalAlignment="Center" />
+                        </Grid>
+                    </StackPanel>                    
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Visible" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="Background" Value="White" />
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled" />        
+    </Style>
+
+
+    <Style x:Key="Daily_Activity_Summary_Highlight_Item" TargetType="{x:Type ListBoxItem}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListBoxItem">
+                    <Border Name="Border" Padding="2" SnapsToDevicePixels="true">
+                        <ContentPresenter />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsSelected" Value="true">
+                            <Setter TargetName="Border" Property="BorderBrush" Value="Red"/>
+                            <Setter Property="Background" TargetName="Border" Value="Red"/>                            
+                        </Trigger>
+                    </ControlTemplate.Triggers>                    
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
+
+    <Style x:Key="Display_Event_Activity_Annotation_List" TargetType="{x:Type ListBox}">
+        <Setter Property="ItemTemplate" >
+            <Setter.Value>
+                <DataTemplate>
+                    <StackPanel Margin="0,0,0,0" VerticalAlignment="Bottom" Orientation="Horizontal" Opacity="1" >
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0" Content="{Binding Path=event_index}" FontFamily="Times New Roman" FontSize="10" HorizontalAlignment="Left" />
+                            <Label Grid.Column="1" Content="{Binding Path=annotation}" FontFamily="Times New Roman" FontSize="10" HorizontalAlignment="Left" />
+                            <Label Grid.Column="2" Content="{Binding Path=duration_string}" FontFamily="Times New Roman" FontSize="10" HorizontalAlignment="Left" />
+                        </Grid>
+                    </StackPanel>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="Background" Value="White" />        
+    </Style>
+
+
+
+    <DataTemplate x:Key="Event_Keyframe_Template">        
+            <Grid Width="{Binding ElementName=ZoomSlider, Path='Value'}" Height="{Binding ElementName=ZoomSlider, Path='Value'}" Margin="5,5,5,5" Background="AliceBlue">
+                <Image Margin ="0,0,0,0" Source="{Binding Path=keyframe_path}" Stretch="Fill" >
+                <Image.BitmapEffect>
+                    <DropShadowBitmapEffect Softness="0.25" ShadowDepth="2" Direction="315"/>
+                </Image.BitmapEffect>
+            </Image>
+
+            <StackPanel Margin="0,0,0,0" VerticalAlignment="Bottom" Orientation="Horizontal" Background="{Binding Path=border_colour}"  Opacity="1" >
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />                        
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Text="{Binding Path=str_time}" FontSize="16"  Margin="5,0,22,0" Foreground="White"/>
+                    <TextBlock Grid.Row="1" Text="{Binding Path=event_length}" FontSize="16" Foreground="White" Margin="0,0,5,0"/>
+                </Grid>                
+            </StackPanel>
+            </Grid>
+        </DataTemplate>
+
+    
+    
+    <Style x:Key="Events_in_Day" TargetType="ListBox">
+        <Setter Property="ItemTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <Image Source="{Binding Path=keyframe_path}" Width="{Binding ElementName=ZoomSlider, Path='Value'}" Height="{Binding ElementName=ZoomSlider, Path='Value'}" Margin="5,5,5,5" />
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <WrapPanel />
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="Background" Value="White" />
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+
+
+    </Style>
+
+
+
+    <Style x:Key="Users_Listing" TargetType="ComboBox">
+        <Setter Property="ItemTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <Label Content="{Binding Path=name}" />
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
+    <Style x:Key="string_horizontal_listbox" TargetType="ListBox">
+        <Setter Property="ItemTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <StackPanel Width="100">
+                        <TextBlock Text="{Binding }" HorizontalAlignment="Center" />
+                    </StackPanel>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <WrapPanel />
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+        <Style.Resources>
+            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="LightGreen"/>
+            <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="LightBlue"/>
+        </Style.Resources>
+    </Style>
+    
+
+    <Style x:Key="Images_in_Event" TargetType="{x:Type ListBox}">
+    <Setter Property="ItemTemplate" >
+      <Setter.Value>
+        <DataTemplate>
+          <Image Source="{Binding Path=scaled_image_src}" Width="215" Height="175" />
+        </DataTemplate>
+      </Setter.Value>
+    </Setter>
+    <Setter Property="ItemsPanel">
+      <Setter.Value>
+        <ItemsPanelTemplate>
+          <WrapPanel />
+        </ItemsPanelTemplate>
+      </Setter.Value>
+    </Setter>
+    <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+
+  </Style>
+
+ 
+  
+  
+  <Style x:Key="CloseBtn1" BasedOn="{x:Null}" TargetType="{x:Type Button}">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type Button}">
+          <Grid Width="69" Height="63">
+            <Rectangle Stroke="#FFC22B0A" RadiusX="24" RadiusY="12" Height="60" Width="64.829" Margin="0,2.238,0,0.762" x:Name="rectangle">
+            	<Rectangle.BitmapEffect>
+            		<DropShadowBitmapEffect Direction="315" Softness="0.25" ShadowDepth="2"/>
+            	</Rectangle.BitmapEffect>
+              <Rectangle.Fill>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                  <GradientStop Color="#FFF0BEB0" Offset="0.049"/>
+                  <GradientStop Color="#FF6A1E08" Offset="1"/>
+                  <GradientStop Color="#FFEC4F22" Offset="0.482"/>
+                </LinearGradientBrush>
+              </Rectangle.Fill>
+            </Rectangle>
+            <Path Stretch="Fill" Stroke="#FF5B0505" StrokeThickness="5" HorizontalAlignment="Right" Margin="0,3.9,7.177,0" VerticalAlignment="Top" Width="26.5" Height="22.8" RenderTransformOrigin="0.5,0.5" Data="M583.0806,36.477612 L637.57724,61.230955" d:LayoutOverrides="HorizontalAlignment" x:Name="path">
+              <Path.RenderTransform>
+                <TransformGroup>
+                  <ScaleTransform ScaleX="1" ScaleY="0.65"/>
+                  <SkewTransform AngleX="0" AngleY="0"/>
+                  <RotateTransform Angle="5"/>
+                  <TranslateTransform X="0" Y="0"/>
+                </TransformGroup>
+              </Path.RenderTransform>
+              <Path.Fill>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                  <GradientStop Color="#FFF0BEB0" Offset="0.049"/>
+                  <GradientStop Color="#FF6A1E08" Offset="1"/>
+                  <GradientStop Color="#FFEC4F22" Offset="0.482"/>
+                </LinearGradientBrush>
+              </Path.Fill>
+            </Path>
+            <Path Stretch="Fill" Stroke="#FF5B0505" StrokeThickness="5" HorizontalAlignment="Right" Margin="0,3.9,7.177,0" VerticalAlignment="Top" Width="26.5" Height="22.8" Data="M583.0806,36.477612 L637.57724,61.230955" Fill="{x:Null}" RenderTransformOrigin="0.632,0.483" d:LayoutOverrides="HorizontalAlignment" x:Name="path1">
+              <Path.RenderTransform>
+                <TransformGroup>
+                  <ScaleTransform ScaleX="-1" ScaleY="0.65"/>
+                  <SkewTransform AngleX="0" AngleY="0"/>
+                  <RotateTransform Angle="-5"/>
+                  <TranslateTransform X="-8.853" Y="0.539"/>
+                </TransformGroup>
+              </Path.RenderTransform>
+            </Path>
+            <TextBlock Margin="-18.831,19.614,-19.237,19.246" Width="Auto" Height="Auto" FontSize="20" Text="Close" TextAlignment="Center" TextWrapping="Wrap"/>
+          </Grid>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter Property="Stroke" TargetName="rectangle" Value="#FFF5F705"/>
+              <Setter Property="Stroke" TargetName="path" Value="#FFF5F705"/>
+              <Setter Property="Stroke" TargetName="path1" Value="#FFF5F705"/>
+              <Setter Property="StrokeThickness" TargetName="rectangle" Value="1"/>
+            </Trigger>
+            <Trigger Property="IsFocused" Value="True"/>
+            <Trigger Property="IsDefaulted" Value="True"/>
+            <Trigger Property="IsMouseOver" Value="True"/>
+            <Trigger Property="IsPressed" Value="True"/>
+            <Trigger Property="IsEnabled" Value="False"/>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  <LinearGradientBrush x:Key="DateDisp" EndPoint="0.5,1" StartPoint="0.5,0">
+    <GradientStop Color="#FFFFFFFF" Offset="0"/>
+    <GradientStop Color="#FFDFE1E2" Offset="1"/>
+    <GradientStop Color="#FFF6F8F9" Offset="0.737"/>
+  </LinearGradientBrush>
+  <Style x:Key="PreviousBtn" BasedOn="{x:Null}" TargetType="{x:Type Button}">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type Button}">
+        	<ControlTemplate.Resources>
+        		<Storyboard x:Key="StartofShow"/>
+        	</ControlTemplate.Resources>
+          <Grid>
+            <Border>
+              <Grid>
+                <Viewbox Margin="12,0,8.52,27.037" RenderTransformOrigin="0.5,0.5">
+                  <Viewbox.RenderTransform>
+                    <TransformGroup>
+                      <ScaleTransform ScaleX="1.3" ScaleY="1.3"/>
+                      <SkewTransform AngleX="0" AngleY="0"/>
+                      <RotateTransform Angle="0"/>
+                      <TranslateTransform X="0" Y="0"/>
+                    </TransformGroup>
+                  </Viewbox.RenderTransform>
+                  <Canvas Width="84.48" Height="44.16">
+                    <Path Width="83.2082" Height="42.504" Canvas.Left="0.534363" Canvas.Top="0.746704" Stretch="Fill" Data="F1 M 6.53436,1.7467L 77.7426,1.7467C 80.504,1.7467 82.7426,3.98529 82.7426,6.7467L 82.7426,37.2508C 82.7426,40.0121 80.504,42.2507 77.7426,42.2507L 6.53436,42.2507C 3.77289,42.2507 1.53436,40.0121 1.53436,37.2508L 1.53436,6.7467C 1.53436,3.98529 3.77289,1.7467 6.53436,1.7467 Z " StrokeThickness="2" StrokeLineJoin="Round" x:Name="path">
+                    	<Path.Fill>
+                    		<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    			<GradientStop Color="#FF3C3D40" Offset="0"/>
+                    			<GradientStop Color="#FF090909" Offset="1"/>
+                    			<GradientStop Color="#FF16190F" Offset="0.302"/>
+                    			<GradientStop Color="#FF0F110C" Offset="0.661"/>
+                    		</LinearGradientBrush>
+                    	</Path.Fill>
+                      <Path.Stroke>
+                        <LinearGradientBrush StartPoint="0.542772,1.01341" EndPoint="0.542772,-0.0281841">
+                          <GradientStop Color="#FF3E3F44" Offset="0.0182648"/>
+                          <GradientStop Color="#FF16190F" Offset="0.333333"/>
+                          <GradientStop Color="#FF494B48" Offset="0.596154"/>
+                          <GradientStop Color="#FF7D7E81" Offset="1"/>
+                        </LinearGradientBrush>
+                      </Path.Stroke>
+                      <Path.BitmapEffect>
+                        <DropShadowBitmapEffect Softness="0.25" ShadowDepth="2" Opacity="1" Color="#FF000000" Direction="315" Noise="0"/>
+                      </Path.BitmapEffect>
+                    </Path>
+                    <Path Width="81.208" Height="40.504" Canvas.Left="1.5347" Canvas.Top="1.74677" Stretch="Fill" Fill="#1BFFFFFF" Data="F1 M 4.5347,1.74677L 79.7427,1.74677C 81.3995,1.74677 82.7427,3.0899 82.7427,4.74677L 82.7427,39.2508C 82.7427,40.9077 81.3995,42.2508 79.7427,42.2508L 4.5347,42.2508C 2.87784,42.2508 1.5347,40.9077 1.5347,39.2508L 1.5347,4.74677C 1.5347,3.0899 2.87784,1.74677 4.5347,1.74677 Z "/>
+                    <Path Width="80.2821" Height="19.8223" Canvas.Left="2.07471" Canvas.Top="0.47998" Stretch="Fill" Data="F1 M 78.8652,0.47998L 5.54227,0.47998C 3.75311,0.47998 2.27832,1.97845 2.07471,3.90979C 3.47693,13.0645 21.0797,20.3023 42.5888,20.3023C 62.1915,20.3023 78.5497,14.2906 82.3568,6.29498L 82.3568,4.36798C 82.3568,2.2207 80.7936,0.47998 78.8652,0.47998 Z ">
+                      <Path.Fill>
+                        <LinearGradientBrush StartPoint="0.459989,0.40623" EndPoint="0.459989,1.53948">
+                          <GradientStop Color="#63FFFFFF" Offset="0.0228311"/>
+                          <GradientStop Color="#63020F1B" Offset="1"/>
+                        </LinearGradientBrush>
+                      </Path.Fill>
+                    </Path>
+                    <Path x:Name="back_5" Width="37.814" Height="32.6973" Canvas.Left="23.2316" Canvas.Top="5.98" Stretch="Fill" StrokeLineJoin="Round" Stroke="#FF47484A" Data="F1 M 40.9026,37.3853L 40.9026,29.2847L 49.6574,29.2847C 50.9985,29.2847 60.5441,29.9724 60.5456,26.5807L 60.5456,18.0765C 60.5441,14.9404 50.9985,15.3727 49.6574,15.3727L 40.9026,15.3727L 40.9026,7.27197C 39.9543,6.216 38.4168,6.216 37.4685,7.27197L 24.4254,20.417C 23.4771,21.473 23.5125,22.9883 24.4608,24.0442L 37.4685,37.3853C 38.4169,38.4413 39.9543,38.4412 40.9026,37.3853 Z ">
+                      <Path.Fill>
+                        <LinearGradientBrush StartPoint="0.518854,0.955359" EndPoint="0.518854,0.252052">
+                          <GradientStop Color="#FFA8A8AC" Offset="0.0182648"/>
+                          <GradientStop Color="#FFCCCED3" Offset="0.362787"/>
+                          <GradientStop Color="#FFF1F5FA" Offset="0.589041"/>
+                          <GradientStop Color="#FFDEE3E7" Offset="1"/>
+                        </LinearGradientBrush>
+                      </Path.Fill>
+                    </Path>
+                  </Canvas>
+                </Viewbox>
+                <TextBlock VerticalAlignment="Bottom" Height="21.037" FontSize="18" Foreground="#FF000000" Text="Previous Photo" TextAlignment="Center" TextWrapping="Wrap"/>
+              </Grid>
+            </Border>
+          </Grid>
+          <ControlTemplate.Triggers>
+        		<Trigger Property="IsMouseOver" Value="True">
+        			<Setter Property="Fill" TargetName="back_5">
+        				<Setter.Value>
+        					<LinearGradientBrush EndPoint="0.518854,0.252052" StartPoint="0.518854,0.955359">
+        						<GradientStop Color="#CDFFEA06" Offset="0.0182648"/>
+        						<GradientStop Color="#CDFFEA06" Offset="0.362787"/>
+        						<GradientStop Color="#CDFFEA06" Offset="0.589041"/>
+        						<GradientStop Color="#CDFFEA06" Offset="1"/>
+        					</LinearGradientBrush>
+        				</Setter.Value>
+        			</Setter>
+        			<Setter Property="Stroke" TargetName="back_5" Value="#CD938704"/>
+        		</Trigger>
+        		<Trigger Property="IsStylusOver" Value="True">
+        			<Setter Property="Stroke" TargetName="back_5" Value="#CD938704"/>
+        			<Setter Property="Fill" TargetName="back_5">
+        				<Setter.Value>
+        					<LinearGradientBrush EndPoint="0.518854,0.252052" StartPoint="0.518854,0.955359">
+        						<GradientStop Color="#CDFFEA06" Offset="0.0182648"/>
+        						<GradientStop Color="#CDFFEA06" Offset="0.362787"/>
+        						<GradientStop Color="#CDFFEA06" Offset="0.589041"/>
+        						<GradientStop Color="#CDFFEA06" Offset="1"/>
+        					</LinearGradientBrush>
+        				</Setter.Value>
+        			</Setter>
+        		</Trigger>
+        		<Trigger Property="IsFocused" Value="True"/>
+        		<Trigger Property="IsDefaulted" Value="True"/>
+        		<Trigger Property="IsMouseOver" Value="True"/>
+        		<Trigger Property="IsPressed" Value="True"/>
+        		<Trigger Property="IsEnabled" Value="False"/>
+        	</ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  <Style x:Key="NextBtn" BasedOn="{x:Null}" TargetType="{x:Type Button}">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type Button}">
+        	<ControlTemplate.Resources>
+        		<Storyboard x:Key="EndofShow"/>
+        	</ControlTemplate.Resources>
+          <Grid>
+            <Border>
+              <Grid>
+                <Viewbox Margin="8.04,0,12,27.037" RenderTransformOrigin="0.5,0.5" OpacityMask="#FF000000">
+                  <Viewbox.RenderTransform>
+                    <TransformGroup>
+                      <ScaleTransform ScaleX="1.3" ScaleY="1.3"/>
+                      <SkewTransform AngleX="0" AngleY="0"/>
+                      <RotateTransform Angle="0"/>
+                      <TranslateTransform X="0" Y="0"/>
+                    </TransformGroup>
+                  </Viewbox.RenderTransform>
+                  <Canvas Width="84.96" Height="44.16">
+                    <Path Width="83.2082" Height="42.504" Canvas.Left="0.827698" Canvas.Top="0.880005" Stretch="Fill" Data="F1 M 6.8277,1.88L 78.0359,1.88C 80.7973,1.88 83.0359,4.11859 83.0359,6.88L 83.0359,37.3841C 83.0359,40.1455 80.7973,42.384 78.0359,42.384L 6.8277,42.384C 4.06622,42.384 1.8277,40.1455 1.8277,37.3841L 1.8277,6.88C 1.8277,4.11859 4.06622,1.88 6.8277,1.88 Z " StrokeThickness="2" StrokeLineJoin="Round" x:Name="path">
+                    	<Path.Fill>
+                    		<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    			<GradientStop Color="#FF3C3D40" Offset="0"/>
+                    			<GradientStop Color="#FF090909" Offset="1"/>
+                    			<GradientStop Color="#FF16190F" Offset="0.276"/>
+                    			<GradientStop Color="#FF0F110C" Offset="0.679"/>
+                    		</LinearGradientBrush>
+                    	</Path.Fill>
+                      <Path.Stroke>
+                        <LinearGradientBrush StartPoint="0.542772,1.01341" EndPoint="0.542772,-0.0281841">
+                          <GradientStop Color="#FF3E3F44" Offset="0.0182648"/>
+                          <GradientStop Color="#FF16190F" Offset="0.333333"/>
+                          <GradientStop Color="#FF494B48" Offset="0.596154"/>
+                          <GradientStop Color="#FF7D7E81" Offset="1"/>
+                        </LinearGradientBrush>
+                      </Path.Stroke>
+                      <Path.BitmapEffect>
+                        <DropShadowBitmapEffect Softness="0.25" ShadowDepth="2" Opacity="1" Color="#FF000000" Direction="315" Noise="0"/>
+                      </Path.BitmapEffect>
+                    </Path>
+                    <Path Width="81.2079" Height="40.504" Canvas.Left="1.82803" Canvas.Top="1.88013" Stretch="Fill" Fill="#1BFFFFFF" Data="F1 M 4.82803,1.88013L 80.036,1.88013C 81.6928,1.88013 83.036,3.22321 83.036,4.88013L 83.036,39.3842C 83.036,41.041 81.6928,42.3841 80.036,42.3841L 4.82803,42.3841C 3.17117,42.3841 1.82803,41.041 1.82803,39.3842L 1.82803,4.88013C 1.82803,3.22321 3.17117,1.88013 4.82803,1.88013 Z "/>
+                    <Path Width="80.2821" Height="19.8223" Canvas.Left="2.36804" Canvas.Top="0.613281" Stretch="Fill" Data="F1 M 79.1585,0.613281L 5.8356,0.613281C 4.04645,0.613281 2.57166,2.11176 2.36804,4.04309C 3.77026,13.1979 21.3731,20.4356 42.8821,20.4356C 62.4848,20.4356 78.8431,14.424 82.6501,6.42828L 82.6501,4.50128C 82.6501,2.354 81.0869,0.613281 79.1585,0.613281 Z ">
+                      <Path.Fill>
+                        <LinearGradientBrush StartPoint="0.459989,0.406233" EndPoint="0.459989,1.53949">
+                          <GradientStop Color="#63FFFFFF" Offset="0.0228311"/>
+                          <GradientStop Color="#63020F1B" Offset="1"/>
+                        </LinearGradientBrush>
+                      </Path.Fill>
+                    </Path>
+                    <Path x:Name="back" Width="37.814" Height="32.6973" Canvas.Left="23.5253" Canvas.Top="6.11322" Stretch="Fill" StrokeLineJoin="Round" Stroke="#FF47484A" Data="F1 M 43.6683,7.40515L 43.6684,15.5058L 34.9135,15.5058C 33.5724,15.5058 24.0268,14.8181 24.0253,18.2097L 24.0253,26.7139C 24.0268,29.8502 33.5724,29.4178 34.9135,29.4178L 43.6684,29.4178L 43.6683,37.5185C 44.6166,38.5745 46.1541,38.5745 47.1024,37.5186L 60.1456,24.3735C 61.0938,23.3176 61.0584,21.8022 60.1101,20.7463L 47.1024,7.40515C 46.1541,6.34924 44.6166,6.34924 43.6683,7.40515 Z ">
+                      <Path.Fill>
+                        <LinearGradientBrush StartPoint="0.481145,0.0446423" EndPoint="0.481145,0.747949">
+                          <GradientStop Color="#FFA8A8AC" Offset="0.0182648"/>
+                          <GradientStop Color="#FFCCCED3" Offset="0.362787"/>
+                          <GradientStop Color="#FFF1F5FA" Offset="0.589041"/>
+                          <GradientStop Color="#FFDEE3E7" Offset="1"/>
+                        </LinearGradientBrush>
+                      </Path.Fill>
+                    </Path>
+                  </Canvas>
+                </Viewbox>
+                <TextBlock Height="21.037" FontSize="18" Foreground="#FF000000" Text="Next Photo" TextAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Bottom"/>
+              </Grid>
+            </Border>
+          </Grid>
+          <ControlTemplate.Triggers>
+        		<EventTrigger RoutedEvent="FrameworkElement.Loaded"/>
+        		<Trigger Property="IsMouseOver" Value="True">
+        			<Setter Property="Fill" TargetName="back">
+        				<Setter.Value>
+        					<LinearGradientBrush EndPoint="0.481145,0.747949" StartPoint="0.481145,0.0446423">
+        						<GradientStop Color="#CDFFEA06" Offset="0.0182648"/>
+        						<GradientStop Color="#CDFFEA06" Offset="0.362787"/>
+        						<GradientStop Color="#CDFFEA06" Offset="0.589041"/>
+        						<GradientStop Color="#CDFFEA06" Offset="1"/>
+        					</LinearGradientBrush>
+        				</Setter.Value>
+        			</Setter>
+        			<Setter Property="Stroke" TargetName="back" Value="#CD938704"/>
+        		</Trigger>
+        		<Trigger Property="IsStylusOver" Value="True">
+        			<Setter Property="Stroke" TargetName="back" Value="#CD938704"/>
+        			<Setter Property="Fill" TargetName="back">
+        				<Setter.Value>
+        					<LinearGradientBrush EndPoint="0.481145,0.747949" StartPoint="0.481145,0.0446423">
+        						<GradientStop Color="#CDFFEA06" Offset="0.821"/>
+        						<GradientStop Color="#CDFFEA06" Offset="0"/>
+        						<GradientStop Color="#CDFFEA06" Offset="0.589041"/>
+        						<GradientStop Color="#CDFFEA06" Offset="1"/>
+        					</LinearGradientBrush>
+        				</Setter.Value>
+        			</Setter>
+        		</Trigger>
+        		<Trigger Property="IsFocused" Value="True"/>
+        		<Trigger Property="IsDefaulted" Value="True"/>
+        		<Trigger Property="IsMouseOver" Value="True"/>
+        		<Trigger Property="IsPressed" Value="True"/>
+        		<Trigger Property="IsEnabled" Value="False"/>
+        	</ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  <Style x:Key="PlayBtn" BasedOn="{x:Null}" TargetType="{x:Type Button}">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type Button}">
+        	<ControlTemplate.Resources>
+        		<Storyboard x:Key="PauseStory">
+        			<ObjectAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000" Storyboard.TargetName="play_path" Storyboard.TargetProperty="(UIElement.Visibility)">
+        				<DiscreteObjectKeyFrame KeyTime="00:00:00" Value="{x:Static Visibility.Hidden}"/>
+        			</ObjectAnimationUsingKeyFrames>
+        			<ObjectAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000" Storyboard.TargetName="textBlock" Storyboard.TargetProperty="(UIElement.Visibility)">
+        				<DiscreteObjectKeyFrame KeyTime="00:00:00" Value="{x:Static Visibility.Hidden}"/>
+        			</ObjectAnimationUsingKeyFrames>
+        		</Storyboard>
+        		<Storyboard x:Key="PlayStory">
+        			<ObjectAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000" Storyboard.TargetName="play_path" Storyboard.TargetProperty="(UIElement.Visibility)">
+        				<DiscreteObjectKeyFrame KeyTime="00:00:00" Value="{x:Static Visibility.Visible}"/>
+        			</ObjectAnimationUsingKeyFrames>
+        			<ObjectAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000" Storyboard.TargetName="textBlock" Storyboard.TargetProperty="(UIElement.Visibility)">
+        				<DiscreteObjectKeyFrame KeyTime="00:00:00" Value="{x:Static Visibility.Visible}"/>
+        			</ObjectAnimationUsingKeyFrames>
+        		</Storyboard>
+        	</ControlTemplate.Resources>
+          <Grid>
+            <Border>
+              <Grid>
+                <Viewbox Margin="6.8,0,6.08,27.037" RenderTransformOrigin="0.5,0.5">
+                  <Viewbox.RenderTransform>
+                    <TransformGroup>
+                      <ScaleTransform ScaleX="1.3" ScaleY="1.3"/>
+                      <SkewTransform AngleX="0" AngleY="0"/>
+                      <RotateTransform Angle="0"/>
+                      <TranslateTransform X="0" Y="0"/>
+                    </TransformGroup>
+                  </Viewbox.RenderTransform>
+                  <Canvas Width="57.1201" Height="44.16">
+                    <Path Width="55.5559" Height="42.504" Canvas.Left="0.719971" Canvas.Top="0.746765" Stretch="Fill" Data="F1 M 6.71997,1.74677L 50.2759,1.74677C 53.0374,1.74677 55.2759,3.98529 55.2759,6.74677L 55.2759,37.2508C 55.2759,40.0122 53.0374,42.2508 50.2759,42.2508L 6.71997,42.2508C 3.95856,42.2508 1.71997,40.0122 1.71997,37.2508L 1.71997,6.74677C 1.71997,3.98529 3.95856,1.74677 6.71997,1.74677 Z " StrokeThickness="2" StrokeLineJoin="Round">
+                      <Path.Stroke>
+                        <LinearGradientBrush StartPoint="0.542249,1.01341" EndPoint="0.542249,-0.0281855">
+                          <GradientStop Color="#FF3E3F44" Offset="0.0182648"/>
+                          <GradientStop Color="#FF16190F" Offset="0.333333"/>
+                          <GradientStop Color="#FF494B48" Offset="0.596154"/>
+                          <GradientStop Color="#FF7D7E81" Offset="1"/>
+                        </LinearGradientBrush>
+                      </Path.Stroke>
+                      <Path.Fill>
+                        <LinearGradientBrush StartPoint="0.543827,1.03876" EndPoint="0.543827,-0.0542662">
+                          <GradientStop Color="#FF3C3D40" Offset="0.022"/>
+                          <GradientStop Color="#FF16190F" Offset="0.333333"/>
+                          <GradientStop Color="#FF0F110C" Offset="0.596154"/>
+                          <GradientStop Color="#FF090909" Offset="1"/>
+                        </LinearGradientBrush>
+                      </Path.Fill>
+                      <Path.BitmapEffect>
+                        <DropShadowBitmapEffect Softness="0.25" ShadowDepth="2" Opacity="1" Color="#FF000000" Direction="315" Noise="0"/>
+                      </Path.BitmapEffect>
+                    </Path>
+                    <Path Width="53.5558" Height="40.504" Canvas.Left="1.72021" Canvas.Top="1.74677" Stretch="Fill" Fill="#1BFFFFFF" Data="F1 M 4.72021,1.74677L 52.276,1.74677C 53.9329,1.74677 55.276,3.0899 55.276,4.74683L 55.276,39.2508C 55.276,40.9077 53.9329,42.2508 52.276,42.2508L 4.72021,42.2508C 3.06335,42.2508 1.72021,40.9077 1.72021,39.2508L 1.72021,4.74683C 1.72021,3.0899 3.06335,1.74677 4.72021,1.74677 Z "/>
+                    <Path Width="52.9452" Height="19.8223" Canvas.Left="2.076" Canvas.Top="1.545" Stretch="Fill" Data="F1 M 52.7189,0.47998L 4.36316,0.47998C 3.18323,0.47998 2.21057,1.97845 2.07629,3.90979C 3.0011,13.0645 14.6099,20.3023 28.7949,20.3023C 41.7227,20.3023 52.5109,14.2906 55.0215,6.29498L 55.0215,4.36798C 55.0215,2.2207 53.9906,0.47998 52.7189,0.47998 Z ">
+                      <Path.Fill>
+                        <LinearGradientBrush StartPoint="0.45999,0.40623" EndPoint="0.45999,1.53948">
+                          <GradientStop Color="#63FFFFFF" Offset="0.0228311"/>
+                          <GradientStop Color="#63020F1B" Offset="1"/>
+                        </LinearGradientBrush>
+                      </Path.Fill>
+                    </Path>
+                    <Path x:Name="play_path" Stretch="Fill" StrokeLineJoin="Round" Stroke="#FFA3A5A8" Data="F1 M 642.061,-81.0388C 642.364,-82.3905 645.442,-81.9302 646.827,-81.0388L 664.996,-69.7991C 666.312,-68.7393 666.312,-67.0211 664.996,-65.9613L 646.827,-54.7217C 645.593,-53.861 642.247,-53.4172 642.18,-54.7323L 642.03,-67.7471L 642.061,-81.0388 Z " Width="25" Height="30" Canvas.Left="17" Canvas.Top="7">
+                      <Path.Fill>
+                        <LinearGradientBrush StartPoint="0.436288,0.344987" EndPoint="0.436288,0.885932">
+                          <GradientStop Color="#FFDEE3E7" Offset="0"/>
+                          <GradientStop Color="#FFE6EBEF" Offset="0.25794"/>
+                          <GradientStop Color="#FFEFF3F8" Offset="0.466102"/>
+                          <GradientStop Color="#FFAFB0B4" Offset="1"/>
+                        </LinearGradientBrush>
+                      </Path.Fill>
+                    </Path>
+                  </Canvas>
+                </Viewbox>
+                <TextBlock FontSize="18" Foreground="#FF000000" Text="Play" TextAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Bottom" x:Name="textBlock" Margin="0,0,0,-0.789" Height="21.727" d:LayoutOverrides="VerticalAlignment"/>
+              </Grid>
+            </Border>
+          </Grid>
+          <ControlTemplate.Triggers>
+        		<EventTrigger RoutedEvent="ButtonBase.Click">
+          		<BeginStoryboard Storyboard="{StaticResource PauseStory}"/>
+          		<BeginStoryboard x:Name="PlayStory_BeginStoryboard" Storyboard="{StaticResource PlayStory}"/>
+          	</EventTrigger>
+        		<Trigger Property="IsMouseOver" Value="True">
+        			<Setter Property="Fill" TargetName="play_path" Value="#CDFFEA06"/>
+        			<Setter Property="Stroke" TargetName="play_path" Value="#FFBBAC0A"/>
+        		</Trigger>
+        		<Trigger Property="IsStylusOver" Value="True"/>
+        		<Trigger Property="IsFocused" Value="True"/>
+        		<Trigger Property="IsDefaulted" Value="True"/>
+        		<Trigger Property="IsMouseOver" Value="True"/>
+        		<Trigger Property="IsPressed" Value="True"/>
+        		<Trigger Property="IsEnabled" Value="False"/>
+        	</ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  <Style x:Key="PauseBtn" BasedOn="{x:Null}" TargetType="{x:Type Button}">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type Button}">
+          <Grid Margin="6.08,0,0,0">
+            <Border>
+              <Grid>
+                <Viewbox Margin="6.8,0,6.08,27.037" RenderTransformOrigin="0.5,0.5">
+                  <Viewbox.RenderTransform>
+                    <TransformGroup>
+                      <ScaleTransform ScaleX="1.3" ScaleY="1.3"/>
+                      <SkewTransform AngleX="0" AngleY="0"/>
+                      <RotateTransform Angle="0"/>
+                      <TranslateTransform X="0" Y="0"/>
+                    </TransformGroup>
+                  </Viewbox.RenderTransform>
+                  <Canvas Width="57.12" Height="44.16">
+                    <Path Width="55.5559" Height="42.504" Canvas.Left="0.866699" Canvas.Top="0.746765" Stretch="Fill" Data="F1 M 6.8667,1.74677L 50.4226,1.74677C 53.1841,1.74677 55.4226,3.98529 55.4226,6.74677L 55.4226,37.2508C 55.4226,40.0122 53.1841,42.2508 50.4226,42.2508L 6.8667,42.2508C 4.10522,42.2508 1.8667,40.0122 1.8667,37.2508L 1.8667,6.74677C 1.8667,3.98529 4.10522,1.74677 6.8667,1.74677 Z " StrokeThickness="2" StrokeLineJoin="Round">
+                      <Path.Stroke>
+                        <LinearGradientBrush StartPoint="0.542248,1.01341" EndPoint="0.542248,-0.0281855">
+                          <GradientStop Color="#FF3E3F44" Offset="0.0182648"/>
+                          <GradientStop Color="#FF16190F" Offset="0.333333"/>
+                          <GradientStop Color="#FF494B48" Offset="0.596154"/>
+                          <GradientStop Color="#FF7D7E81" Offset="1"/>
+                        </LinearGradientBrush>
+                      </Path.Stroke>
+                      <Path.Fill>
+                        <LinearGradientBrush StartPoint="0.543825,1.03876" EndPoint="0.543825,-0.0542662">
+                          <GradientStop Color="#FF3C3D40" Offset="0.0182648"/>
+                          <GradientStop Color="#FF16190F" Offset="0.333333"/>
+                          <GradientStop Color="#FF0F110C" Offset="0.596154"/>
+                          <GradientStop Color="#FF090909" Offset="1"/>
+                        </LinearGradientBrush>
+                      </Path.Fill>
+                      <Path.BitmapEffect>
+                        <DropShadowBitmapEffect Softness="0.25" ShadowDepth="2" Opacity="1" Color="#FF000000" Direction="315" Noise="0"/>
+                      </Path.BitmapEffect>
+                    </Path>
+                    <Path Width="53.5558" Height="40.504" Canvas.Left="1.86694" Canvas.Top="1.74677" Stretch="Fill" Fill="#1BFFFFFF" Data="F1 M 4.86694,1.74677L 52.4227,1.74677C 54.0795,1.74677 55.4227,3.0899 55.4227,4.74677L 55.4227,39.2508C 55.4227,40.9077 54.0795,42.2508 52.4227,42.2508L 4.86694,42.2508C 3.21008,42.2508 1.86694,40.9077 1.86694,39.2508L 1.86694,4.74677C 1.86694,3.0899 3.21008,1.74677 4.86694,1.74677 Z "/>
+                    <Path Width="52.9452" Height="19.8223" Canvas.Left="2.22302" Canvas.Top="0.47998" Stretch="Fill" Data="F1 M 52.8655,0.47998L 4.50983,0.47998C 3.3299,0.47998 2.3573,1.97845 2.22302,3.90979C 3.14777,13.0645 14.7566,20.3023 28.9416,20.3023C 41.8694,20.3023 52.6575,14.2906 55.1682,6.29498L 55.1682,4.36798C 55.1682,2.2207 54.1373,0.47998 52.8655,0.47998 Z ">
+                      <Path.Fill>
+                        <LinearGradientBrush StartPoint="0.459989,0.40623" EndPoint="0.459989,1.53948">
+                          <GradientStop Color="#63FFFFFF" Offset="0.0228311"/>
+                          <GradientStop Color="#63020F1B" Offset="1"/>
+                        </LinearGradientBrush>
+                      </Path.Fill>
+                    </Path>
+                    <Path Stretch="Fill" Stroke="#CD47484A" StrokeLineJoin="Round" Margin="0,0,0,0" Width="23.222" Height="28.826" Canvas.Left="16.822" Canvas.Top="7.334" Data="M14.111,0.5 L22.722,0.5 22.722,28.326 14.111,28.326 z M0.5,0.5 L9.1110001,0.5 9.1110001,28.326 0.5,28.326 z" x:Name="Pause">
+                    	<Path.Fill>
+                    		<LinearGradientBrush StartPoint="0.43556,0.343988" EndPoint="0.43556,0.88646">
+                    			<GradientStop Color="#CDA8A8AC" Offset="0"/>
+                    			<GradientStop Color="#CDF1F5FA" Offset="0.47032"/>
+                    			<GradientStop Color="#CDDEE3E7" Offset="1"/>
+                    		</LinearGradientBrush>
+                    	</Path.Fill>
+                    </Path>
+                  </Canvas>
+                </Viewbox>
+                <TextBlock Height="21.037" FontSize="18" Foreground="#FF000000" Text="Pause" TextAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Bottom"/>
+              </Grid>
+            </Border>
+          </Grid>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+            	<Setter Property="Fill" TargetName="Pause" Value="#CDFFEA06"/>
+            	<Setter Property="Stroke" TargetName="Pause" Value="#CD91892F"/>
+            </Trigger>
+            <Trigger Property="IsStylusOver" Value="True"/>
+            <Trigger Property="IsFocused" Value="True"/>
+            <Trigger Property="IsDefaulted" Value="True"/>
+            <Trigger Property="IsMouseOver" Value="True"/>
+            <Trigger Property="IsPressed" Value="True"/>
+            <Trigger Property="IsEnabled" Value="False"/>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  <ControlTemplate x:Key="templateScroll" TargetType="{x:Type ScrollViewer}">
+  	<Grid x:Name="Grid" Background="{TemplateBinding Background}" >
+  		<Grid.ColumnDefinitions>
+  			<ColumnDefinition Width="*"/>
+  			<ColumnDefinition Width="Auto"/>
+  		</Grid.ColumnDefinitions>
+  		<Grid.RowDefinitions>
+  			<RowDefinition Height="*"/>
+  			<RowDefinition Height="Auto"/>
+  		</Grid.RowDefinitions>
+  		<Rectangle Fill="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" x:Name="Corner" Grid.Column="1" Grid.Row="1"/>
+  		<ScrollContentPresenter Margin="1,40.8,1,37.6" x:Name="PART_ScrollContentPresenter" Grid.Column="0" Grid.Row="0" CanContentScroll="{TemplateBinding CanContentScroll}" CanHorizontallyScroll="False" CanVerticallyScroll="False" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"/>
+  		<ScrollBar Cursor="Arrow" x:Name="PART_VerticalScrollBar" Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}" Grid.Column="0" Grid.Row="0" ViewportSize="{TemplateBinding ViewportHeight}" Maximum="{TemplateBinding ScrollableHeight}" Minimum="0" Value="{Binding Path=VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" AutomationProperties.AutomationId="VerticalScrollBar" Width="Auto" Style="{DynamicResource ScrollBarStyle1}" Background="{x:Null}" BorderBrush="#FFD7D2D2" Margin="0,0,0,-1"/>
+  	</Grid>
+  </ControlTemplate>
+  <LinearGradientBrush x:Key="VerticalScrollBarPageButtonNormal" EndPoint="1, 0" StartPoint="0, 0">
+  	<GradientStop Color="#EEEDE5" Offset="0"/>
+  	<GradientStop Color="#EEEDE5" Offset="0.05"/>
+  	<GradientStop Color="#F3F1EC" Offset="0.06"/>
+  	<GradientStop Color="#FEFEFE" Offset="0.94"/>
+  	<GradientStop Color="#EEEDE5" Offset="0.95"/>
+  	<GradientStop Color="#EEEDE5" Offset="1"/>
+  </LinearGradientBrush>
+  <Style x:Key="ScrollBarButton" TargetType="{x:Type RepeatButton}">
+  	<Setter Property="OverridesDefaultStyle" Value="true"/>
+  	<Setter Property="Focusable" Value="false"/>
+  	<Setter Property="IsTabStop" Value="false"/>
+  	<Setter Property="Template">
+  		<Setter.Value>
+  			<ControlTemplate TargetType="{x:Type RepeatButton}">
+  				<Microsoft_Windows_Themes:ScrollChrome x:Name="Chrome" SnapsToDevicePixels="true" RenderMouseOver="{TemplateBinding IsMouseOver}" RenderPressed="{TemplateBinding IsPressed}" Microsoft_Windows_Themes:ScrollChrome.ScrollGlyph="{TemplateBinding Microsoft_Windows_Themes:ScrollChrome.ScrollGlyph}" ThemeColor="Homestead"/>
+  			</ControlTemplate>
+  		</Setter.Value>
+  	</Setter>
+  </Style>
+  <LinearGradientBrush x:Key="VerticalScrollBarPageButtonPressed" EndPoint="1, 0" StartPoint="0, 0">
+  	<GradientStop Color="#D7D5C2" Offset="0"/>
+  	<GradientStop Color="#D7D5C2" Offset="0.05"/>
+  	<GradientStop Color="#E3DED3" Offset="0.06"/>
+  	<GradientStop Color="#FDFDF6" Offset="0.94"/>
+  	<GradientStop Color="#D7D5C2" Offset="0.95"/>
+  	<GradientStop Color="#D7D5C2" Offset="1"/>
+  </LinearGradientBrush>
+  <Style x:Key="VerticalScrollBarPageButton" TargetType="{x:Type RepeatButton}">
+  	<Setter Property="OverridesDefaultStyle" Value="true"/>
+  	<Setter Property="Background" Value="Transparent"/>
+  	<Setter Property="Focusable" Value="false"/>
+  	<Setter Property="IsTabStop" Value="false"/>
+  	<Setter Property="Template">
+  		<Setter.Value>
+  			<ControlTemplate TargetType="{x:Type RepeatButton}">
+  				<Rectangle Fill="{TemplateBinding Background}" x:Name="Bg"/>
+  				<ControlTemplate.Triggers>
+  					<Trigger Property="IsPressed" Value="true">
+  						<Setter Property="Fill" TargetName="Bg" Value="{StaticResource VerticalScrollBarPageButtonPressed}"/>
+  					</Trigger>
+  				</ControlTemplate.Triggers>
+  			</ControlTemplate>
+  		</Setter.Value>
+  	</Setter>
+  </Style>
+  <Style x:Key="ScrollBarThumb" TargetType="{x:Type Thumb}">
+  	<Setter Property="OverridesDefaultStyle" Value="true"/>
+  	<Setter Property="IsTabStop" Value="false"/>
+  	<Setter Property="Template">
+  		<Setter.Value>
+  			<ControlTemplate TargetType="{x:Type Thumb}">
+  				<Microsoft_Windows_Themes:ScrollChrome x:Name="Chrome" SnapsToDevicePixels="true" RenderMouseOver="{TemplateBinding IsMouseOver}" RenderPressed="{TemplateBinding IsDragging}" Microsoft_Windows_Themes:ScrollChrome.ScrollGlyph="{TemplateBinding Microsoft_Windows_Themes:ScrollChrome.ScrollGlyph}" ThemeColor="NormalColor"/>
+  			</ControlTemplate>
+  		</Setter.Value>
+  	</Setter>
+  </Style>
+  <LinearGradientBrush x:Key="HorizontalScrollBarPageButtonNormal" EndPoint="0, 1" StartPoint="0, 0">
+  	<GradientStop Color="#EEEDE5" Offset="0"/>
+  	<GradientStop Color="#EEEDE5" Offset="0.05"/>
+  	<GradientStop Color="#F3F1EC" Offset="0.06"/>
+  	<GradientStop Color="#FEFEFE" Offset="0.94"/>
+  	<GradientStop Color="#EEEDE5" Offset="0.95"/>
+  	<GradientStop Color="#EEEDE5" Offset="1"/>
+  </LinearGradientBrush>
+  <LinearGradientBrush x:Key="HorizontalScrollBarPageButtonPressed" EndPoint="0, 1" StartPoint="0, 0">
+  	<GradientStop Color="#D7D5C2" Offset="0"/>
+  	<GradientStop Color="#D7D5C2" Offset="0.05"/>
+  	<GradientStop Color="#E3DED3" Offset="0.06"/>
+  	<GradientStop Color="#FDFDF6" Offset="0.94"/>
+  	<GradientStop Color="#D7D5C2" Offset="0.95"/>
+  	<GradientStop Color="#D7D5C2" Offset="1"/>
+  </LinearGradientBrush>
+  <Style x:Key="HorizontalScrollBarPageButton" TargetType="{x:Type RepeatButton}">
+  	<Setter Property="OverridesDefaultStyle" Value="true"/>
+  	<Setter Property="Background" Value="Transparent"/>
+  	<Setter Property="Focusable" Value="false"/>
+  	<Setter Property="IsTabStop" Value="false"/>
+  	<Setter Property="Template">
+  		<Setter.Value>
+  			<ControlTemplate TargetType="{x:Type RepeatButton}">
+  				<Rectangle Fill="{TemplateBinding Background}" x:Name="Bg"/>
+  				<ControlTemplate.Triggers>
+  					<Trigger Property="IsPressed" Value="true">
+  						<Setter Property="Fill" TargetName="Bg" Value="{StaticResource HorizontalScrollBarPageButtonPressed}"/>
+  					</Trigger>
+  				</ControlTemplate.Triggers>
+  			</ControlTemplate>
+  		</Setter.Value>
+  	</Setter>
+  </Style>
+  <Style x:Key="ScrollBarStyle1" TargetType="{x:Type ScrollBar}">
+  	<Setter Property="Stylus.IsPressAndHoldEnabled" Value="false"/>
+  	<Setter Property="Stylus.IsFlicksEnabled" Value="false"/>
+  	<Setter Property="Background" Value="{StaticResource VerticalScrollBarPageButtonNormal}"/>
+  	<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+  	<Setter Property="Width" Value="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}"/>
+  	<Setter Property="MinWidth" Value="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}"/>
+  	<Setter Property="Template">
+  		<Setter.Value>
+  			<ControlTemplate TargetType="{x:Type ScrollBar}">
+  				<Grid SnapsToDevicePixels="true" Background="{TemplateBinding Background}" Width="Auto">
+  					<Grid.RowDefinitions>
+  						<RowDefinition Height="40"/>
+  						<RowDefinition Height="*"/>
+  						<RowDefinition Height="40"/>
+  					</Grid.RowDefinitions>
+                    <!-- aiden ... change scroll settings here!!! -->
+  					<RepeatButton  Command="{x:Static ScrollBar.LineUpCommand}" Microsoft_Windows_Themes:ScrollChrome.ScrollGlyph="UpArrow" Foreground="{x:Null}" BorderBrush="{x:Null}" x:Name="repeatButton" >
+  						<RepeatButton.Background>
+  							<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+  								<GradientStop Color="#B29098AA" Offset="0.01"/>
+  								<GradientStop Color="#B13E4453" Offset="1"/>
+  								<GradientStop Color="#B26E778B" Offset="0.378"/>
+  							</LinearGradientBrush>
+  						</RepeatButton.Background>
+  						<Path Stretch="Fill" StrokeLineJoin="Round" Stroke="{x:Null}" Fill="#FFFFFFFF" Data="F1 M 805.605,-495.462C 803.296,-494.349 799.552,-494.349 797.243,-495.462L 795.153,-496.469C 792.844,-497.582 792.844,-499.387 795.153,-500.5L 882.096,-542.409C 882.235,-542.493 882.386,-542.575 882.548,-542.653L 884.638,-543.66C 885.78,-544.211 887.272,-544.489 888.768,-544.495C 890.317,-544.508 891.874,-544.23 893.055,-543.661L 895.145,-542.653C 895.31,-542.574 895.462,-542.491 895.603,-542.406L 982.541,-500.499C 984.85,-499.386 984.85,-497.582 982.541,-496.469L 980.45,-495.461C 978.141,-494.348 974.398,-494.348 972.089,-495.461L 888.846,-535.586L 805.605,-495.462 Z " Width="40" Height="20"/>
+  					</RepeatButton>
+  					<Track x:Name="PART_Track" Grid.Row="1" IsDirectionReversed="true" Visibility="Collapsed">
+  						<Track.DecreaseRepeatButton>
+  							<RepeatButton Style="{StaticResource VerticalScrollBarPageButton}" Command="{x:Static ScrollBar.PageUpCommand}"/>
+  						</Track.DecreaseRepeatButton>
+  						<Track.IncreaseRepeatButton>
+  							<RepeatButton Style="{StaticResource VerticalScrollBarPageButton}" Command="{x:Static ScrollBar.PageDownCommand}"/>
+  						</Track.IncreaseRepeatButton>
+  						<Track.Thumb>
+  							<Thumb Microsoft_Windows_Themes:ScrollChrome.ScrollGlyph="VerticalGripper" Foreground="{x:Null}" BorderBrush="#FF000000" Margin="0,5,0,5" Width="36" Height="Auto" x:Name="thumb" SnapsToDevicePixels="True" Cursor="Hand" Visibility="Collapsed">
+  								<Thumb.Background>
+  									<LinearGradientBrush EndPoint="-0.174,0.477" StartPoint="1.185,0.464">
+  										<GradientStop Color="#FFDCD8D8" Offset="0"/>
+  										<GradientStop Color="#FFDCD8D8" Offset="1"/>
+  										<GradientStop Color="#FFFAEFEF" Offset="0.465"/>
+  									</LinearGradientBrush>
+  								</Thumb.Background>
+  							</Thumb>
+  						</Track.Thumb>
+  					</Track>
+  					<RepeatButton  Command="{x:Static ScrollBar.LineDownCommand}" Grid.Row="2" Microsoft_Windows_Themes:ScrollChrome.ScrollGlyph="DownArrow" BorderBrush="{x:Null}" x:Name="repeatButton1"  >
+  						<RepeatButton.Background>
+  							<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+  								<GradientStop Color="#B29098AA" Offset="0"/>
+  								<GradientStop Color="#B23E4453" Offset="0.998"/>
+  								<GradientStop Color="#B26E778B" Offset="0.378"/>
+  							</LinearGradientBrush>
+  						</RepeatButton.Background>
+  						<Path Stretch="Fill" StrokeLineJoin="Round" Stroke="{x:Null}" Fill="#FFFFFFFF" Data="F1 M 1056.27,-246.459C 1058.57,-247.572 1062.32,-247.572 1064.63,-246.459L 1066.72,-245.452C 1069.03,-244.339 1069.03,-242.534 1066.72,-241.421L 979.774,-199.512C 979.635,-199.428 979.484,-199.346 979.322,-199.268L 977.232,-198.26C 976.09,-197.71 974.598,-197.432 973.102,-197.426C 971.553,-197.413 969.996,-197.691 968.815,-198.26L 966.725,-199.268C 966.56,-199.347 966.408,-199.429 966.267,-199.515L 879.329,-241.421C 877.02,-242.534 877.02,-244.339 879.329,-245.452L 881.419,-246.46C 883.729,-247.573 887.472,-247.573 889.781,-246.46L 973.024,-206.335L 1056.27,-246.459 Z " Width="40" Height="20"/>
+  					</RepeatButton>
+  				</Grid>
+  				<ControlTemplate.Triggers>
+  				</ControlTemplate.Triggers>
+  			</ControlTemplate>
+  		</Setter.Value>
+  	</Setter>
+  	<Style.Triggers>
+  		<Trigger Property="Orientation" Value="Horizontal">
+  			<Setter Property="Width" Value="Auto"/>
+  			<Setter Property="MinWidth" Value="0"/>
+  			<Setter Property="Background" Value="{StaticResource HorizontalScrollBarPageButtonNormal}"/>
+  			<Setter Property="Height" Value="{DynamicResource {x:Static SystemParameters.HorizontalScrollBarHeightKey}}"/>
+  			<Setter Property="MinHeight" Value="{DynamicResource {x:Static SystemParameters.HorizontalScrollBarHeightKey}}"/>
+  			<Setter Property="Template">
+  				<Setter.Value>
+  					<ControlTemplate TargetType="{x:Type ScrollBar}">
+  						<Grid SnapsToDevicePixels="true" Background="{TemplateBinding Background}">
+  							<Grid.ColumnDefinitions>
+  								<ColumnDefinition MaxWidth="{DynamicResource {x:Static SystemParameters.HorizontalScrollBarButtonWidthKey}}"/>
+  								<ColumnDefinition Width="0.00001*"/>
+  								<ColumnDefinition MaxWidth="{DynamicResource {x:Static SystemParameters.HorizontalScrollBarButtonWidthKey}}"/>
+  							</Grid.ColumnDefinitions>
+  							<RepeatButton Style="{StaticResource ScrollBarButton}" Command="{x:Static ScrollBar.LineLeftCommand}" Microsoft_Windows_Themes:ScrollChrome.ScrollGlyph="LeftArrow"/>
+  							<Track x:Name="PART_Track" Grid.Column="1">
+  								<Track.DecreaseRepeatButton>
+  									<RepeatButton Style="{StaticResource HorizontalScrollBarPageButton}" Command="{x:Static ScrollBar.PageLeftCommand}"/>
+  								</Track.DecreaseRepeatButton>
+  								<Track.IncreaseRepeatButton>
+  									<RepeatButton Style="{StaticResource HorizontalScrollBarPageButton}" Command="{x:Static ScrollBar.PageRightCommand}"/>
+  								</Track.IncreaseRepeatButton>
+  								<Track.Thumb>
+  									<Thumb Style="{StaticResource ScrollBarThumb}" Microsoft_Windows_Themes:ScrollChrome.ScrollGlyph="HorizontalGripper"/>
+  								</Track.Thumb>
+  							</Track>
+  							<RepeatButton Style="{StaticResource ScrollBarButton}" Command="{x:Static ScrollBar.LineRightCommand}" Grid.Column="2" Microsoft_Windows_Themes:ScrollChrome.ScrollGlyph="RightArrow"/>
+  						</Grid>
+  					</ControlTemplate>
+  				</Setter.Value>
+  			</Setter>
+  		</Trigger>
+  	</Style.Triggers>
+  </Style>
+  <LinearGradientBrush x:Key="AfternoonBrush" EndPoint="0.5,1" StartPoint="0.5,0">
+  	<GradientStop Color="#127B7B7E" Offset="0.001"/>
+  	<GradientStop Color="#667D7E7E" Offset="0.988"/>
+  	<GradientStop Color="#FF4F4F50" Offset="0.398"/>
+  	<GradientStop Color="#CCB6B6BC" Offset="0.196"/>
+  	<GradientStop Color="#FF6A6A69" Offset="0.741"/>
+  </LinearGradientBrush>
+ 
+  
+  
+  
+</ResourceDictionary>

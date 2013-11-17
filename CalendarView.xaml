@@ -1,0 +1,564 @@
+﻿<!--
+Copyright (c) 2010, CLARITY: Centre for Sensor Web Technologies, DCU (Dublin City University)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+* Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+* Neither the name of CLARITY: Centre for Sensor Web Technologies, DCU (Dublin City University) nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ -->
+<UserControl x:Class="SenseCamBrowser1.CalendarView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vsm="clr-namespace:System.Windows;assembly=WPFToolkit"
+    xmlns:src="clr-namespace:SenseCamBrowser1"
+    xmlns:primitives="clr-namespace:Microsoft.Windows.Controls.Primitives;assembly=WPFToolkit"
+   xmlns:Custom="http://schemas.microsoft.com/wpf/2008/toolkit" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
+   >
+    <UserControl.Resources >
+        <Style x:Key="CalendarStyle1" TargetType="{x:Type Custom:Calendar}" >
+            <Setter Property="Foreground" Value="#FF333333"/>
+            <Setter Property="Background">
+                <Setter.Value>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#FFE4EAF0" Offset="0"/>
+                        <GradientStop Color="#FFECF0F4" Offset="0.16"/>
+                        <GradientStop Color="#FFFCFCFD" Offset="0.16"/>
+                        <GradientStop Color="#FFFFFFFF" Offset="1"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="BorderBrush">
+                <Setter.Value>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#FFA3AEB9" Offset="0"/>
+                        <GradientStop Color="#FF8399A9" Offset="0.375"/>
+                        <GradientStop Color="#FF718597" Offset="0.375"/>
+                        <GradientStop Color="#FF617584" Offset="1"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="BorderThickness" Value="1,1,1,1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Custom:Calendar}">
+                        <StackPanel HorizontalAlignment="Center" x:Name="PART_Root" Width="212.439" Height="168.448" RenderTransformOrigin="0.5,0.5">
+                            <StackPanel.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                    <SkewTransform AngleX="0" AngleY="0"/>
+                                    <RotateTransform Angle="0"/>
+                                    <TranslateTransform X="0" Y="-98"/>
+                                </TransformGroup>
+                            </StackPanel.RenderTransform>
+                            <Custom:CalendarItem x:Name="PART_CalendarItem" Style="{DynamicResource CalendarItemStyle1}" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Height="119.863"/>
+                        </StackPanel>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="CalendarItemStyle1" TargetType="{x:Type Custom:CalendarItem}">
+            <Setter Property="Margin" Value="0,3,0,3"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Custom:CalendarItem}">
+                        <ControlTemplate.Resources>
+                            <DataTemplate x:Key="DayTitleTemplate">
+                                <TextBlock HorizontalAlignment="Center" Margin="0,6,0,6" VerticalAlignment="Center" FontFamily="Verdana" FontSize="9.5" FontWeight="Bold" Foreground="#FF333333" Text="{Binding}"/>
+                            </DataTemplate>
+                        </ControlTemplate.Resources>
+                        <Grid x:Name="PART_Root" Width="180.86">
+                            <Grid.Resources>
+                                <SolidColorBrush x:Key="DisabledColor" Color="#A5FFFFFF"/>
+                            </Grid.Resources>
+                            <Rectangle Fill="#FFD8CE9B" Stroke="{x:Null}" Margin="-18.449,-4.125,-16.212,0" VerticalAlignment="Top" Height="27.086" d:IsHidden="True" Visibility="Hidden"/>
+                            <Border Margin="1,-4.125,-2.001,-40.375" BorderBrush="{x:Null}" BorderThickness="2,2,2,2" CornerRadius="1,1,1,1">
+                                <Grid>
+                                    <Grid.Resources>
+                                        <ControlTemplate x:Key="HeaderButtonTemplate" TargetType="{x:Type Button}">
+                                            <Grid Cursor="Hand">
+                                                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="1,4,1,9" x:Name="buttonContent" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" TextElement.Foreground="#FF333333" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"/>
+                                            </Grid>
+                                        </ControlTemplate>
+                                        <ControlTemplate x:Key="NextButtonTemplate" TargetType="{x:Type Button}">
+                                            <Grid Cursor="Hand">
+                                                <Rectangle Fill="#11E5EBF1" Stretch="Fill" Opacity="1"/>
+                                                <Grid>
+                                                    <Path Fill="#FF333333" Stretch="Fill" HorizontalAlignment="Right" Margin="0,-6,14,0" VerticalAlignment="Center" Width="6" Height="10" Data="M282.875,231.875L282.875,240.375 288.625,236z"/>
+                                                </Grid>
+                                            </Grid>
+                                        </ControlTemplate>
+                                        <ControlTemplate x:Key="PreviousButtonTemplate" TargetType="{x:Type Button}">
+                                            <Grid Cursor="Hand">
+                                                <Rectangle Fill="#11E5EBF1" Stretch="Fill" Opacity="1"/>
+                                                <Grid>
+                                                    <Path Fill="#FF333333" Stretch="Fill" HorizontalAlignment="Left" Margin="14,-6,0,0" VerticalAlignment="Center" Width="6" Height="10" Data="M288.75,232.25L288.75,240.625 283,236.625z"/>
+                                                </Grid>
+                                            </Grid>
+                                        </ControlTemplate>
+                                    </Grid.Resources>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Button HorizontalAlignment="Left" Margin="-12,7.837,0,-2.164" x:Name="PART_PreviousButton" Width="28" Height="20" Focusable="False" RenderTransformOrigin="0.5,0.5" Grid.Column="0" Grid.Row="0" d:LayoutOverrides="HorizontalAlignment" Cursor="Hand">
+                                        <Button.RenderTransform>
+                                            <TransformGroup>
+                                                <ScaleTransform ScaleX="2.2" ScaleY="2.2"/>
+                                                <SkewTransform AngleX="0" AngleY="0"/>
+                                                <RotateTransform Angle="0"/>
+                                                <TranslateTransform X="0" Y="0"/>
+                                            </TransformGroup>
+                                        </Button.RenderTransform>
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="{x:Type Button}">
+                                                <Grid Cursor="Hand">
+                                                    <Rectangle Fill="#11E5EBF1" Stretch="Fill" Opacity="1"/>
+                                                    <Grid>
+                                                        <Path Fill="#FF333333" Stretch="Fill" HorizontalAlignment="Left" Margin="14,-6,0,0" VerticalAlignment="Center" Width="6" Height="10" Data="M288.75,232.25L288.75,240.625 283,236.625z"/>
+                                                    </Grid>
+                                                </Grid>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button>
+                                    <Button HorizontalAlignment="Center" x:Name="PART_HeaderButton" VerticalAlignment="Stretch" FontSize="10.5" FontWeight="Bold" Focusable="False" Grid.Column="1" Grid.Row="0" RenderTransformOrigin="0.5,0.5" d:LayoutOverrides="Height" Margin="0,0,0,0">
+                                        <Button.RenderTransform>
+                                            <TransformGroup>
+                                                <ScaleTransform ScaleX="1.4" ScaleY="1.4"/>
+                                                <SkewTransform AngleX="0" AngleY="0"/>
+                                                <RotateTransform Angle="0"/>
+                                                <TranslateTransform X="0" Y="0"/>
+                                            </TransformGroup>
+                                        </Button.RenderTransform>
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="{x:Type Button}">
+                                                <Grid Cursor="Hand">
+                                                    <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="1,4,1,9" x:Name="buttonContent" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" TextElement.Foreground="#FF333333" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"/>
+                                                </Grid>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button>
+                                    <Button HorizontalAlignment="Right" Margin="0,7.837,-10,-2.164" x:Name="PART_NextButton" Width="28" Height="20" Focusable="False" RenderTransformOrigin="0.5,0.5" Grid.Column="2" Grid.Row="0" d:LayoutOverrides="HorizontalAlignment" Cursor="Hand">
+                                        <Button.RenderTransform>
+                                            <TransformGroup>
+                                                <ScaleTransform ScaleX="2.2" ScaleY="2.2"/>
+                                                <SkewTransform AngleX="0" AngleY="0"/>
+                                                <RotateTransform Angle="0"/>
+                                                <TranslateTransform X="0" Y="0"/>
+                                            </TransformGroup>
+                                        </Button.RenderTransform>
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="{x:Type Button}">
+                                                <Grid Cursor="Hand">
+                                                    <Rectangle Fill="#11E5EBF1" Stretch="Fill" Opacity="1"/>
+                                                    <Grid>
+                                                        <Path Fill="#FF333333" Stretch="Fill" HorizontalAlignment="Right" Margin="0,-6,14,0" VerticalAlignment="Center" Width="6" Height="10" Data="M282.875,231.875L282.875,240.375 288.625,236z"/>
+                                                    </Grid>
+                                                </Grid>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button>
+                                    <Grid Margin="16,14.446,-4,-1.4" x:Name="PART_MonthView" RenderTransformOrigin="0.5,0.5" Visibility="Visible" Grid.ColumnSpan="3" Grid.Row="1" Cursor="Hand">
+                                        <Grid.RenderTransform>
+                                            <TransformGroup>
+                                                <ScaleTransform ScaleX="1.4" ScaleY="1.4"/>
+                                                <SkewTransform AngleX="0" AngleY="0"/>
+                                                <RotateTransform Angle="0"/>
+                                                <TranslateTransform X="0" Y="0"/>
+                                            </TransformGroup>
+                                        </Grid.RenderTransform>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                    </Grid>
+                                    <Grid Margin="6,-3,7,6" x:Name="PART_YearView" Visibility="Hidden" Grid.ColumnSpan="3" Grid.Row="1">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                    </Grid>
+                                </Grid>
+                            </Border>
+                            <Rectangle Fill="#A5FFFFFF" Stretch="Fill" Stroke="#A5FFFFFF" StrokeThickness="1" RadiusX="2" RadiusY="2" x:Name="PART_DisabledVisual" Opacity="0" Visibility="Collapsed"/>
+                            <Viewbox Width="6.923" Height="Auto" HorizontalAlignment="Left" Margin="2.596,-3.52,0,-522.836" RenderTransformOrigin="0.5,0.5">
+                                <Viewbox.RenderTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform ScaleX="0.3" ScaleY="0.3"/>
+                                        <SkewTransform AngleX="0" AngleY="0"/>
+                                        <RotateTransform Angle="90"/>
+                                        <TranslateTransform X="83" Y="-295"/>
+                                    </TransformGroup>
+                                </Viewbox.RenderTransform>
+                                <Canvas Width="6.92349" Height="646.265">
+                                    <Ellipse Width="6.92349" Height="6.92346" Canvas.Left="0" Canvas.Top="256.385" Stretch="Fill" Fill="#FFD08B2D"/>
+                                    <Ellipse Width="6.92349" Height="6.92346" Canvas.Left="0" Canvas.Top="256.385" Stretch="Fill" Fill="#FFD08B2D"/>
+                                    <Path Width="6.92349" Height="6.92352" Canvas.Left="0" Canvas.Top="274.56" Stretch="Fill" Fill="#FFD08B2D" Data="F1 M 3.46175,274.56C 5.37362,274.56 6.92349,276.109 6.92349,278.021C 6.92349,279.933 5.37362,281.483 3.46175,281.483C 1.54987,281.483 0,279.933 0,278.021C 0,276.109 1.54987,274.56 3.46175,274.56 Z "/>
+                                    <Path Width="6.92349" Height="6.92349" Canvas.Left="0" Canvas.Top="292.734" Stretch="Fill" Fill="#FFD08B2D" Data="F1 M 3.46175,292.734C 5.37362,292.734 6.92349,294.284 6.92349,296.196C 6.92349,298.107 5.37362,299.657 3.46175,299.657C 1.54987,299.657 0,298.107 0,296.196C 0,294.284 1.54987,292.734 3.46175,292.734 Z "/>
+                                    <Path Width="6.92349" Height="6.92349" Canvas.Left="0" Canvas.Top="292.734" Stretch="Fill" Fill="#FFD08B2D" Data="F1 M 3.46175,292.734C 5.37362,292.734 6.92349,294.284 6.92349,296.196C 6.92349,298.107 5.37362,299.657 3.46175,299.657C 1.54987,299.657 0,298.107 0,296.196C 0,294.284 1.54987,292.734 3.46175,292.734 Z "/>
+                                    <Path Width="6.92349" Height="6.92352" Canvas.Left="0" Canvas.Top="310.908" Stretch="Fill" Fill="#FFD08B2D" Data="F1 M 3.46175,310.908C 5.37362,310.908 6.92349,312.458 6.92349,314.37C 6.92349,316.282 5.37362,317.831 3.46175,317.831C 1.54987,317.831 0,316.282 0,314.37C 0,312.458 1.54987,310.908 3.46175,310.908 Z "/>
+                                    <Path Width="6.92349" Height="6.92352" Canvas.Left="0" Canvas.Top="329.082" Stretch="Fill" Fill="#FFD08B2D" Data="F1 M 3.46175,329.082C 5.37362,329.082 6.92349,330.632 6.92349,332.544C 6.92349,334.456 5.37362,336.006 3.46175,336.006C 1.54987,336.006 0,334.456 0,332.544C 0,330.632 1.54987,329.082 3.46175,329.082 Z "/>
+                                    <Path Width="6.92349" Height="6.92352" Canvas.Left="0" Canvas.Top="329.082" Stretch="Fill" Fill="#FFD08B2D" Data="F1 M 3.46175,329.082C 5.37362,329.082 6.92349,330.632 6.92349,332.544C 6.92349,334.456 5.37362,336.006 3.46175,336.006C 1.54987,336.006 0,334.456 0,332.544C 0,330.632 1.54987,329.082 3.46175,329.082 Z "/>
+                                    <Path Width="6.92349" Height="6.92349" Canvas.Left="0" Canvas.Top="347.256" Stretch="Fill" Fill="#FFD08B2D" Data="F1 M 3.46175,347.256C 5.37362,347.256 6.92349,348.806 6.92349,350.718C 6.92349,352.63 5.37362,354.18 3.46175,354.18C 1.54987,354.18 0,352.63 0,350.718C 0,348.806 1.54987,347.256 3.46175,347.256 Z "/>
+                                    <Path Width="6.92349" Height="6.92349" Canvas.Left="0" Canvas.Top="365.43" Stretch="Fill" Fill="#FFD08B2D" Data="F1 M 3.46175,365.43C 5.37362,365.43 6.92349,366.98 6.92349,368.892C 6.92349,370.804 5.37362,372.354 3.46175,372.354C 1.54987,372.354 0,370.804 0,368.892C 0,366.98 1.54987,365.43 3.46175,365.43 Z "/>
+                                    <Path Width="6.92349" Height="6.92349" Canvas.Left="0" Canvas.Top="365.43" Stretch="Fill" Fill="#FFD08B2D" Data="F1 M 3.46175,365.43C 5.37362,365.43 6.92349,366.98 6.92349,368.892C 6.92349,370.804 5.37362,372.354 3.46175,372.354C 1.54987,372.354 0,370.804 0,368.892C 0,366.98 1.54987,365.43 3.46175,365.43 Z "/>
+                                    <Path Width="6.92349" Height="6.92352" Canvas.Left="0" Canvas.Top="383.605" Stretch="Fill" Fill="#FFD08B2D" Data="F1 M 3.46175,383.605C 5.37362,383.605 6.92349,385.154 6.92349,387.066C 6.92349,388.978 5.37362,390.528 3.46175,390.528C 1.54987,390.528 0,388.978 0,387.066C 0,385.154 1.54987,383.605 3.46175,383.605 Z "/>
+                                    <Path Width="6.92349" Height="6.92349" Canvas.Left="0" Canvas.Top="401.779" Stretch="Fill" Fill="#FFD08B2D" Data="F1 M 3.46175,401.779C 5.37362,401.779 6.92349,403.329 6.92349,405.241C 6.92349,407.152 5.37362,408.702 3.46175,408.702C 1.54987,408.702 0,407.152 0,405.241C 0,403.329 1.54987,401.779 3.46175,401.779 Z "/>
+                                    <Path Width="6.92349" Height="6.92349" Canvas.Left="0" Canvas.Top="401.779" Stretch="Fill" Fill="#FFD08B2D" Data="F1 M 3.46175,401.779C 5.37362,401.779 6.92349,403.329 6.92349,405.241C 6.92349,407.152 5.37362,408.702 3.46175,408.702C 1.54987,408.702 0,407.152 0,405.241C 0,403.329 1.54987,401.779 3.46175,401.779 Z "/>
+                                    <Path Width="6.92349" Height="6.92349" Canvas.Left="0" Canvas.Top="419.953" Stretch="Fill" Fill="#FFD08B2D" Data="F1 M 3.46175,419.953C 5.37362,419.953 6.92349,421.503 6.92349,423.415C 6.92349,425.327 5.37362,426.876 3.46175,426.876C 1.54987,426.876 0,425.327 0,423.415C 0,421.503 1.54987,419.953 3.46175,419.953 Z "/>
+                                    <Path Width="6.92349" Height="6.92349" Canvas.Left="0" Canvas.Top="438.127" Stretch="Fill" Fill="#FFD08B2D" Data="F1 M 3.46175,438.127C 5.37362,438.127 6.92349,439.677 6.92349,441.589C 6.92349,443.501 5.37362,445.051 3.46175,445.051C 1.54987,445.051 0,443.501 0,441.589C 0,439.677 1.54987,438.127 3.46175,438.127 Z "/>
+                                    <Path Width="6.92349" Height="6.92349" Canvas.Left="0" Canvas.Top="438.127" Stretch="Fill" Fill="#FFD08B2D" Data="F1 M 3.46175,438.127C 5.37362,438.127 6.92349,439.677 6.92349,441.589C 6.92349,443.501 5.37362,445.051 3.46175,445.051C 1.54987,445.051 0,443.501 0,441.589C 0,439.677 1.54987,438.127 3.46175,438.127 Z "/>
+                                    <Path Width="6.92349" Height="6.92349" Canvas.Left="0" Canvas.Top="456.301" Stretch="Fill" Fill="#FFD08B2D" Data="F1 M 3.46175,456.301C 5.37362,456.301 6.92349,457.851 6.92349,459.763C 6.92349,461.675 5.37362,463.225 3.46175,463.225C 1.54987,463.225 0,461.675 0,459.763C 0,457.851 1.54987,456.301 3.46175,456.301 Z "/>
+                                    <Ellipse Width="6.92349" Height="6.92346" Canvas.Left="0" Canvas.Top="474.475" Stretch="Fill" Fill="#FFD08B2D"/>
+                                    <Ellipse Width="6.92349" Height="6.92346" Canvas.Left="0" Canvas.Top="474.475" Stretch="Fill" Fill="#FFD08B2D"/>
+                                    <Path Width="6.92349" Height="6.92349" Canvas.Left="0" Canvas.Top="492.65" Stretch="Fill" Fill="#FFD08B2D" Data="F1 M 3.46175,492.65C 5.37362,492.65 6.92349,494.199 6.92349,496.111C 6.92349,498.023 5.37362,499.573 3.46175,499.573C 1.54987,499.573 0,498.023 0,496.111C 0,494.199 1.54987,492.65 3.46175,492.65 Z "/>
+                                    <Path Width="6.92349" Height="6.92352" Canvas.Left="0" Canvas.Top="0" Stretch="Fill" Fill="#FFD08B2D" Data="F1 M 3.46175,0C 5.37362,0 6.92349,1.5498 6.92349,3.46179C 6.92349,5.37366 5.37362,6.92352 3.46175,6.92352C 1.54987,6.92352 0,5.37366 0,3.46179C 0,1.5498 1.54987,0 3.46175,0 Z "/>
+                                    <Path Width="6.92349" Height="6.92352" Canvas.Left="0" Canvas.Top="0" Stretch="Fill" Fill="#FFD08B2D" Data="F1 M 3.46175,0C 5.37362,0 6.92349,1.5498 6.92349,3.46179C 6.92349,5.37366 5.37362,6.92352 3.46175,6.92352C 1.54987,6.92352 0,5.37366 0,3.46179C 0,1.5498 1.54987,0 3.46175,0 Z "/>
+                                    <Path Width="6.92349" Height="6.92346" Canvas.Left="0" Canvas.Top="18.1742" Stretch="Fill" Fill="#FFD08B2D" Data="F1 M 3.46175,18.1742C 5.37362,18.1742 6.92349,19.724 6.92349,21.6359C 6.92349,23.5478 5.37362,25.0977 3.46175,25.0977C 1.54987,25.0977 0,23.5478 0,21.6359C 0,19.724 1.54987,18.1742 3.46175,18.1742 Z "/>
+                                    <Path Width="6.92349" Height="6.92352" Canvas.Left="0" Canvas.Top="36.3483" Stretch="Fill" Fill="#FFD08B2D" Data="F1 M 3.46175,36.3483C 5.37362,36.3483 6.92349,37.8981 6.92349,39.8101C 6.92349,41.7219 5.37362,43.2719 3.46175,43.2719C 1.54987,43.2719 0,41.7219 0,39.8101C 0,37.8981 1.54987,36.3483 3.46175,36.3483 Z "/>
+                                    <Path Width="6.92349" Height="6.92352" Canvas.Left="0" Canvas.Top="36.3483" Stretch="Fill" Fill="#FFD08B2D" Data="F1 M 3.46175,36.3483C 5.37362,36.3483 6.92349,37.8981 6.92349,39.8101C 6.92349,41.7219 5.37362,43.2719 3.46175,43.2719C 1.54987,43.2719 0,41.7219 0,39.8101C 0,37.8981 1.54987,36.3483 3.46175,36.3483 Z "/>
+                                    <Path Width="6.92349" Height="6.92352" Canvas.Left="0" Canvas.Top="54.5225" Stretch="Fill" Fill="#FFD08B2D" Data="F1 M 3.46175,54.5225C 5.37362,54.5225 6.92349,56.0723 6.92349,57.9843C 6.92349,59.8961 5.37362,61.446 3.46175,61.446C 1.54987,61.446 0,59.8961 0,57.9843C 0,56.0723 1.54987,54.5225 3.46175,54.5225 Z "/>
+                                    <Ellipse Width="6.92349" Height="6.92346" Canvas.Left="0" Canvas.Top="72.6967" Stretch="Fill" Fill="#FFD08B2D"/>
+                                    <Ellipse Width="6.92349" Height="6.92346" Canvas.Left="0" Canvas.Top="72.6967" Stretch="Fill" Fill="#FFD08B2D"/>
+                                    <Path Width="6.92349" Height="6.92352" Canvas.Left="0" Canvas.Top="90.8708" Stretch="Fill" Fill="#FFD08B2D" Data="F1 M 3.46175,90.8708C 5.37362,90.8708 6.92349,92.4206 6.92349,94.3325C 6.92349,96.2444 5.37362,97.7943 3.46175,97.7943C 1.54987,97.7943 0,96.2444 0,94.3325C 0,92.4206 1.54987,90.8708 3.46175,90.8708 Z "/>
+                                    <Path Width="6.92349" Height="6.92352" Canvas.Left="0" Canvas.Top="109.045" Stretch="Fill" Fill="#FFD08B2D" Data="F1 M 3.46175,109.045C 5.37362,109.045 6.92349,110.595 6.92349,112.507C 6.92349,114.419 5.37362,115.968 3.46175,115.968C 1.54987,115.968 0,114.419 0,112.507C 0,110.595 1.54987,109.045 3.46175,109.045 Z "/>
+                                    <Path Width="6.92349" Height="6.92352" Canvas.Left="0" Canvas.Top="109.045" Stretch="Fill" Fill="#FFD08B2D" Data="F1 M 3.46175,109.045C 5.37362,109.045 6.92349,110.595 6.92349,112.507C 6.92349,114.419 5.37362,115.968 3.46175,115.968C 1.54987,115.968 0,114.419 0,112.507C 0,110.595 1.54987,109.045 3.46175,109.045 Z "/>
+                                    <Ellipse Width="6.92349" Height="6.92346" Canvas.Left="0" Canvas.Top="127.219" Stretch="Fill" Fill="#FFD08B2D"/>
+                                    <Path Width="6.92349" Height="6.92352" Canvas.Left="0" Canvas.Top="145.393" Stretch="Fill" Fill="#FFD08B2D" Data="F1 M 3.46175,145.393C 5.37362,145.393 6.92349,146.943 6.92349,148.855C 6.92349,150.767 5.37362,152.317 3.46175,152.317C 1.54987,152.317 0,150.767 0,148.855C 0,146.943 1.54987,145.393 3.46175,145.393 Z "/>
+                                    <Path Width="6.92349" Height="6.92352" Canvas.Left="0" Canvas.Top="145.393" Stretch="Fill" Fill="#FFD08B2D" Data="F1 M 3.46175,145.393C 5.37362,145.393 6.92349,146.943 6.92349,148.855C 6.92349,150.767 5.37362,152.317 3.46175,152.317C 1.54987,152.317 0,150.767 0,148.855C 0,146.943 1.54987,145.393 3.46175,145.393 Z "/>
+                                    <Path Width="6.92349" Height="6.92352" Canvas.Left="0" Canvas.Top="163.567" Stretch="Fill" Fill="#FFD08B2D" Data="F1 M 3.46175,163.567C 5.37362,163.567 6.92349,165.117 6.92349,167.029C 6.92349,168.941 5.37362,170.491 3.46175,170.491C 1.54987,170.491 0,168.941 0,167.029C 0,165.117 1.54987,163.567 3.46175,163.567 Z "/>
+                                    <Ellipse Width="6.92349" Height="6.92346" Canvas.Left="0" Canvas.Top="181.742" Stretch="Fill" Fill="#FFD08B2D"/>
+                                    <Ellipse Width="6.92349" Height="6.92346" Canvas.Left="0" Canvas.Top="181.742" Stretch="Fill" Fill="#FFD08B2D"/>
+                                    <Ellipse Width="6.92349" Height="6.92346" Canvas.Left="0" Canvas.Top="199.916" Stretch="Fill" Fill="#FFD08B2D"/>
+                                    <Path Width="6.92349" Height="6.92352" Canvas.Left="0" Canvas.Top="218.09" Stretch="Fill" Fill="#FFD08B2D" Data="F1 M 3.46175,218.09C 5.37362,218.09 6.92349,219.64 6.92349,221.552C 6.92349,223.464 5.37362,225.013 3.46175,225.013C 1.54987,225.013 0,223.464 0,221.552C 0,219.64 1.54987,218.09 3.46175,218.09 Z "/>
+                                    <Path Width="6.92349" Height="6.92352" Canvas.Left="0" Canvas.Top="218.09" Stretch="Fill" Fill="#FFD08B2D" Data="F1 M 3.46175,218.09C 5.37362,218.09 6.92349,219.64 6.92349,221.552C 6.92349,223.464 5.37362,225.013 3.46175,225.013C 1.54987,225.013 0,223.464 0,221.552C 0,219.64 1.54987,218.09 3.46175,218.09 Z "/>
+                                    <Path Width="6.92349" Height="6.92352" Canvas.Left="0" Canvas.Top="236.264" Stretch="Fill" Fill="#FFD08B2D" Data="F1 M 3.46175,236.264C 5.37362,236.264 6.92349,237.814 6.92349,239.726C 6.92349,241.638 5.37362,243.188 3.46175,243.188C 1.54987,243.188 0,241.638 0,239.726C 0,237.814 1.54987,236.264 3.46175,236.264 Z "/>
+                                    <Path Width="6.92349" Height="6.92346" Canvas.Left="0" Canvas.Top="510.824" Stretch="Fill" Fill="#FFD08B2D" Data="F1 M 3.46175,510.824C 5.37362,510.824 6.92349,512.374 6.92349,514.286C 6.92349,516.197 5.37362,517.747 3.46175,517.747C 1.54987,517.747 0,516.197 0,514.286C 0,512.374 1.54987,510.824 3.46175,510.824 Z "/>
+                                    <Path Width="6.92349" Height="6.92346" Canvas.Left="0" Canvas.Top="510.824" Stretch="Fill" Fill="#FFD08B2D" Data="F1 M 3.46175,510.824C 5.37362,510.824 6.92349,512.374 6.92349,514.286C 6.92349,516.197 5.37362,517.747 3.46175,517.747C 1.54987,517.747 0,516.197 0,514.286C 0,512.374 1.54987,510.824 3.46175,510.824 Z "/>
+                                    <Path Width="6.92349" Height="6.92346" Canvas.Left="0" Canvas.Top="528.998" Stretch="Fill" Fill="#FFD08B2D" Data="F1 M 3.46175,528.998C 5.37362,528.998 6.92349,530.548 6.92349,532.46C 6.92349,534.371 5.37362,535.921 3.46175,535.921C 1.54987,535.921 0,534.371 0,532.46C 0,530.548 1.54987,528.998 3.46175,528.998 Z "/>
+                                    <Ellipse Width="6.92349" Height="6.92346" Canvas.Left="0" Canvas.Top="548.47" Stretch="Fill" Fill="#FFD08B2D"/>
+                                    <Ellipse Width="6.92349" Height="6.92346" Canvas.Left="0" Canvas.Top="548.47" Stretch="Fill" Fill="#FFD08B2D"/>
+                                    <Ellipse Width="6.92349" Height="6.92346" Canvas.Left="0" Canvas.Top="566.644" Stretch="Fill" Fill="#FFD08B2D"/>
+                                    <Ellipse Width="6.92349" Height="6.92346" Canvas.Left="0" Canvas.Top="584.819" Stretch="Fill" Fill="#FFD08B2D"/>
+                                    <Ellipse Width="6.92349" Height="6.92346" Canvas.Left="0" Canvas.Top="584.819" Stretch="Fill" Fill="#FFD08B2D"/>
+                                    <Path Width="6.92349" Height="6.92352" Canvas.Left="0" Canvas.Top="602.993" Stretch="Fill" Fill="#FFD08B2D" Data="F1 M 3.46175,602.993C 5.37362,602.993 6.92349,604.543 6.92349,606.454C 6.92349,608.366 5.37362,609.916 3.46175,609.916C 1.54987,609.916 0,608.366 0,606.454C 0,604.543 1.54987,602.993 3.46175,602.993 Z "/>
+                                    <Ellipse Width="6.92349" Height="6.92346" Canvas.Left="0" Canvas.Top="621.167" Stretch="Fill" Fill="#FFD08B2D"/>
+                                    <Ellipse Width="6.92349" Height="6.92346" Canvas.Left="0" Canvas.Top="621.167" Stretch="Fill" Fill="#FFD08B2D"/>
+                                    <Path Width="6.92349" Height="6.92352" Canvas.Left="0" Canvas.Top="639.341" Stretch="Fill" Fill="#FFD08B2D" Data="F1 M 3.46175,639.341C 5.37362,639.341 6.92349,640.891 6.92349,642.803C 6.92349,644.715 5.37362,646.265 3.46175,646.265C 1.54987,646.265 0,644.715 0,642.803C 0,640.891 1.54987,639.341 3.46175,639.341 Z "/>
+                                </Canvas>
+                            </Viewbox>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Visibility" TargetName="PART_DisabledVisual" Value="Visible"/>
+                            </Trigger>
+                            <DataTrigger Binding="{Binding Path=DisplayMode, RelativeSource={RelativeSource FindAncestor, AncestorLevel=1, AncestorType={x:Type Custom:Calendar}}}" Value="Year">
+                                <Setter Property="Visibility" TargetName="PART_MonthView" Value="Hidden"/>
+                                <Setter Property="Visibility" TargetName="PART_YearView" Value="Visible"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Path=DisplayMode, RelativeSource={RelativeSource FindAncestor, AncestorLevel=1, AncestorType={x:Type Custom:Calendar}}}" Value="Decade">
+                                <Setter Property="Visibility" TargetName="PART_MonthView" Value="Hidden"/>
+                                <Setter Property="Visibility" TargetName="PART_YearView" Value="Visible"/>
+                            </DataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="CloseBtn" BasedOn="{x:Null}" TargetType="{x:Type Button}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Grid>
+                            <Rectangle Stroke="#FFC22B0A" RadiusX="24" RadiusY="12" Height="60" Width="64.829" Margin="0,2.238,0,0.762">
+                                <Rectangle.Fill>
+                                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                        <GradientStop Color="#FFF0BEB0" Offset="0.049"/>
+                                        <GradientStop Color="#FF6A1E08" Offset="1"/>
+                                        <GradientStop Color="#FFEC4F22" Offset="0.482"/>
+                                    </LinearGradientBrush>
+                                </Rectangle.Fill>
+                            </Rectangle>
+                            <Path Stretch="Fill" Stroke="#FF5B0505" StrokeThickness="5" HorizontalAlignment="Right" Margin="0,3.9,3.177,0" VerticalAlignment="Top" Width="26.5" Height="22.8" RenderTransformOrigin="0.5,0.5" Data="M583.0806,36.477612 L637.57724,61.230955">
+                                <Path.RenderTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform ScaleX="1" ScaleY="0.65"/>
+                                        <SkewTransform AngleX="0" AngleY="0"/>
+                                        <RotateTransform Angle="5"/>
+                                        <TranslateTransform X="0" Y="0"/>
+                                    </TransformGroup>
+                                </Path.RenderTransform>
+                                <Path.Fill>
+                                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                        <GradientStop Color="#FFF0BEB0" Offset="0.049"/>
+                                        <GradientStop Color="#FF6A1E08" Offset="1"/>
+                                        <GradientStop Color="#FFEC4F22" Offset="0.482"/>
+                                    </LinearGradientBrush>
+                                </Path.Fill>
+                            </Path>
+                            <Path Stretch="Fill" Stroke="#FF5B0505" StrokeThickness="5" HorizontalAlignment="Right" Margin="0,3.9,3.177,0" VerticalAlignment="Top" Width="26.5" Height="22.8" Data="M583.0806,36.477612 L637.57724,61.230955" Fill="{x:Null}" RenderTransformOrigin="0.632,0.483">
+                                <Path.RenderTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform ScaleX="-1" ScaleY="0.65"/>
+                                        <SkewTransform AngleX="0" AngleY="0"/>
+                                        <RotateTransform Angle="-5"/>
+                                        <TranslateTransform X="-8.853" Y="0.539"/>
+                                    </TransformGroup>
+                                </Path.RenderTransform>
+                            </Path>
+                            <TextBlock Margin="9.169,19.614,8.763,19.246" Width="Auto" Height="Auto" FontSize="20" Text="Close" TextAlignment="Center" TextWrapping="Wrap" d:LayoutOverrides="Width, Height"/>
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" RecognizesAccessKey="True"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True"/>
+                            <Trigger Property="IsDefaulted" Value="True"/>
+                            <Trigger Property="IsMouseOver" Value="True"/>
+                            <Trigger Property="IsPressed" Value="True"/>
+                            <Trigger Property="IsEnabled" Value="False"/>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <MediaElement x:Name="sound_Click_Sound" Source="Click_Sound.wav" LoadedBehavior="Manual" />
+
+        <Rectangle HorizontalAlignment="Stretch" Opacity="0.895" Fill="#FF8A8A8A" />
+
+        <Grid Height="600" Width="705" Margin="-0.367,-0.394,0.367,0.394" >
+            <Rectangle Fill="#FFFCF7EB" Stroke="{x:Null}" Margin="45,15.168,46,22.423" RadiusY="8" RadiusX="8">
+
+                <Rectangle.BitmapEffect>
+                    <DropShadowBitmapEffect ShadowDepth="3" Softness="0.495" Color="#FF6E4D0B"/>
+                </Rectangle.BitmapEffect>
+                <Rectangle.BitmapEffectInput>
+                    <BitmapEffectInput/>
+                </Rectangle.BitmapEffectInput>
+            </Rectangle>
+            <Canvas x:Name="Header_design" Margin="51,15.168,46,0" VerticalAlignment="Top" Height="54.9">
+                <Path Fill="#80E8CEB9" Stretch="Fill" Stroke="{x:Null}" StrokeLineJoin="Round" StrokeThickness="1" Height="69.742" Data="M0.97445403,29.655107 L0.95898025,14.404161 C0.95898025,14.404161 0.9766232,12.373026 0.95644123,10.001128 0.94244709,8.3564584 0.72508323,6.7333146 1.5006894,5.0875399 2.9449775,2.0228752 6.7886414,-0.0026012031 11.181479,-0.45215074 16.160028,-0.92741898 887.02603,-0.53734734 887.02603,-0.53734734 887.02603,-0.53734734 893.03584,-1.044681 897.49982,2.4290563 901.42483,5.4833802 900.13516,8.0291227 900.42829,12.529176 900.82827,25.329247 901.41779,48.881926 901.41779,48.881926 901.41779,48.881926 871.53278,24.915816&#xd;&#xa;662.33771,27.235117 384.4451,30.316053 345.92687,42.370827 141.98695,43.764447 17.173082,44.61736 0.97445403,29.655107 0.97445403,29.655107 z" Width="614.696" Canvas.Left="-6.229" Canvas.Top="-0.216"/>
+                <Path Fill="#CAC97705" Stretch="Fill" Stroke="{x:Null}" StrokeLineJoin="Round" StrokeThickness="1" Width="614.384" Height="23.422" Data="M0.63573745,20.344381 L0.63545032,14.819237 C0.63545032,14.819237 0.62084095,12.545459 1.0069703,10.205115 1.3418379,8.1754701 1.3367722,7.74656 2.1562918,6.1222057 3.5602832,3.3393808 6.6235371,0.33092144 11.181479,-0.45215074 16.160028,-0.92741898 887.02603,-0.53734734 887.02603,-0.53734734 887.02603,-0.53734734 891.33008,-1.1279605 895.79406,2.3457769 899.71907,5.4001008 899.86528,9.2379549 900.08561,11.794739 900.48559,24.59481 900.08585,53.481866 900.08585,53.481866 900.08585,53.481866 895.72014,10.9105&#xd;&#xa;670.98132,20.956917 227.29952,40.790661 210.04038,45.707056 108.69318,44.341 19.665123,43.140993 0.63573745,20.344381 0.63573745,20.344381 z" Canvas.Left="-6.229" Canvas.Top="-0.216"/>
+            </Canvas>
+
+            <my:Calendar Margin="8,243.668,3,-8.668" x:Name="calSenseCamDay" xmlns:my="http://schemas.microsoft.com/wpf/2008/toolkit" RenderTransformOrigin="0.5,0.5" IsTodayHighlighted="False" Style="{DynamicResource CalendarStyle1}" SelectedDatesChanged="calSenseCamDay_SelectedDatesChanged" >
+
+                <my:Calendar.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform ScaleX="2.85" ScaleY="2.7"/>
+                        <SkewTransform AngleX="0" AngleY="0"/>
+                        <RotateTransform Angle="0"/>
+                        <TranslateTransform X="0" Y="143"/>
+                    </TransformGroup>
+                </my:Calendar.RenderTransform>
+
+
+                <!-- start code to cut out while editing style (allows us to see designer view without errors)-->
+                <my:Calendar.CalendarDayButtonStyle>
+
+                    <!-- This is mostly copied from generic.xaml -->
+
+                    <Style TargetType="primitives:CalendarDayButton">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="primitives:CalendarDayButton">
+
+                                    <!-- This is new -->
+                                    <ControlTemplate.Resources>
+                                        <src:calendar_control x:Key="conv" />
+                                    </ControlTemplate.Resources>
+
+                                    <Grid ToolTip="{Binding Converter={StaticResource conv}, 
+                                                    Mode=OneWay}">
+
+                                        <!-- Resume the copy -->
+
+                                        <vsm:VisualStateManager.VisualStateGroups>
+                                            <vsm:VisualStateGroup x:Name="CommonStates">
+                                                <vsm:VisualStateGroup.Transitions>
+                                                    <vsm:VisualTransition GeneratedDuration="0:0:0.1" />
+                                                </vsm:VisualStateGroup.Transitions>
+                                                <vsm:VisualState x:Name="Normal" />
+                                                <vsm:VisualState x:Name="MouseOver">
+                                                    <Storyboard>
+                                                        <DoubleAnimation Storyboard.TargetName="Background" Storyboard.TargetProperty="Opacity" To=".5" Duration="0" />
+                                                    </Storyboard>
+                                                </vsm:VisualState>
+                                                <vsm:VisualState x:Name="Pressed">
+                                                    <Storyboard>
+                                                        <DoubleAnimation Storyboard.TargetName="Background" Storyboard.TargetProperty="Opacity" To=".5" Duration="0" />
+                                                    </Storyboard>
+                                                </vsm:VisualState>
+                                                <vsm:VisualState x:Name="Disabled">
+                                                    <Storyboard>
+                                                        <DoubleAnimation Storyboard.TargetName="Background" Storyboard.TargetProperty="Opacity" To="0" Duration="0" />
+                                                        <DoubleAnimation Storyboard.TargetName="NormalText" Storyboard.TargetProperty="Opacity" To=".35" Duration="0" />
+                                                    </Storyboard>
+                                                </vsm:VisualState>
+                                            </vsm:VisualStateGroup>
+                                            <vsm:VisualStateGroup x:Name="SelectionStates">
+                                                <vsm:VisualStateGroup.Transitions>
+                                                    <vsm:VisualTransition GeneratedDuration="0" />
+                                                </vsm:VisualStateGroup.Transitions>
+                                                <vsm:VisualState x:Name="Unselected" />
+                                                <vsm:VisualState x:Name="Selected">
+                                                    <Storyboard>
+                                                        <DoubleAnimation Storyboard.TargetName="SelectedBackground" Storyboard.TargetProperty="Opacity" To=".75" Duration="0" />
+                                                    </Storyboard>
+                                                </vsm:VisualState>
+                                            </vsm:VisualStateGroup>
+                                            <vsm:VisualStateGroup x:Name="CalendarButtonFocusStates">
+                                                <vsm:VisualStateGroup.Transitions>
+                                                    <vsm:VisualTransition GeneratedDuration="0" />
+                                                </vsm:VisualStateGroup.Transitions>
+                                                <vsm:VisualState x:Name="CalendarButtonFocused">
+                                                    <Storyboard>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="DayButtonFocusVisual" Storyboard.TargetProperty="Visibility" Duration="0">
+                                                            <DiscreteObjectKeyFrame KeyTime="0">
+                                                                <DiscreteObjectKeyFrame.Value>
+                                                                    <Visibility>Visible</Visibility>
+                                                                </DiscreteObjectKeyFrame.Value>
+                                                            </DiscreteObjectKeyFrame>
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                    </Storyboard>
+                                                </vsm:VisualState>
+                                                <vsm:VisualState x:Name="CalendarButtonUnfocused">
+                                                    <Storyboard>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="DayButtonFocusVisual" Storyboard.TargetProperty="Visibility" Duration="0">
+                                                            <DiscreteObjectKeyFrame KeyTime="0">
+                                                                <DiscreteObjectKeyFrame.Value>
+                                                                    <Visibility>Collapsed</Visibility>
+                                                                </DiscreteObjectKeyFrame.Value>
+                                                            </DiscreteObjectKeyFrame>
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                    </Storyboard>
+                                                </vsm:VisualState>
+                                            </vsm:VisualStateGroup>
+                                            <vsm:VisualStateGroup x:Name="ActiveStates">
+                                                <vsm:VisualStateGroup.Transitions>
+                                                    <vsm:VisualTransition GeneratedDuration="0" />
+                                                </vsm:VisualStateGroup.Transitions>
+                                                <vsm:VisualState x:Name="Active" />
+                                                <vsm:VisualState x:Name="Inactive">
+                                                    <Storyboard>
+                                                        <ColorAnimation Duration="0" Storyboard.TargetName="selectedText" Storyboard.TargetProperty="Color" To="#FF777777"></ColorAnimation>
+                                                    </Storyboard>
+                                                </vsm:VisualState>
+                                            </vsm:VisualStateGroup>
+                                            <vsm:VisualStateGroup x:Name="DayStates">
+                                                <vsm:VisualStateGroup.Transitions>
+                                                    <vsm:VisualTransition GeneratedDuration="0" />
+                                                </vsm:VisualStateGroup.Transitions>
+                                                <vsm:VisualState x:Name="RegularDay" />
+                                                <vsm:VisualState x:Name="Today">
+                                                    <Storyboard>
+                                                        <DoubleAnimation Storyboard.TargetName="TodayBackground" Storyboard.TargetProperty="Opacity" To="1" Duration="0" />
+                                                        <ColorAnimation Duration="0" Storyboard.TargetName="selectedText" Storyboard.TargetProperty="Color" To="#FFFFFFFF"></ColorAnimation>
+                                                    </Storyboard>
+                                                </vsm:VisualState>
+                                            </vsm:VisualStateGroup>
+                                            <vsm:VisualStateGroup x:Name="BlackoutDayStates">
+                                                <vsm:VisualStateGroup.Transitions>
+                                                    <vsm:VisualTransition GeneratedDuration="0" />
+                                                </vsm:VisualStateGroup.Transitions>
+                                                <vsm:VisualState x:Name="NormalDay" />
+                                                <vsm:VisualState x:Name="BlackoutDay">
+                                                    <Storyboard>
+                                                        <DoubleAnimation Duration="0" Storyboard.TargetName="Blackout" Storyboard.TargetProperty="Opacity" To=".2"/>
+                                                    </Storyboard>
+                                                </vsm:VisualState>
+                                            </vsm:VisualStateGroup>
+                                        </vsm:VisualStateManager.VisualStateGroups>
+                                        <Rectangle x:Name="TodayBackground" RadiusX="1" RadiusY="1" Opacity="0" Fill="#FFAAAAAA"/>
+
+                                        <!-- This element is new -->
+                                        <Rectangle x:Name="RedLetterDayBackground" IsHitTestVisible="False" Fill="#80FF0000" />
+
+                                        <Rectangle x:Name="SelectedBackground" RadiusX="1" RadiusY="1" Opacity="0" Fill="{TemplateBinding Background}"/>
+                                        <Rectangle x:Name="Background" RadiusX="1" RadiusY="1" Opacity="0" Fill="{TemplateBinding Background}"/>
+                                        <ContentPresenter
+                                    x:Name="NormalText"
+                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    Margin="5,1,5,1"
+                                    >
+                                            <TextElement.Foreground>
+                                                <SolidColorBrush x:Name="selectedText" Color="#FF333333"/>
+                                            </TextElement.Foreground>
+                                        </ContentPresenter>
+                                        <Path x:Name="Blackout" Opacity="0" Margin="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" RenderTransformOrigin="0.5,0.5" Fill="#FF000000" Stretch="Fill" Data="M8.1772461,11.029181 L10.433105,11.029181 L11.700684,12.801641 L12.973633,11.029181 L15.191895,11.029181 L12.844727,13.999395 L15.21875,17.060919 L12.962891,17.060919 L11.673828,15.256231 L10.352539,17.060919 L8.1396484,17.060919 L10.519043,14.042364 z"/>
+                                        <Rectangle x:Name="DayButtonFocusVisual" Visibility="Collapsed" IsHitTestVisible="false" RadiusX="1" RadiusY="1" Stroke="#FF45D6FA"/>
+                                    </Grid>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsFocused" Value="True">
+                                            <Setter TargetName="DayButtonFocusVisual" Property="Visibility" Value="Visible" />
+                                        </Trigger>
+
+                                        <!-- This DataTrigger is new -->
+                                        <DataTrigger Binding="{Binding Converter={StaticResource conv}}"
+                                             Value="{x:Null}">
+                                            <Setter TargetName="RedLetterDayBackground" 
+                                            Property="Visibility" Value="Hidden" />
+                                        </DataTrigger>
+
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </my:Calendar.CalendarDayButtonStyle>
+                <!-- end code to cut out while editing style (allows us to see designer view without errors)-->
+                
+            </my:Calendar>
+            <TextBlock Margin="83,43.515,46,0" VerticalAlignment="Top" Height="Auto" Text="Choose a Date by Touching a Number" TextWrapping="Wrap" FontSize="22" Foreground="#FF000000"/>
+            <Button HorizontalAlignment="Right" x:Name="CloseBtn" Style="{DynamicResource CloseBtn1}" VerticalAlignment="Top" Width="71.229" Height="63" Content="" d:LayoutOverrides="Height" Margin="0,17.868,47.414,0" Click="CloseBtn_Click"  RenderTransformOrigin="0.5,0.5" Visibility="Visible" Opacity="1">
+                <Button.Resources>
+                    <ResourceDictionary>
+                        <ResourceDictionary.MergedDictionaries>
+                            <ResourceDictionary Source="SenseCamDictionary.xaml"/>
+                        </ResourceDictionary.MergedDictionaries>
+                    </ResourceDictionary>
+                </Button.Resources>
+                <Button.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform ScaleX="1" ScaleY="1"/>
+                        <SkewTransform AngleX="0" AngleY="0"/>
+                        <RotateTransform Angle="0"/>
+                        <TranslateTransform X="-2" Y="0"/>
+                    </TransformGroup>
+                </Button.RenderTransform>
+            </Button>
+        </Grid>
+    </Grid>
+</UserControl>
