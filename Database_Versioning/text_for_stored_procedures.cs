@@ -1746,6 +1746,10 @@ END
 
         public static string Jan11_SPLIT_EVENT_INTO_TWO()
         {
+            //todo I need to update UTC time in here
+            //INSERT INTO All_Events VALUES (@USER_ID, @DAY_OF_SOURCE_EVENT, @DAY_OF_SOURCE_EVENT, @DAY_OF_SOURCE_EVENT, @DAY_OF_SOURCE_EVENT, '', NULL, 0)
+            //todo does UTC time really help at all??
+
             //todo multiple query
             string end_string = "";
             end_string += "\n" + "";
