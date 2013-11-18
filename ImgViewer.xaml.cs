@@ -872,49 +872,54 @@ namespace SenseCamBrowser1
         /// </summary>
         public void update_display_image()
         {
-            if(list_of_event_images.Count>0)
+            //thanks to Sam in UCSD who recognised some strange multi-threading behaviour sending phantom calls to call this method
+            //which would then mean list_of_event_images was null, therefore we have now added in this first if statement
+
+            if (list_of_event_images != null)
             {
-
-                txt_image_number.Text = (array_position_of_current_image + 1).ToString() + " of " + list_of_event_images.Count + " photos";
-                txt_img_time.Text = list_of_event_images[array_position_of_current_image].image_time.ToString("HH:mm tt");
-
-                //img_to_show.Source = list_of_event_images[array_position_of_current_image].scaled_image_src; //list_of_event_images[array_position_of_current_image].image_source(); //show full size image...
-                if (PlayBtn.IsEnabled)
+                if (list_of_event_images.Count > 0)
                 {
-                    img_to_show.Source = list_of_event_images[array_position_of_current_image].scaled_image_src;
+
+                    txt_image_number.Text = (array_position_of_current_image + 1).ToString() + " of " + list_of_event_images.Count + " photos";
+                    txt_img_time.Text = list_of_event_images[array_position_of_current_image].image_time.ToString("HH:mm tt");
+
+                    //img_to_show.Source = list_of_event_images[array_position_of_current_image].scaled_image_src; //list_of_event_images[array_position_of_current_image].image_source(); //show full size image...
+                    if (PlayBtn.IsEnabled)
+                    {
+                        img_to_show.Source = list_of_event_images[array_position_of_current_image].scaled_image_src;
+                        //lst_display_images.ItemsSource = null;
+                        //lst_display_images.Items.Clear();
+                        //lst_display_images.Items.Add(list_of_event_images[array_position_of_current_image]);
+                        EventPlaySlider.Value = array_position_of_current_image; //update slider position
+                    }
+                    else
+                    {
+                        lst_display_images.ItemsSource = null;
+                        lst_display_images.Items.Clear();
+                        lst_display_images.ItemsSource = list_of_event_images;
+                    }
+
+
+                    //let's see if we should have the nextbtn enabled after showing this image...
+                    if (array_position_of_current_image < list_of_event_images.Count - 1) { NextBtn.Opacity = 1.0; NextBtn.IsEnabled = true; }
+                    else { NextBtn.Opacity = 0.3; NextBtn.IsEnabled = false; }
+
+                    //let's see if we should have the previousbtn enabled after showing this image...
+                    if (array_position_of_current_image >= 1) { PreviousBtn.Opacity = 1.0; PreviousBtn.IsEnabled = true; }
+                    else { PreviousBtn.Opacity = 0.3; PreviousBtn.IsEnabled = false; }
+
+
+                    //txt_image_number.Text = (array_position_of_current_image + 1).ToString() + " of " + list_of_event_images.Count + " images";
+
+                    ////img_to_show.Source = list_of_event_images[array_position_of_current_image].image_source(); //show full size image...
                     //lst_display_images.ItemsSource = null;
                     //lst_display_images.Items.Clear();
                     //lst_display_images.Items.Add(list_of_event_images[array_position_of_current_image]);
-                    EventPlaySlider.Value = array_position_of_current_image; //update slider position
-                }
-                else
-                {
-                    lst_display_images.ItemsSource = null;
-                    lst_display_images.Items.Clear();
-                    lst_display_images.ItemsSource = list_of_event_images;
-                }
 
+                    //EventPlaySlider.Value = array_position_of_current_image;
 
-                //let's see if we should have the nextbtn enabled after showing this image...
-                if (array_position_of_current_image < list_of_event_images.Count - 1) { NextBtn.Opacity = 1.0; NextBtn.IsEnabled = true; }
-                else { NextBtn.Opacity = 0.3; NextBtn.IsEnabled = false; }
-
-                //let's see if we should have the previousbtn enabled after showing this image...
-                if (array_position_of_current_image >= 1) { PreviousBtn.Opacity = 1.0; PreviousBtn.IsEnabled = true; }
-                else { PreviousBtn.Opacity = 0.3; PreviousBtn.IsEnabled = false; }
-
-
-                //txt_image_number.Text = (array_position_of_current_image + 1).ToString() + " of " + list_of_event_images.Count + " images";
-
-                ////img_to_show.Source = list_of_event_images[array_position_of_current_image].image_source(); //show full size image...
-                //lst_display_images.ItemsSource = null;
-                //lst_display_images.Items.Clear();
-                //lst_display_images.Items.Add(list_of_event_images[array_position_of_current_image]);
-
-                //EventPlaySlider.Value = array_position_of_current_image;
-
-            } //end if(list_of_event_images.Count>0)...
-            
+                } //end if(list_of_event_images.Count>0)...
+            } //end if(list_of_event_images!=null)
         }//close method update_display_image()...
 
 
