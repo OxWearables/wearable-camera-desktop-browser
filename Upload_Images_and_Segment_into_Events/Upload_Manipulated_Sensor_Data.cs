@@ -21,6 +21,8 @@ using System.Collections;
 using System.Data.SqlClient;
 using System.IO;
 using System.Configuration;
+using System.Data.SQLite;
+using System.Data.Common;
 
 namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 {
@@ -1240,11 +1242,74 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
         private static void upload_sensor_readings_to_db(Sensor_Reading[] sensor_readings, int user_id, Upload_and_Segment_Images_Thread.DeviceType device_type)
         {
+            // http://sqlite.phxsoftware.com/forums/t/134.aspx
+            DbConnection cnn = new SQLiteConnection(@"Data Source=C:\software development\APIs downloaded\Databases\sql lite\aiden_test.db;Pooling=true;FailIfMissing=false;Version=3");
+
+            cnn.Open();
+            using (DbTransaction dbTrans = cnn.BeginTransaction())
+            {
+                using (DbCommand cmd = cnn.CreateCommand())
+                {
+                    //cmd.CommandText = "INSERT INTO TestCase(MyValue) VALUES(?)";
+                    cmd.CommandText = "INSERT INTO Sensor_Readings(user_id,sample_time,acc_x,acc_y,acc_z,white_val,battery,temperature,pir,trigger_code,image_name,mag_x,mag_y,mag_z) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    DbParameter user_id_field, sample_time_field,acc_x_field,acc_y_field,acc_z_field,white_val_field,battery_field,temperature_field,pir_field,trigger_code_field,image_name_field,mag_x_field,mag_y_field,mag_z_field;
+                    user_id_field = cmd.CreateParameter();
+                    sample_time_field = cmd.CreateParameter();
+                    acc_x_field = cmd.CreateParameter();
+                    acc_y_field = cmd.CreateParameter();
+                    acc_z_field = cmd.CreateParameter();
+                    white_val_field = cmd.CreateParameter();
+                    battery_field = cmd.CreateParameter();
+                    temperature_field = cmd.CreateParameter();
+                    pir_field = cmd.CreateParameter();
+                    trigger_code_field = cmd.CreateParameter();
+                    image_name_field = cmd.CreateParameter();
+                    mag_x_field = cmd.CreateParameter();
+                    mag_y_field = cmd.CreateParameter();
+                    mag_z_field = cmd.CreateParameter();
+                    cmd.Parameters.Add(user_id_field);
+                    cmd.Parameters.Add(sample_time_field);
+                    cmd.Parameters.Add(acc_x_field);
+                    cmd.Parameters.Add(acc_y_field);
+                    cmd.Parameters.Add(acc_z_field);
+                    cmd.Parameters.Add(white_val_field);
+                    cmd.Parameters.Add(battery_field);
+                    cmd.Parameters.Add(temperature_field);
+                    cmd.Parameters.Add(pir_field);
+                    cmd.Parameters.Add(trigger_code_field);
+                    cmd.Parameters.Add(image_name_field);
+                    cmd.Parameters.Add(mag_x_field);
+                    cmd.Parameters.Add(mag_y_field);
+                    cmd.Parameters.Add(mag_z_field);
+
+                    for (int row_counter = 0; row_counter < sensor_readings.Length; row_counter++)
+                    {
+                        user_id_field.Value = user_id;
+                        sample_time_field.Value = sensor_readings[row_counter].get_sample_time();
+                        acc_x_field.Value = Standard_Calculation.get_signed_int(sensor_readings[row_counter].get_acc_x(), device_type);
+                        acc_y_field.Value = Standard_Calculation.get_signed_int(sensor_readings[row_counter].get_acc_y(), device_type);
+                        acc_z_field.Value = Standard_Calculation.get_signed_int(sensor_readings[row_counter].get_acc_z(), device_type);
+                        white_val_field.Value = sensor_readings[row_counter].get_white_val();
+                        battery_field.Value = sensor_readings[row_counter].get_battery();
+                        temperature_field.Value = sensor_readings[row_counter].get_temperature();
+                        pir_field.Value = sensor_readings[row_counter].get_pir();
+                        trigger_code_field.Value = sensor_readings[row_counter].get_trigger_code();
+                        image_name_field.Value = sensor_readings[row_counter].get_image_name();
+                        mag_x_field.Value = sensor_readings[row_counter].mag_x;
+                        mag_y_field.Value = sensor_readings[row_counter].mag_y;
+                        mag_z_field.Value = sensor_readings[row_counter].mag_z;
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+                dbTrans.Commit();
+            }
+            cnn.Close();
+
             // CONVERT ARRAY OF TYPE IMAGE_REP TO TYPE DATAROW
-            DataRow[] data_row_array_of_sensor_readings = Sensor_Reading_array_to_datarow_array(sensor_readings, user_id, device_type);
+            //DataRow[] data_row_array_of_sensor_readings = Sensor_Reading_array_to_datarow_array(sensor_readings, user_id, device_type);
 
             // SQLBULK DATA ROW ARRAY TO DATABASE
-            bulk_copy_to_Sensor_Readings_table(data_row_array_of_sensor_readings);
+            //bulk_copy_to_Sensor_Readings_table(data_row_array_of_sensor_readings);
         } //end method upload_sensor_readings_to_db()...
 
 
