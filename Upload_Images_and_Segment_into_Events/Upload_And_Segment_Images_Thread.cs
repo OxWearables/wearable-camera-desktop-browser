@@ -21,6 +21,8 @@ using System.IO;
 using System.Data.SqlClient;
 using System.Data;
 using System.Diagnostics;
+using System.Data.SQLite;
+using System.Data.Common;
 
 namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 {
@@ -811,7 +813,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
             //write_output("start upload_all_images => " + DateTime.Now.ToString());
             //1 upload all the images to the database
             upload_new_images(all_images, images_folder, user_id);
-
+            
             //write_output("start upload_new_events => " + DateTime.Now.ToString());
             //2 upload all the events to the database
             upload_new_events(all_events, images_folder, user_id, local_hours_ahead_of_utc_time);
@@ -827,11 +829,41 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
         private void upload_new_images(Segmentation_Image_Rep[] image_list, string images_folder, int user_id)
         {
+            // http://sqlite.phxsoftware.com/forums/t/134.aspx
+            DbConnection cnn = new SQLiteConnection(@"Data Source=C:\software development\APIs downloaded\Databases\sql lite\aiden_test.db;Pooling=true;FailIfMissing=false;Version=3");
+
+            cnn.Open();
+            using (DbTransaction dbTrans = cnn.BeginTransaction())
+            {
+                using (DbCommand cmd = cnn.CreateCommand())
+                {
+                    //cmd.CommandText = "INSERT INTO TestCase(MyValue) VALUES(?)";
+                    cmd.CommandText = "INSERT INTO All_Images(user_id,image_path,image_time) VALUES(?,?,?)";
+                    DbParameter user_id_field, event_id_field, image_path_field, image_time_field;
+                    user_id_field = cmd.CreateParameter();
+                    image_path_field = cmd.CreateParameter();
+                    image_time_field = cmd.CreateParameter();
+                    cmd.Parameters.Add(user_id_field);
+                    cmd.Parameters.Add(image_path_field);
+                    cmd.Parameters.Add(image_time_field);
+
+                    for (int n = 0; n < image_list.Length; n++)
+                    {
+                        user_id_field.Value = user_id;
+                        image_path_field.Value = images_folder + image_list[n].get_image_name();
+                        image_time_field.Value = image_list[n].get_image_time();
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+                dbTrans.Commit();
+            }
+            cnn.Close();
+
             // CONVERT ARRAY OF TYPE IMAGE_REP TO TYPE DATAROW
-            DataRow[] data_row_array_of_images = Segmentation_Image_Rep_array_to_datarow_array(image_list, images_folder, user_id);
+            //DataRow[] data_row_array_of_images = Segmentation_Image_Rep_array_to_datarow_array(image_list, images_folder, user_id);
 
             // SQLBULK DATA ROW ARRAY TO DATABASE
-            bulk_copy_to_all_images_table(data_row_array_of_images);
+            //bulk_copy_to_all_images_table(data_row_array_of_images);
         } //end method uplodat_images_to_database()
 
 
