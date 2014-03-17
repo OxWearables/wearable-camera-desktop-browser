@@ -1031,6 +1031,22 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
         private void update_event_id_field_of_all_images_table(int user_id)
         {
+            SQLiteConnection cnn = new SQLiteConnection(@"Data Source=C:\software development\APIs downloaded\Databases\sql lite\aiden_test.db;Pooling=true;FailIfMissing=false;Version=3");
+            SQLiteCommand command = new SQLiteCommand(cnn);
+            cnn.Open();
+            command.CommandText = Database_Versioning.text_for_stored_procedures.spUpdate_Images_With_Event_ID_step1_get_most_recent_event_id_for_user(user_id);
+            int most_recent_event_id = int.Parse(command.ExecuteScalar().ToString());
+            
+            command.CommandText = Database_Versioning.text_for_stored_procedures.spUpdate_Images_With_Event_ID_step2_update_images_with_relevant_event_id(user_id, most_recent_event_id);
+            command.ExecuteNonQuery();
+            command.CommandText = Database_Versioning.text_for_stored_procedures.spUpdate_Images_With_Event_ID_step3_update_sensor_readings_with_relevant_event_id(user_id, most_recent_event_id);
+            command.ExecuteNonQuery();
+
+            command.CommandText = Database_Versioning.text_for_stored_procedures.spUpdate_Images_With_Event_ID_step4_tidy_up_stage(user_id);
+            command.ExecuteNonQuery();
+
+            cnn.Close();
+            /*
             //call a database stored procedure to update the Master_Events table
             SqlConnection con = new SqlConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
             SqlCommand selectCmd = new SqlCommand("spUpdate_Images_With_Event_ID", con);
@@ -1040,6 +1056,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
             con.Open();
             selectCmd.ExecuteNonQuery();
             con.Close();
+            */
         } //end method update_event_id_field_of_all_images_table
 
 

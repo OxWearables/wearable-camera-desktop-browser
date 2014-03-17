@@ -195,7 +195,7 @@ END
         {
             string end_string = "";
             end_string += "\n" + "UPDATE All_Images";
-            end_string += "\n" + "SET event_id=;";
+            end_string += "\n" + "SET event_id=";
             end_string += "\n" + "(";
             end_string += "\n" + "SELECT event_id"; //todo may have to change this to max(event_id) and remove limit 1 a few lines below?
             end_string += "\n" + "FROM All_Events";
@@ -230,13 +230,14 @@ END
         {
             string end_string = "";
             end_string += "\n" + "UPDATE Sensor_Readings";
-            end_string += "\n" + "SET event_id=;";
+            end_string += "\n" + "SET event_id=";
             end_string += "\n" + "(";
             end_string += "\n" + "SELECT MAX(event_id)";
             end_string += "\n" + "FROM All_Events";
             end_string += "\n" + "WHERE event_id > " + most_recent_event_id;
             end_string += "\n" + "AND [user_id] = " + user_id;
-            end_string += "\n" + "AND DATEADD(MINUTE,-1,start_time) <= Sensor_Readings.sample_time AND DATEADD(MINUTE,1,end_time) >= Sensor_Readings.sample_time";
+            //end_string += "\n" + "AND DATEADD(MINUTE,-1,start_time) <= Sensor_Readings.sample_time AND DATEADD(MINUTE,1,end_time) >= Sensor_Readings.sample_time";
+            end_string += "\n" + "AND DATETIME(start_time,'-1 minute') <= Sensor_Readings.sample_time AND DATETIME(end_time,'+1 minute') >= Sensor_Readings.sample_time";
             end_string += "\n" + ")";
             end_string += "\n" + "WHERE [user_id] = " + user_id;
             end_string += "\n" + "AND event_id IS NULL;";
