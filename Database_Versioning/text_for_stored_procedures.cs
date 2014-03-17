@@ -746,8 +746,10 @@ END
             string end_string = "SELECT event_id, start_time, end_time, keyframe_path, comment";
             end_string += "\n" + "FROM All_Events";
             end_string += "\n" + "WHERE [user_id] = " + user_id;
-            end_string += "\n" + "AND DATEPART(YEAR, [day]) = DATEPART(YEAR, " + convert_datetime_to_sql_string(day) + ")";
-            end_string += "\n" + "AND DATEPART(DAYOFYEAR, [day]) = DATEPART(DAYOFYEAR, " + convert_datetime_to_sql_string(day) + ")";
+            end_string += "\n" + "AND day >=" + convert_datetime_to_sql_string(new DateTime(day.Year,day.Month,day.Day)) + "";
+            end_string += "\n" + "AND day <=" + convert_datetime_to_sql_string(new DateTime(day.Year,day.Month,day.Day,23,59,59)) + "";
+            //end_string += "\n" + "AND DATEPART(YEAR, [day]) = DATEPART(YEAR, " + convert_datetime_to_sql_string(day) + ")";
+            //end_string += "\n" + "AND DATEPART(DAYOFYEAR, [day]) = DATEPART(DAYOFYEAR, " + convert_datetime_to_sql_string(day) + ")";
             end_string += "\n" + "ORDER BY start_time";
 
             return end_string;
@@ -1111,7 +1113,28 @@ END
 
         private static string convert_datetime_to_sql_string(DateTime time)
         {
-            return "'" + time.Year + "-" + time.Month + "-" + time.Day + " " + time.Hour + ":" + time.Minute + ":" + time.Second + "." + time.Millisecond + "'";
+            string month, day, hour, minute, second;
+            if (time.Month < 10)
+                month = "0" + time.Month;
+            else month = time.Month.ToString();
+
+            if (time.Day < 10)
+                day = "0" + time.Day;
+            else day = time.Day.ToString();
+            
+            if (time.Hour < 10)
+                hour = "0" + time.Hour;
+            else hour = time.Hour.ToString();
+
+            if (time.Minute < 10)
+                minute = "0" + time.Minute;
+            else minute = time.Minute.ToString();
+
+            if (time.Second < 10)
+                second = "0" + time.Second;
+            else second = time.Second.ToString();
+
+            return "'" + time.Year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second + "." + time.Millisecond + "'";
         } //close method convert_datetime_to_sql_string()...
 
         public static string JAN_11_GET_IMAGE_IN_DAY_NEAREST_TARGET_TIME(int user_id, DateTime day, DateTime target_time, int search_window_in_minutes)
