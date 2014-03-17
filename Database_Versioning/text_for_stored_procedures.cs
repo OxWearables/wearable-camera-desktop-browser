@@ -505,8 +505,10 @@ END
             end_string += "\n" + "SELECT event_id";
             end_string += "\n" + "FROM All_Events";
             end_string += "\n" + "WHERE [user_id] = " + user_id;
-            end_string += "\n" + "AND DATEPART(YEAR, [day]) = DATEPART(YEAR, " + convert_datetime_to_sql_string(day) + ")";
-            end_string += "\n" + "AND DATEPART(DAYOFYEAR, [day]) = DATEPART(DAYOFYEAR, " + convert_datetime_to_sql_string(day) + ")";
+            end_string += "\n" + "AND day >=" + convert_datetime_to_sql_string(new DateTime(day.Year, day.Month, day.Day)) + "";
+            end_string += "\n" + "AND day <=" + convert_datetime_to_sql_string(new DateTime(day.Year, day.Month, day.Day, 23, 59, 59)) + "";
+            //end_string += "\n" + "AND DATEPART(YEAR, [day]) = DATEPART(YEAR, " + convert_datetime_to_sql_string(day) + ")";
+            //end_string += "\n" + "AND DATEPART(DAYOFYEAR, [day]) = DATEPART(DAYOFYEAR, " + convert_datetime_to_sql_string(day) + ")";
             end_string += "\n" + ")";
             return end_string;
             /*
@@ -550,9 +552,11 @@ END
             string end_string = "SELECT event_id, start_time, end_time, keyframe_path, comment";
             end_string += "\n" + "FROM All_Events";
             end_string += "\n" + "WHERE [user_id] = " + user_id;
-            end_string += "\n" + "AND DATEPART(YEAR, [day]) = DATEPART(YEAR, " + convert_datetime_to_sql_string(day) + ")";
-            end_string += "\n" + "AND DATEPART(DAYOFYEAR, [day]) = DATEPART(DAYOFYEAR, " + convert_datetime_to_sql_string(day) + ")";
-            end_string += "\n" + "AND DATEPART(HOUR, start_time) < 12";
+            end_string += "\n" + "AND day >=" + convert_datetime_to_sql_string(new DateTime(day.Year, day.Month, day.Day)) + "";
+            end_string += "\n" + "AND day <=" + convert_datetime_to_sql_string(new DateTime(day.Year, day.Month, day.Day, 11, 59, 59)) + "";
+            //end_string += "\n" + "AND DATEPART(YEAR, [day]) = DATEPART(YEAR, " + convert_datetime_to_sql_string(day) + ")";
+            //end_string += "\n" + "AND DATEPART(DAYOFYEAR, [day]) = DATEPART(DAYOFYEAR, " + convert_datetime_to_sql_string(day) + ")";
+            //end_string += "\n" + "AND DATEPART(HOUR, start_time) < 12";
 
             return end_string;
             /*
@@ -659,9 +663,11 @@ END
             string end_string = "SELECT event_id, start_time, end_time, keyframe_path, comment";
             end_string += "\n" + "FROM All_Events";
             end_string += "\n" + "WHERE [user_id] = " + user_id;
-            end_string += "\n" + "AND DATEPART(YEAR, [day]) = DATEPART(YEAR, " + convert_datetime_to_sql_string(day) + ")";
-            end_string += "\n" + "AND DATEPART(DAYOFYEAR, [day]) = DATEPART(DAYOFYEAR, " + convert_datetime_to_sql_string(day) + ")";
-            end_string += "\n" + "AND DATEPART(HOUR, start_time) > 17";
+            end_string += "\n" + "AND day >=" + convert_datetime_to_sql_string(new DateTime(day.Year, day.Month, day.Day, 17, 00, 00)) + "";
+            end_string += "\n" + "AND day <=" + convert_datetime_to_sql_string(new DateTime(day.Year, day.Month, day.Day, 23, 59, 59)) + "";
+            //end_string += "\n" + "AND DATEPART(YEAR, [day]) = DATEPART(YEAR, " + convert_datetime_to_sql_string(day) + ")";
+            //end_string += "\n" + "AND DATEPART(DAYOFYEAR, [day]) = DATEPART(DAYOFYEAR, " + convert_datetime_to_sql_string(day) + ")";
+            //end_string += "\n" + "AND DATEPART(HOUR, start_time) > 17";
 
             return end_string;
             /*
@@ -706,8 +712,10 @@ END
             string end_string = "SELECT MIN(start_time) AS start_time, MAX(end_time) AS end_time";
             end_string += "\n" + "FROM All_Events";
             end_string += "\n" + "WHERE [user_id] = " + user_id;
-            end_string += "\n" + "AND DATEPART(YEAR, [day]) = DATEPART(YEAR, " + convert_datetime_to_sql_string(day) + ")";
-            end_string += "\n" + "AND DATEPART(DAYOFYEAR, [day]) = DATEPART(DAYOFYEAR, " + convert_datetime_to_sql_string(day) + ")";
+            end_string += "\n" + "AND day >=" + convert_datetime_to_sql_string(new DateTime(day.Year, day.Month, day.Day)) + "";
+            end_string += "\n" + "AND day <=" + convert_datetime_to_sql_string(new DateTime(day.Year, day.Month, day.Day, 23, 59, 59)) + "";
+            //end_string += "\n" + "AND DATEPART(YEAR, [day]) = DATEPART(YEAR, " + convert_datetime_to_sql_string(day) + ")";
+            //end_string += "\n" + "AND DATEPART(DAYOFYEAR, [day]) = DATEPART(DAYOFYEAR, " + convert_datetime_to_sql_string(day) + ")";
 
             return end_string;
             /*
@@ -792,10 +800,12 @@ END
             string end_string = "SELECT event_id, start_time, end_time, keyframe_path, comment";
             end_string += "\n" + "FROM All_Events";
             end_string += "\n" + "WHERE [user_id] = " + user_id;
-            end_string += "\n" + "AND DATEPART(YEAR, [day]) = DATEPART(YEAR, " + convert_datetime_to_sql_string(day) + ")";
-            end_string += "\n" + "AND DATEPART(DAYOFYEAR, [day]) = DATEPART(DAYOFYEAR, " + convert_datetime_to_sql_string(day) + ")";
-            end_string += "\n" + "AND DATEPART(HOUR, start_time) >= 12";
-            end_string += "\n" + "AND DATEPART(HOUR, start_time) <= 17";
+            end_string += "\n" + "AND day >=" + convert_datetime_to_sql_string(new DateTime(day.Year, day.Month, day.Day, 12, 00, 00)) + "";
+            end_string += "\n" + "AND day <=" + convert_datetime_to_sql_string(new DateTime(day.Year, day.Month, day.Day, 16, 59, 59)) + "";
+            //end_string += "\n" + "AND DATEPART(YEAR, [day]) = DATEPART(YEAR, " + convert_datetime_to_sql_string(day) + ")";
+            //end_string += "\n" + "AND DATEPART(DAYOFYEAR, [day]) = DATEPART(DAYOFYEAR, " + convert_datetime_to_sql_string(day) + ")";
+            //end_string += "\n" + "AND DATEPART(HOUR, start_time) >= 12";
+            //end_string += "\n" + "AND DATEPART(HOUR, start_time) <= 17";
 
             return end_string;
             /*
@@ -1010,8 +1020,10 @@ END
             end_string += "\n" + "ON annotations.event_id = All_Events.[event_id]";
             end_string += "\n" + "";
             end_string += "\n" + "WHERE annotations.[user_id]=" + user_id;
-            end_string += "\n" + "AND DATEPART(YEAR, All_Events.[day]) = DATEPART(YEAR, " + convert_datetime_to_sql_string(day) + ")";
-            end_string += "\n" + "AND DATEPART(DAYOFYEAR, All_Events.[day]) = DATEPART(DAYOFYEAR, " + convert_datetime_to_sql_string(day) + ")";
+            end_string += "\n" + "AND day >=" + convert_datetime_to_sql_string(new DateTime(day.Year, day.Month, day.Day)) + "";
+            end_string += "\n" + "AND day <=" + convert_datetime_to_sql_string(new DateTime(day.Year, day.Month, day.Day, 23, 59, 59)) + "";
+            //end_string += "\n" + "AND DATEPART(YEAR, All_Events.[day]) = DATEPART(YEAR, " + convert_datetime_to_sql_string(day) + ")";
+            //end_string += "\n" + "AND DATEPART(DAYOFYEAR, All_Events.[day]) = DATEPART(DAYOFYEAR, " + convert_datetime_to_sql_string(day) + ")";
             end_string += "\n" + "";
             end_string += "\n" + "ORDER BY All_Events.start_time";
 
@@ -1146,8 +1158,10 @@ END
             end_string += "\n" + "AND event_id IN (SELECT event_id";
             end_string += "\n" + "  FROM All_Events";
             end_string += "\n" + "  WHERE [user_id] = " + user_id;
-            end_string += "\n" + "      AND DATEPART(YEAR, [day]) = DATEPART(YEAR, " + convert_datetime_to_sql_string(day) + ")";
-            end_string += "\n" + "      AND DATEPART(DAYOFYEAR, [day]) = DATEPART(DAYOFYEAR, " + convert_datetime_to_sql_string(day) + ")";
+            end_string += "\n" + "AND day >=" + convert_datetime_to_sql_string(new DateTime(day.Year, day.Month, day.Day)) + "";
+            end_string += "\n" + "AND day <=" + convert_datetime_to_sql_string(new DateTime(day.Year, day.Month, day.Day, 23, 59, 59)) + "";
+            //end_string += "\n" + "      AND DATEPART(YEAR, [day]) = DATEPART(YEAR, " + convert_datetime_to_sql_string(day) + ")";
+            //end_string += "\n" + "      AND DATEPART(DAYOFYEAR, [day]) = DATEPART(DAYOFYEAR, " + convert_datetime_to_sql_string(day) + ")";
             /* NEED DIFFERENT VARIABLES FOR @DAY & @TARGET TIME, JUST IN CASE FOR CASES OF DATA AROUND MIDNIGHT...
 --THE REASON FOR THIS IS THAT IF THE @TARGET_TIME IS AFTER MIDNIGHT,
 --BUT ALL THE EVENTS WILL HAVE A @DAY TIME OF BEFORE MIDNIGHT, SO CAN'T CARRY OUT THE SEARCH ABOVE
@@ -1214,8 +1228,10 @@ END
             end_string += "\n" + "AND event_id IN (SELECT event_id";
             end_string += "\n" + "  FROM All_Events";
             end_string += "\n" + "  WHERE [user_id] = " + user_id;
-            end_string += "\n" + "  AND DATEPART(YEAR, [day]) = DATEPART(YEAR, " + convert_datetime_to_sql_string(day) + ")";
-            end_string += "\n" + "  AND DATEPART(DAYOFYEAR, [day]) = DATEPART(DAYOFYEAR, " + convert_datetime_to_sql_string(day) + ")";
+            end_string += "\n" + "AND day >=" + convert_datetime_to_sql_string(new DateTime(day.Year, day.Month, day.Day)) + "";
+            end_string += "\n" + "AND day <=" + convert_datetime_to_sql_string(new DateTime(day.Year, day.Month, day.Day, 23, 59, 59)) + "";
+            //end_string += "\n" + "  AND DATEPART(YEAR, [day]) = DATEPART(YEAR, " + convert_datetime_to_sql_string(day) + ")";
+            //end_string += "\n" + "  AND DATEPART(DAYOFYEAR, [day]) = DATEPART(DAYOFYEAR, " + convert_datetime_to_sql_string(day) + ")";
             end_string += "\n" + ")";
             end_string += "\n" + "";
             end_string += "\n" + "ORDER BY sample_time;";
@@ -1547,8 +1563,10 @@ END
             end_string += "\n" + "ON annotations.event_id = All_Events.event_id";
             end_string += "\n" + "";
             end_string += "\n" + "WHERE annotations.[user_id]=" + user_id;
-            end_string += "\n" + "AND DATEPART(YEAR, All_Events.[day]) = DATEPART(YEAR," + convert_datetime_to_sql_string(day) + ")";
-            end_string += "\n" + "AND DATEPART(DAYOFYEAR, All_Events.[day]) = DATEPART(DAYOFYEAR," + convert_datetime_to_sql_string(day) + ")";
+            end_string += "\n" + "  AND day >=" + convert_datetime_to_sql_string(new DateTime(day.Year, day.Month, day.Day)) + "";
+            end_string += "\n" + "  AND day <=" + convert_datetime_to_sql_string(new DateTime(day.Year, day.Month, day.Day, 23, 59, 59)) + "";
+            //end_string += "\n" + "AND DATEPART(YEAR, All_Events.[day]) = DATEPART(YEAR," + convert_datetime_to_sql_string(day) + ")";
+            //end_string += "\n" + "AND DATEPART(DAYOFYEAR, All_Events.[day]) = DATEPART(DAYOFYEAR," + convert_datetime_to_sql_string(day) + ")";
             end_string += "\n" + "AND annotations.annotation_name='" + annotation_type + "'";
             end_string += "\n" + "";
             end_string += "\n" + "ORDER BY annotations.event_id;";
@@ -1607,8 +1625,10 @@ END
             end_string += "\n" + "      ON annotations.event_id = All_Events.[event_id]";
             end_string += "\n" + "";
             end_string += "\n" + "  WHERE annotations.[user_id]=" + user_id;
-            end_string += "\n" + "  AND DATEPART(YEAR, All_Events.[day]) = DATEPART(YEAR," + convert_datetime_to_sql_string(day) + ")";
-            end_string += "\n" + "  AND DATEPART(DAYOFYEAR, All_Events.[day]) = DATEPART(DAYOFYEAR," + convert_datetime_to_sql_string(day) + ")";
+            end_string += "\n" + "      AND day >=" + convert_datetime_to_sql_string(new DateTime(day.Year, day.Month, day.Day)) + "";
+            end_string += "\n" + "      AND day <=" + convert_datetime_to_sql_string(new DateTime(day.Year, day.Month, day.Day, 23, 59, 59)) + "";
+            //end_string += "\n" + "  AND DATEPART(YEAR, All_Events.[day]) = DATEPART(YEAR," + convert_datetime_to_sql_string(day) + ")";
+            //end_string += "\n" + "  AND DATEPART(DAYOFYEAR, All_Events.[day]) = DATEPART(DAYOFYEAR," + convert_datetime_to_sql_string(day) + ")";
             end_string += "\n" + "";
             end_string += "\n" + "  ) AS inner_table";
             end_string += "\n" + "";
