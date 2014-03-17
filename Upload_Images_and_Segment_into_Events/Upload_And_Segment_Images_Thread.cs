@@ -922,11 +922,53 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
         private void upload_new_events(Segmentation_Event_Rep[] event_list, string images_folder, int user_id, int local_hours_ahead_of_utc_time)
         {
+            // http://sqlite.phxsoftware.com/forums/t/134.aspx
+            DbConnection cnn = new SQLiteConnection(@"Data Source=C:\software development\APIs downloaded\Databases\sql lite\aiden_test.db;Pooling=true;FailIfMissing=false;Version=3");
+
+            cnn.Open();
+            using (DbTransaction dbTrans = cnn.BeginTransaction())
+            {
+                using (DbCommand cmd = cnn.CreateCommand())
+                {
+                    //cmd.CommandText = "INSERT INTO TestCase(MyValue) VALUES(?)";
+                    cmd.CommandText = "INSERT INTO All_Events(user_id,day,utc_day,start_time,end_time,keyframe_path,number_times_viewed) VALUES(?,?,?,?,?,?,?)";
+                    DbParameter user_id_field, day_field, utc_day_field, start_time_field, end_time_field,keyframe_path_field,number_times_viewed_field;
+                    user_id_field = cmd.CreateParameter();
+                    day_field = cmd.CreateParameter();
+                    utc_day_field = cmd.CreateParameter();
+                    start_time_field = cmd.CreateParameter();
+                    end_time_field = cmd.CreateParameter();
+                    keyframe_path_field = cmd.CreateParameter();
+                    number_times_viewed_field = cmd.CreateParameter();
+                    cmd.Parameters.Add(user_id_field);
+                    cmd.Parameters.Add(day_field);
+                    cmd.Parameters.Add(utc_day_field);
+                    cmd.Parameters.Add(start_time_field);
+                    cmd.Parameters.Add(end_time_field);
+                    cmd.Parameters.Add(keyframe_path_field);
+                    cmd.Parameters.Add(number_times_viewed_field);
+
+                    for (int row_counter = 0; row_counter < event_list.Length; row_counter++)
+                    {
+                        user_id_field.Value = user_id;
+                        day_field.Value = event_list[row_counter].get_day(); //local time day
+                        utc_day_field.Value = event_list[row_counter].get_day().AddHours(-local_hours_ahead_of_utc_time); //utc_day              
+                        start_time_field.Value = event_list[row_counter].get_start_time(); //local time start time
+                        end_time_field.Value = event_list[row_counter].get_end_time(); //local time end time
+                        keyframe_path_field.Value = images_folder + event_list[row_counter].get_keyframe_image_name();
+                        number_times_viewed_field.Value = 0;
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+                dbTrans.Commit();
+            }
+            cnn.Close();
+
             // CONVERT ARRAY OF TYPE IMAGE_REP TO TYPE DATAROW
-            DataRow[] data_row_array_of_events = Segmentation_Event_Rep_array_to_datarow_array(event_list, images_folder, user_id, local_hours_ahead_of_utc_time);
+            //DataRow[] data_row_array_of_events = Segmentation_Event_Rep_array_to_datarow_array(event_list, images_folder, user_id, local_hours_ahead_of_utc_time);
 
             // SQLBULK DATA ROW ARRAY TO DATABASE
-            bulk_copy_to_all_events_table(data_row_array_of_events);
+            //bulk_copy_to_all_events_table(data_row_array_of_events);
         } //end method upload_new_events()
 
 
