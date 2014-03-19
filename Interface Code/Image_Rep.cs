@@ -177,13 +177,10 @@ namespace SenseCamBrowser1
         {
 
             //this method calls a database stored procedure and returns the paths of all the images in this event
-            SqlConnection con = new SqlConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
-            SqlCommand selectCmd = new SqlCommand("spGet_Paths_Of_All_Images_In_Events", con);
-            selectCmd.CommandType = CommandType.StoredProcedure;
-            selectCmd.Parameters.Add("@USER_ID", SqlDbType.Int).Value = user_id;
-            selectCmd.Parameters.Add("@EVENT_ID", SqlDbType.Int).Value = event_id;
+            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spGet_Paths_Of_All_Images_In_Events(user_id, event_id), con);
             con.Open();
-            SqlDataReader read_events = selectCmd.ExecuteReader();
+            SQLiteDataReader read_events = selectCmd.ExecuteReader();
 
             List<Image_Rep> list_of_images = new List<Image_Rep>();
             int counter = 0;

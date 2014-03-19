@@ -76,17 +76,14 @@ namespace SenseCamBrowser1
         {
             //this method calls the relevant database stored procedure to retrieve a list of annotations already associated with this event...
             List<string> list_of_annotations = new List<string>();
-            SqlConnection con = new SqlConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
-            SqlCommand selectCmd = new SqlCommand("NOV10_GET_ANNOTATIONS_FOR_EVENT", con);
-            selectCmd.CommandType = CommandType.StoredProcedure;
-            selectCmd.Parameters.Add("@USER_ID", SqlDbType.Int).Value = user_id;
-            selectCmd.Parameters.Add("@EVENT_ID", SqlDbType.Int).Value = event_id;
-
+            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.NOV10_GET_ANNOTATIONS_FOR_EVENT(user_id,event_id),con);
+            
             string annotation_type;
 
             //then open the db connection, connect to the stored procedure and return the list of results...
             con.Open();
-            SqlDataReader read_events = selectCmd.ExecuteReader();
+            SQLiteDataReader read_events = selectCmd.ExecuteReader();
             while (read_events.Read())
             {
                 annotation_type = read_events[0].ToString();

@@ -234,11 +234,8 @@ namespace SenseCamBrowser1
             public static void update_event_as_being_viewed_another_time(int user_id, int event_id)
             {
                 //THIS METHOD IS RESPONSIBLE FOR UPDATING AN EVENT'S COMMENT FIELD
-                SqlConnection con = new SqlConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
-                SqlCommand selectCmd = new SqlCommand("feb10_spUpdateEvent_Number_Times_Viewed", con);
-                selectCmd.CommandType = CommandType.StoredProcedure;
-                selectCmd.Parameters.Add("@USER_ID", SqlDbType.Int).Value = user_id;
-                selectCmd.Parameters.Add("@EVENT_ID", SqlDbType.Int).Value = event_id;
+                SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+                SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.feb10_spUpdateEvent_Number_Times_Viewed(user_id, event_id), con);
                 con.Open();
                 selectCmd.ExecuteNonQuery();
                 con.Close();
