@@ -209,11 +209,8 @@ namespace SenseCamBrowser1
         {
             int num_images = 0;
             //this method calls a database stored procedure to return the number of images in an event
-            SqlConnection con = new SqlConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
-            SqlCommand selectCmd = new SqlCommand("spGet_Num_Images_In_Event", con);
-            selectCmd.CommandType = CommandType.StoredProcedure;
-            selectCmd.Parameters.Add("@USER_ID", SqlDbType.Int).Value = user_id;
-            selectCmd.Parameters.Add("@EVENT_ID", SqlDbType.Int).Value = event_id;
+            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spGet_Num_Images_In_Event(user_id, event_id), con);
             con.Open();
             try
             {
@@ -271,12 +268,8 @@ namespace SenseCamBrowser1
         public static void delete_image_from_event(int user_id, int event_id, DateTime image_time, string image_path)
         {
             //this method calls a database stored procedure and deletes the given image reference in the database
-            SqlConnection con = new SqlConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
-            SqlCommand selectCmd = new SqlCommand("spDelete_Image_From_Event", con);
-            selectCmd.CommandType = CommandType.StoredProcedure;
-            selectCmd.Parameters.Add("@USER_ID", SqlDbType.Int).Value = user_id;
-            selectCmd.Parameters.Add("@EVENT_ID", SqlDbType.Int).Value = event_id;
-            selectCmd.Parameters.Add("@IMAGE_TIME", SqlDbType.DateTime).Value = image_time;
+            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spDelete_Image_From_Event(user_id, event_id, image_time), con);
             con.Open();
             selectCmd.ExecuteNonQuery();
             con.Close();

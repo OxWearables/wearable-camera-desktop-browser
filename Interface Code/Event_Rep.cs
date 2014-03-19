@@ -138,7 +138,7 @@ namespace SenseCamBrowser1
             public static List<Event_Rep> get_list_of_day_morning_events(int user_id, DateTime day)
             {
                 //this method calls a database stored procedure to retrieve the list of events that happened in the morning of a given day
-                return get_list_of_events_from_query("spGet_Morning_Events", user_id, day);
+                return get_list_of_events_from_query("spGet_Morning_Events", user_id, day); //todo update for sqlite
             } //end method get_list_of_day_morning_events
 
 
@@ -147,7 +147,7 @@ namespace SenseCamBrowser1
             public static List<Event_Rep> get_list_of_day_afternoon_events(int user_id, DateTime day)
             {
                 //this method calls a database stored procedure to retrieve the list of events that happened in the morning of a given day
-                return get_list_of_events_from_query("spGet_Afternoon_Events", user_id, day);
+                return get_list_of_events_from_query("spGet_Afternoon_Events", user_id, day); //todo update for sqlite
             } //end method get_list_of_day_morning_events
 
 
@@ -156,7 +156,7 @@ namespace SenseCamBrowser1
             public static List<Event_Rep> get_list_of_day_evening_events(int user_id, DateTime day)
             {
                 //this method calls a database stored procedure to retrieve the list of events that happened in the morning of a given day
-                return get_list_of_events_from_query("spGet_Evening_Events", user_id, day);
+                return get_list_of_events_from_query("spGet_Evening_Events", user_id, day); //todo update for sqlite
             } //end method get_list_of_day_morning_events
 
 
@@ -211,12 +211,8 @@ namespace SenseCamBrowser1
             public static void update_event_comment(int user_id, int event_id, string comment)
             {
                 //THIS METHOD IS RESPONSIBLE FOR UPDATING AN EVENT'S COMMENT FIELD
-                SqlConnection con = new SqlConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
-                SqlCommand selectCmd = new SqlCommand("spUpdateEventComment", con);
-                selectCmd.CommandType = CommandType.StoredProcedure;
-                selectCmd.Parameters.Add("@USER_ID", SqlDbType.Int).Value = user_id;
-                selectCmd.Parameters.Add("@EVENT_ID", SqlDbType.Int).Value = event_id;
-                selectCmd.Parameters.Add("@COMMENT", SqlDbType.Text).Value = comment;
+                SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+                SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spUpdateEventComment(user_id, event_id, comment), con);
                 con.Open();
                 selectCmd.ExecuteNonQuery();
                 con.Close();
@@ -253,12 +249,8 @@ namespace SenseCamBrowser1
             public static void update_event_keyframe_path(int user_id, int event_id, string new_keyframe_path)
             {
                 //this method calls a database stored procedure to update the keyframe path of the event in question
-                SqlConnection con = new SqlConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
-                SqlCommand selectCmd = new SqlCommand("spUpdate_Event_Keyframe_Path", con);
-                selectCmd.CommandType = CommandType.StoredProcedure;
-                selectCmd.Parameters.Add("@USER_ID", SqlDbType.Int).Value = user_id;
-                selectCmd.Parameters.Add("@EVENT_ID", SqlDbType.Int).Value = event_id;
-                selectCmd.Parameters.Add("@KEYFRAME_PATH", SqlDbType.VarChar).Value = new_keyframe_path;
+                SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+                SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spUpdate_Event_Keyframe_Path(user_id,event_id,new_keyframe_path), con);
                 con.Open();
                 selectCmd.ExecuteNonQuery();
                 con.Close();
@@ -275,11 +267,8 @@ namespace SenseCamBrowser1
             public static void delete_event_from_database(int user_id, int event_id)
             {
                 //this method calls a database stored procedure to delete this event from the database
-                SqlConnection con = new SqlConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
-                SqlCommand selectCmd = new SqlCommand("spDelete_Event", con);
-                selectCmd.CommandType = CommandType.StoredProcedure;
-                selectCmd.Parameters.Add("@USER_ID", SqlDbType.Int).Value = user_id;
-                selectCmd.Parameters.Add("@EVENT_ID", SqlDbType.Int).Value = event_id;
+                SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+                SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spDelete_Event(user_id,event_id), con);
                 con.Open();
                 selectCmd.ExecuteNonQuery();
                 con.Close();
@@ -302,12 +291,8 @@ namespace SenseCamBrowser1
                 //step 4, update the keyframe path of the events in question...
                 
                 //all the above steps are covered by the stored procedure below...
-                SqlConnection con = new SqlConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
-                SqlCommand selectCmd = new SqlCommand("Oct10_ADD_NEW_MERGED_IMAGES_TO_PREVIOUS_EVENT", con);
-                selectCmd.CommandType = CommandType.StoredProcedure;
-                selectCmd.Parameters.Add("@USER_ID", SqlDbType.Int).Value = user_id;
-                selectCmd.Parameters.Add("@EVENT_ID_OF_NEW_SOURCE_IMAGES", SqlDbType.Int).Value = event_id_of_source_images;
-                selectCmd.Parameters.Add("@TIME_OF_END_IMAGE", SqlDbType.DateTime).Value = time_of_end_image;
+                SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+                SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.Oct10_ADD_NEW_MERGED_IMAGES_TO_PREVIOUS_EVENT(),con);//todo write SQL syntax! "Oct10_ADD_NEW_MERGED_IMAGES_TO_PREVIOUS_EVENT", con);
                 con.Open();
                 selectCmd.ExecuteNonQuery();
                 con.Close();
@@ -328,12 +313,8 @@ namespace SenseCamBrowser1
                 //step 4, update the keyframe path of the events in question...
 
                 //all the above steps are covered by the stored procedure below...
-                SqlConnection con = new SqlConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
-                SqlCommand selectCmd = new SqlCommand("Oct10_ADD_NEW_MERGED_IMAGES_TO_NEXT_EVENT", con);
-                selectCmd.CommandType = CommandType.StoredProcedure;
-                selectCmd.Parameters.Add("@USER_ID", SqlDbType.Int).Value = user_id;
-                selectCmd.Parameters.Add("@EVENT_ID_OF_NEW_SOURCE_IMAGES", SqlDbType.Int).Value = event_id_of_source_images;
-                selectCmd.Parameters.Add("@TIME_OF_START_IMAGE", SqlDbType.DateTime).Value = time_of_start_image;
+                SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+                SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.Oct10_ADD_NEW_MERGED_IMAGES_TO_NEXT_EVENT(),con);//todo write SQL syntax! "Oct10_ADD_NEW_MERGED_IMAGES_TO_NEXT_EVENT", con);
                 con.Open();
                 selectCmd.ExecuteNonQuery();
                 con.Close();
@@ -356,12 +337,8 @@ namespace SenseCamBrowser1
                 //step 4, update the keyframe path of the events in question...
 
                 //all the above steps are covered by the stored procedure below...
-                SqlConnection con = new SqlConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
-                SqlCommand selectCmd = new SqlCommand("Jan11_SPLIT_EVENT_INTO_TWO", con); //anja updates, this stored procedure is now updated to return the ID of the newly created event...
-                selectCmd.CommandType = CommandType.StoredProcedure;
-                selectCmd.Parameters.Add("@USER_ID", SqlDbType.Int).Value = user_id;
-                selectCmd.Parameters.Add("@EVENT_ID_OF_SOURCE_IMAGES", SqlDbType.Int).Value = event_id_of_source_images;
-                selectCmd.Parameters.Add("@TIME_OF_START_IMAGE", SqlDbType.DateTime).Value = time_of_start_image;
+                SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+                SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.Jan11_SPLIT_EVENT_INTO_TWO(),con);//todo write stored procedure code! "Jan11_SPLIT_EVENT_INTO_TWO", con); //anja updates, this stored procedure is now updated to return the ID of the newly created event...                
                 con.Open();
                 try
                 {

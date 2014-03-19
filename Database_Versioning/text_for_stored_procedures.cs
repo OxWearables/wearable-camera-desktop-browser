@@ -848,9 +848,9 @@ END
         {
             string end_string = "DELETE";
             end_string += "\n" + "FROM All_Images";
-            end_string += "\n" + "WHERE [ueser_id] = " + user_id;
+            end_string += "\n" + "WHERE [user_id] = " + user_id;
             end_string += "\n" + "AND [event_id] = " + event_id;
-            end_string += "\n" + "AND image_time = " + convert_datetime_to_sql_string(image_time);
+            end_string += "\n" + "AND image_time = " + convert_datetime_to_sql_string(image_time) + ";";
 
             return end_string;
             /*
@@ -1147,7 +1147,7 @@ END
                 second = "0" + time.Second;
             else second = time.Second.ToString();
 
-            return "'" + time.Year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second + "." + time.Millisecond + "'";
+            return "'" + time.Year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second + "'";// +"." + time.Millisecond + "'";
         } //close method convert_datetime_to_sql_string()...
 
         public static string JAN_11_GET_IMAGE_IN_DAY_NEAREST_TARGET_TIME(int user_id, DateTime day, DateTime target_time, int search_window_in_minutes)
@@ -1767,7 +1767,7 @@ END
         {
             string end_string = "";
             end_string += "\n" + "INSERT INTO SC_Browser_User_Annotations";
-            end_string += "\n" + "VALUES (" + user_id + "," + event_id + "," + convert_datetime_to_sql_string(DateTime.Now) + "," + event_annotation_name + "')";
+            end_string += "\n" + "VALUES (" + user_id + "," + event_id + "," + convert_datetime_to_sql_string(DateTime.Now) + ",'" + event_annotation_name + "')";
 
             return end_string;
             /*
@@ -1951,11 +1951,10 @@ END
         public static string APR11_ADD_ANNOTATION_TYPE(string annotation_type_name)
         {
             //todo multiple query
-            return "";
-
             string end_string = "";
-            end_string += "\n" + "EXEC APR11_REMOVE_ANNOTATION_TYPE @ANNOTATION_TYPE_NAME;";
-            end_string += "\n" + "INSERT INTO Annotation_Types VALUES(@ANNOTATION_TYPE_NAME, @ANNOTATION_TYPE_NAME)";
+            end_string += "\n" + "DELETE FROM Annotation_Types";
+            end_string += "\n" + "WHERE annotation_type = '" + annotation_type_name + "';";
+            end_string += "\n" + "INSERT INTO Annotation_Types (annotation_type,description) VALUES('" + annotation_type_name + "','" + annotation_type_name + "');";
 
             return end_string;
             /*

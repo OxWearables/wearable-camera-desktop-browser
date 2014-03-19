@@ -100,12 +100,8 @@ namespace SenseCamBrowser1
 
         public static void add_event_annotation_to_database(int user_id, int event_id, string annotation_name)
         {
-            SqlConnection con = new SqlConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
-            SqlCommand selectCmd = new SqlCommand("NOV10_ADD_EVENT_ANNOTATION", con);
-            selectCmd.CommandType = CommandType.StoredProcedure;
-            selectCmd.Parameters.Add("@USER_ID", SqlDbType.Int).Value = user_id;
-            selectCmd.Parameters.Add("@EVENT_ID", SqlDbType.Int).Value = event_id;
-            selectCmd.Parameters.Add("@EVENT_ANNOTATION_NAME", SqlDbType.VarChar).Value = annotation_name;
+            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.NOV10_ADD_EVENT_ANNOTATION(user_id, event_id, annotation_name), con);
             con.Open();
             selectCmd.ExecuteNonQuery();
             con.Close();            
@@ -114,11 +110,8 @@ namespace SenseCamBrowser1
 
         public static void clear_event_annotations_from_database(int user_id, int event_id)
         {
-            SqlConnection con = new SqlConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
-            SqlCommand selectCmd = new SqlCommand("NOV10_CLEAR_EVENT_ANNOTATIONS", con);
-            selectCmd.CommandType = CommandType.StoredProcedure;
-            selectCmd.Parameters.Add("@USER_ID", SqlDbType.Int).Value = user_id;
-            selectCmd.Parameters.Add("@EVENT_ID", SqlDbType.Int).Value = event_id;
+            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.NOV10_CLEAR_EVENT_ANNOTATIONS(user_id, event_id), con);
             con.Open();
             selectCmd.ExecuteNonQuery();
             con.Close();
@@ -126,12 +119,8 @@ namespace SenseCamBrowser1
 
         public static void clear_event_annotations_from_database(int user_id, int event_id, string individual_annotation_text)
         {
-            SqlConnection con = new SqlConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
-            SqlCommand selectCmd = new SqlCommand("AUG12_CLEAR_EVENT_ANNOTATIONS_INDIVIDUAL", con);
-            selectCmd.CommandType = CommandType.StoredProcedure;
-            selectCmd.Parameters.Add("@USER_ID", SqlDbType.Int).Value = user_id;
-            selectCmd.Parameters.Add("@EVENT_ID", SqlDbType.Int).Value = event_id;
-            selectCmd.Parameters.Add("@INDIVIDUAL_ANNOTATION_TEXT", SqlDbType.VarChar).Value = individual_annotation_text;
+            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.AUG12_CLEAR_EVENT_ANNOTATIONS_INDIVIDUAL(user_id, event_id, individual_annotation_text), con);
             con.Open();
             selectCmd.ExecuteNonQuery();
             con.Close();
@@ -144,10 +133,8 @@ namespace SenseCamBrowser1
 
         public static void add_annotation_type_to_database(string annotation_type_name)
         {
-            SqlConnection con = new SqlConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
-            SqlCommand selectCmd = new SqlCommand("APR11_ADD_ANNOTATION_TYPE", con);
-            selectCmd.CommandType = CommandType.StoredProcedure;
-            selectCmd.Parameters.Add("@ANNOTATION_TYPE_NAME", SqlDbType.VarChar).Value = annotation_type_name;
+            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.APR11_ADD_ANNOTATION_TYPE(annotation_type_name), con);
             con.Open();
             selectCmd.ExecuteNonQuery();
             con.Close();
@@ -157,10 +144,8 @@ namespace SenseCamBrowser1
 
         public static void clear_annotation_type_from_database(string annotation_type_name)
         {
-            SqlConnection con = new SqlConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
-            SqlCommand selectCmd = new SqlCommand("APR11_REMOVE_ANNOTATION_TYPE", con);
-            selectCmd.CommandType = CommandType.StoredProcedure;
-            selectCmd.Parameters.Add("@ANNOTATION_TYPE_NAME", SqlDbType.VarChar).Value = annotation_type_name; 
+            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.APR11_REMOVE_ANNOTATION_TYPE(annotation_type_name), con);
             con.Open();
             selectCmd.ExecuteNonQuery();
             con.Close();
@@ -169,9 +154,8 @@ namespace SenseCamBrowser1
 
         public static void clear_all_annotation_types_from_database()
         {
-            SqlConnection con = new SqlConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
-            SqlCommand selectCmd = new SqlCommand("APR11_REMOVE_ALL_ANNOTATION_TYPES", con);
-            selectCmd.CommandType = CommandType.StoredProcedure;
+            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.APR11_REMOVE_ALL_ANNOTATION_TYPES(), con);
             con.Open();
             selectCmd.ExecuteNonQuery();
             con.Close();
