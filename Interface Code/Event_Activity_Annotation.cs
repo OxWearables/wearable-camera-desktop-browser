@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Data.SqlClient;
 using System.Data;
+using System.Data.SQLite;
+using System.Data.Common;
 
 namespace SenseCamBrowser1.Interface_Code
 {
@@ -39,12 +41,9 @@ namespace SenseCamBrowser1.Interface_Code
             //this method calls the relevant database stored procedure to retrieve a list of annotationed events for this day...
             List<Event_Activity_Annotation> list_of_annotated_events = new List<Event_Activity_Annotation>();
 
-            SqlConnection con = new SqlConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
-            SqlCommand selectCmd = new SqlCommand("JAN11_GET_ANNOTATED_EVENTS_IN_DAY", con);
-            selectCmd.CommandType = CommandType.StoredProcedure;
-            selectCmd.Parameters.Add("@USER_ID", SqlDbType.Int).Value = user_id;
-            selectCmd.Parameters.Add("@DAY", SqlDbType.DateTime).Value = day;
-
+            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.JAN11_GET_ANNOTATED_EVENTS_IN_DAY(user_id,day), con);
+            
             int event_index_counter = 1;
             int event_id;
             string annotation_type;
@@ -52,7 +51,7 @@ namespace SenseCamBrowser1.Interface_Code
 
             //then open the db connection, connect to the stored procedure and return the list of results...
             con.Open();
-            SqlDataReader read_events = selectCmd.ExecuteReader();
+            SQLiteDataReader read_events = selectCmd.ExecuteReader();
             while (read_events.Read())
             {
                 event_id = int.Parse(read_events[0].ToString());

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Data.SqlClient;
 using System.Data;
+using System.Data.SQLite;
+using System.Data.Common;
 
 namespace SenseCamBrowser1
 {
@@ -35,16 +37,15 @@ namespace SenseCamBrowser1
         {
             //this method calls the relevant database stored procedure to retrieve a list of annotation classes...
             List<string> list_of_annotation_classes = new List<string>();
-            SqlConnection con = new SqlConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
-            SqlCommand selectCmd = new SqlCommand("NOV10_GET_LIST_OF_ANNOTATION_CLASSES", con);
-            selectCmd.CommandType = CommandType.StoredProcedure;
+            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.NOV10_GET_LIST_OF_ANNOTATION_CLASSES(), con);
             
             int annotation_id;
             string annotation_type, annotation_description;
 
             //then open the db connection, connect to the stored procedure and return the list of results...
             con.Open();
-            SqlDataReader read_events = selectCmd.ExecuteReader();
+            SQLiteDataReader read_events = selectCmd.ExecuteReader();
             while (read_events.Read())
             {
                 annotation_id = int.Parse(read_events[0].ToString());

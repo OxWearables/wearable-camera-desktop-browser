@@ -19,6 +19,8 @@ using System.Linq;
 using System.Text;
 using System.Data;
 using System.Data.SqlClient;
+using System.Data.SQLite;
+using System.Data.Common;
 
 namespace SenseCamBrowser1
 {
@@ -38,13 +40,8 @@ namespace SenseCamBrowser1
             if (optional_parameters.Length > max_length)
                 optional_parameters = optional_parameters.Substring(optional_parameters.Length - max_length - 1, max_length);
 
-            SqlConnection con = new SqlConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
-            SqlCommand selectCmd = new SqlCommand("spLog_User_Interaction", con);
-            selectCmd.CommandType = CommandType.StoredProcedure;
-            selectCmd.Parameters.Add("@USER_ID", SqlDbType.Int).Value = Window1.OVERALL_USER_ID;
-            selectCmd.Parameters.Add("@INTERACTION_TIME", SqlDbType.DateTime).Value = DateTime.Now;
-            selectCmd.Parameters.Add("@UIXAML_ELEMENT", SqlDbType.VarChar).Value = uixaml_element;
-            selectCmd.Parameters.Add("@COMMA_SEPERATED_PARAMETERS", SqlDbType.VarChar).Value = optional_parameters;
+            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spLog_User_Interaction(Window1.OVERALL_USER_ID,DateTime.Now,uixaml_element,optional_parameters), con);
             con.Open();
             selectCmd.ExecuteNonQuery();
             con.Close();

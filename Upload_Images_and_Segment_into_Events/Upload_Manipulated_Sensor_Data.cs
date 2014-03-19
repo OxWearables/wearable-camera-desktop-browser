@@ -1243,12 +1243,11 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
         private static void upload_sensor_readings_to_db(Sensor_Reading[] sensor_readings, int user_id, Upload_and_Segment_Images_Thread.DeviceType device_type)
         {
             // http://sqlite.phxsoftware.com/forums/t/134.aspx
-            DbConnection cnn = new SQLiteConnection(@"Data Source=C:\software development\APIs downloaded\Databases\sql lite\aiden_test.db;Pooling=true;FailIfMissing=false;Version=3");
-
-            cnn.Open();
-            using (DbTransaction dbTrans = cnn.BeginTransaction())
+            DbConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+            con.Open();
+            using (DbTransaction dbTrans = con.BeginTransaction())
             {
-                using (DbCommand cmd = cnn.CreateCommand())
+                using (DbCommand cmd = con.CreateCommand())
                 {
                     //cmd.CommandText = "INSERT INTO TestCase(MyValue) VALUES(?)";
                     cmd.CommandText = "INSERT INTO Sensor_Readings(user_id,sample_time,acc_x,acc_y,acc_z,white_val,battery,temperature,pir,trigger_code,image_name,mag_x,mag_y,mag_z) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
@@ -1303,81 +1302,9 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                 }
                 dbTrans.Commit();
             }
-            cnn.Close();
-
-            // CONVERT ARRAY OF TYPE IMAGE_REP TO TYPE DATAROW
-            //DataRow[] data_row_array_of_sensor_readings = Sensor_Reading_array_to_datarow_array(sensor_readings, user_id, device_type);
-
-            // SQLBULK DATA ROW ARRAY TO DATABASE
-            //bulk_copy_to_Sensor_Readings_table(data_row_array_of_sensor_readings);
+            con.Close();
         } //end method upload_sensor_readings_to_db()...
 
-
-
-
-        private static DataRow[] Sensor_Reading_array_to_datarow_array(Sensor_Reading[] sensor_array, int user_id, Upload_and_Segment_Images_Thread.DeviceType device_type)
-        {
-            DataRow[] output_datarow_array = new DataRow[sensor_array.Length];
-            object[] row = new object[15];
-
-            //get the original "All_Images" table as a template from which to make the datarow
-            images_and_events_dataset sensor_readings_table = new images_and_events_dataset(); 
-            images_and_events_datasetTableAdapters.Sensor_ReadingsTableAdapter t = new SenseCamBrowser1.Upload_Images_and_Segment_into_Events.images_and_events_datasetTableAdapters.Sensor_ReadingsTableAdapter();
-            t.Fill(sensor_readings_table.Sensor_Readings);
-            DataTable dummy_table = sensor_readings_table.Tables[2];
-                        
-
-            for (int row_counter = 0; row_counter < output_datarow_array.Length; row_counter++)
-            {
-                row[0] = user_id;
-                //row[1] is the event id
-                row[2] = sensor_array[row_counter].get_sample_time();
-                row[3] = Standard_Calculation.get_signed_int(sensor_array[row_counter].get_acc_x(), device_type);
-                row[4] = Standard_Calculation.get_signed_int(sensor_array[row_counter].get_acc_y(), device_type);
-                row[5] = Standard_Calculation.get_signed_int(sensor_array[row_counter].get_acc_z(), device_type);
-                row[6] = sensor_array[row_counter].get_white_val();
-                row[7] = sensor_array[row_counter].get_battery();
-                row[8] = sensor_array[row_counter].get_temperature();
-                row[9] = sensor_array[row_counter].get_pir();
-                row[10] = sensor_array[row_counter].get_trigger_code();
-                row[11] = sensor_array[row_counter].get_image_name();
-                row[12] = sensor_array[row_counter].mag_x;
-                row[13] = sensor_array[row_counter].mag_y;
-                row[14] = sensor_array[row_counter].mag_z;
-                
-
-                output_datarow_array[row_counter] = dummy_table.NewRow();
-                output_datarow_array[row_counter].ItemArray = row;
-            } //for(int row_counter=0; row_counter<output_datarow_array.Length; row_counter++)
-
-
-            return output_datarow_array; //should now have a list of datarows
-        } //end method similar_event_3d_array_to_datarow_array()...
-
-
-
-
-        private static void bulk_copy_to_Sensor_Readings_table(DataRow[] row_values)
-        {
-            //append new data to master_images
-            //this will actually work as follows:
-
-            //1. Bulk copy everything into new_images
-            SqlConnection con = new SqlConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
-            con.Open();
-
-            using (SqlBulkCopy copy_to_image_test = new SqlBulkCopy(con))
-            {
-                copy_to_image_test.DestinationTableName = "Sensor_Readings";
-                try
-                {
-                    copy_to_image_test.WriteToServer(row_values);
-                } //now try and write the values over...
-                catch (Exception excep) { }
-            } //end using(SqlBulkCopy copy_to_sensecam = new SqlBulkCopy(sensecam_connection))
-
-            con.Close();
-        } //end methoed bulk_copy_to_Sensor_Readings_table()...
 
         #endregion upload sensor readings to db...
 

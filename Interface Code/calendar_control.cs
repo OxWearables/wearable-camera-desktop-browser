@@ -25,6 +25,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
+using System.Data.SQLite;
+using System.Data.Common;
 
 
 namespace SenseCamBrowser1
@@ -46,19 +48,17 @@ namespace SenseCamBrowser1
             //THIS WILL BE THEN USED IN THE CALENDAR ON THE PAGE TO SHOW THE USER WHAT
             //DAYS THEY CAN CLICK ON, BUT THIS METHOD FOCUSES ON JUST RETRIEVING THAT DATA FROM THE DATABASE
 
-            ArrayList list_of_days = new ArrayList();
+            List<string> list_of_days = new List<string>();
 
             //spGet_Event_Image_Paths
-            SqlConnection con = new SqlConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
-            SqlCommand selectCmd = new SqlCommand("spGet_List_Of_All_Days_For_User", con);
-            selectCmd.CommandType = CommandType.StoredProcedure;
-            selectCmd.Parameters.Add("@USER_ID", SqlDbType.Int).Value = user_id;
+            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spGet_List_Of_All_Days_For_User(user_id), con);
             con.Open();
-            SqlDataReader day_reader = selectCmd.ExecuteReader();
+            SQLiteDataReader day_reader = selectCmd.ExecuteReader();
 
             while (day_reader.Read())
             {
-                list_of_days.Add(day_reader[0]);
+                list_of_days.Add(day_reader[0].ToString());
             } //end while (path_reader.Read())
             con.Close();
 
@@ -67,7 +67,7 @@ namespace SenseCamBrowser1
 
             DateTime[] array_of_available_days = new DateTime[list_of_days.Count];
             for (int c = 0; c < array_of_available_days.Length; c++)
-                array_of_available_days[c] = (DateTime)list_of_days[c];
+                array_of_available_days[c] = DateTime.Parse(list_of_days[c]);
 
             return array_of_available_days;
         } //end method get_list_of_available_days_for_user()

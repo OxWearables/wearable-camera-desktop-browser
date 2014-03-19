@@ -830,16 +830,16 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
         private void upload_new_images(Segmentation_Image_Rep[] image_list, string images_folder, int user_id)
         {
             // http://sqlite.phxsoftware.com/forums/t/134.aspx
-            DbConnection cnn = new SQLiteConnection(@"Data Source=C:\software development\APIs downloaded\Databases\sql lite\aiden_test.db;Pooling=true;FailIfMissing=false;Version=3");
+            DbConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
 
-            cnn.Open();
-            using (DbTransaction dbTrans = cnn.BeginTransaction())
+            con.Open();
+            using (DbTransaction dbTrans = con.BeginTransaction())
             {
-                using (DbCommand cmd = cnn.CreateCommand())
+                using (DbCommand cmd = con.CreateCommand())
                 {
                     //cmd.CommandText = "INSERT INTO TestCase(MyValue) VALUES(?)";
                     cmd.CommandText = "INSERT INTO All_Images(user_id,image_path,image_time) VALUES(?,?,?)";
-                    DbParameter user_id_field, event_id_field, image_path_field, image_time_field;
+                    DbParameter user_id_field, image_path_field, image_time_field;
                     user_id_field = cmd.CreateParameter();
                     image_path_field = cmd.CreateParameter();
                     image_time_field = cmd.CreateParameter();
@@ -857,78 +857,20 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                 }
                 dbTrans.Commit();
             }
-            cnn.Close();
-
-            // CONVERT ARRAY OF TYPE IMAGE_REP TO TYPE DATAROW
-            //DataRow[] data_row_array_of_images = Segmentation_Image_Rep_array_to_datarow_array(image_list, images_folder, user_id);
-
-            // SQLBULK DATA ROW ARRAY TO DATABASE
-            //bulk_copy_to_all_images_table(data_row_array_of_images);
-        } //end method uplodat_images_to_database()
-
-
-
-
-        private DataRow[] Segmentation_Image_Rep_array_to_datarow_array(Segmentation_Image_Rep[] image_array, string images_folder, int user_id)
-        {
-            DataRow[] output_datarow_array = new DataRow[image_array.Length];
-            object[] row = new object[5];
-
-            //get the original "All_Images" table as a template from which to make the datarow
-            images_and_events_dataset all_images_table = new images_and_events_dataset();
-            images_and_events_datasetTableAdapters.All_ImagesTableAdapter t = new SenseCamBrowser1.Upload_Images_and_Segment_into_Events.images_and_events_datasetTableAdapters.All_ImagesTableAdapter();
-            t.Fill(all_images_table.All_Images);
-            DataTable dummy_table = all_images_table.Tables[0];
-
-            for (int row_counter = 0; row_counter < output_datarow_array.Length; row_counter++)
-            {
-                //row[0] is the image key
-                row[1] = user_id;
-                //row[2] is the event id
-                row[3] = images_folder + image_array[row_counter].get_image_name();
-                row[4] = image_array[row_counter].get_image_time();
-
-                output_datarow_array[row_counter] = dummy_table.NewRow();
-                output_datarow_array[row_counter].ItemArray = row;
-            } //for(int row_counter=0; row_counter<output_datarow_array.Length; row_counter++)
-                        
-
-            return output_datarow_array; //should now have a list of datarows
-        } //end method similar_event_3d_array_to_datarow_array()
-
-
-
-
-        private void bulk_copy_to_all_images_table(DataRow[] row_values)
-        {
-            //append new data to All_Images
-            //this will actually work as follows:
-
-            //1. Bulk copy everything into new_images
-            SqlConnection con = new SqlConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
-            con.Open();
-
-            using (SqlBulkCopy copy_to_image_test = new SqlBulkCopy(con))
-            {
-                copy_to_image_test.DestinationTableName = "All_Images";
-                copy_to_image_test.WriteToServer(row_values);
-            } //end using(SqlBulkCopy copy_to_sensecam = new SqlBulkCopy(sensecam_connection))
-
             con.Close();
-        } //end methoed bulk_copy_to_all_images_table
-
+        } //end method uplodat_images_to_database()
+        
 
 
 
         private void upload_new_events(Segmentation_Event_Rep[] event_list, string images_folder, int user_id, int local_hours_ahead_of_utc_time)
         {
             // http://sqlite.phxsoftware.com/forums/t/134.aspx
-            DbConnection cnn = new SQLiteConnection(@"Data Source=C:\software development\APIs downloaded\Databases\sql lite\aiden_test.db;Pooling=true;FailIfMissing=false;Version=3");
-
-            cnn.Open();
-            using (DbTransaction dbTrans = cnn.BeginTransaction())
+            DbConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+            con.Open();
+            using (DbTransaction dbTrans = con.BeginTransaction())
             {
-                using (DbCommand cmd = cnn.CreateCommand())
+                using (DbCommand cmd = con.CreateCommand())
                 {
                     //cmd.CommandText = "INSERT INTO TestCase(MyValue) VALUES(?)";
                     cmd.CommandText = "INSERT INTO All_Events(user_id,day,utc_day,start_time,end_time,keyframe_path,number_times_viewed) VALUES(?,?,?,?,?,?,?)";
@@ -962,101 +904,34 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                 }
                 dbTrans.Commit();
             }
-            cnn.Close();
+            con.Close();
 
-            // CONVERT ARRAY OF TYPE IMAGE_REP TO TYPE DATAROW
-            //DataRow[] data_row_array_of_events = Segmentation_Event_Rep_array_to_datarow_array(event_list, images_folder, user_id, local_hours_ahead_of_utc_time);
-
-            // SQLBULK DATA ROW ARRAY TO DATABASE
-            //bulk_copy_to_all_events_table(data_row_array_of_events);
         } //end method upload_new_events()
 
 
 
-
-        private DataRow[] Segmentation_Event_Rep_array_to_datarow_array(Segmentation_Event_Rep[] event_array, string images_folder, int user_id, int local_hours_ahead_of_utc_time)
-        {
-            DataRow[] output_datarow_array = new DataRow[event_array.Length];
-            object[] row = new object[8];
-
-            //get the original "All_Events" table as a template from which to make the datarow
-            images_and_events_dataset all_events_table = new images_and_events_dataset();
-            images_and_events_datasetTableAdapters.All_EventsTableAdapter t = new SenseCamBrowser1.Upload_Images_and_Segment_into_Events.images_and_events_datasetTableAdapters.All_EventsTableAdapter();
-            t.Fill(all_events_table.All_Events);
-            DataTable dummy_table = all_events_table.Tables[1];
-
-            for (int row_counter = 0; row_counter < output_datarow_array.Length; row_counter++)
-            {
-                //row[0] is the event id
-                row[1] = user_id;
-                row[2] = event_array[row_counter].get_day(); //local time day
-                row[3] = event_array[row_counter].get_day().AddHours(-local_hours_ahead_of_utc_time); //utc_day              
-                row[4] = event_array[row_counter].get_start_time(); //local time start time
-                row[5] = event_array[row_counter].get_end_time(); //local time end time
-                row[6] = images_folder + event_array[row_counter].get_keyframe_image_name();
-                //row[7] is the comment field
-                //row[8] is the Number_Times_Viewed
-
-                output_datarow_array[row_counter] = dummy_table.NewRow();
-                output_datarow_array[row_counter].ItemArray = row;
-            } //for(int row_counter=0; row_counter<output_datarow_array.Length; row_counter++)
-
-
-            return output_datarow_array; //should now have a list of datarows
-        } //end method Segmentation_Event_Rep_array_to_datarow_array()
-
-
-
-
-        private void bulk_copy_to_all_events_table(DataRow[] row_values)
-        {
-            //append new data to all_events
-            //this will actually work as follows:
-
-            //1. Bulk copy everything into new_images
-            SqlConnection con = new SqlConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
-            con.Open();
-
-            using (SqlBulkCopy copy_to_image_test = new SqlBulkCopy(con))
-            {
-                copy_to_image_test.DestinationTableName = "All_Events";
-                copy_to_image_test.WriteToServer(row_values);
-            } //end using(SqlBulkCopy copy_to_sensecam = new SqlBulkCopy(sensecam_connection))
-
-            con.Close();
-        } //end methoed bulk_copy_to_all_events_table
-
-
-
-
+        
         private void update_event_id_field_of_all_images_table(int user_id)
         {
-            SQLiteConnection cnn = new SQLiteConnection(@"Data Source=C:\software development\APIs downloaded\Databases\sql lite\aiden_test.db;Pooling=true;FailIfMissing=false;Version=3");
+            SQLiteConnection cnn = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
             SQLiteCommand command = new SQLiteCommand(cnn);
             cnn.Open();
+            //firstly get the most recent event not updated...
             command.CommandText = Database_Versioning.text_for_stored_procedures.spUpdate_Images_With_Event_ID_step1_get_most_recent_event_id_for_user(user_id);
             int most_recent_event_id = int.Parse(command.ExecuteScalar().ToString());
             
+            //then update images table with relevant event id values
             command.CommandText = Database_Versioning.text_for_stored_procedures.spUpdate_Images_With_Event_ID_step2_update_images_with_relevant_event_id(user_id, most_recent_event_id);
             command.ExecuteNonQuery();
+            //afterwards update sensor table with relevent event id values
             command.CommandText = Database_Versioning.text_for_stored_procedures.spUpdate_Images_With_Event_ID_step3_update_sensor_readings_with_relevant_event_id(user_id, most_recent_event_id);
             command.ExecuteNonQuery();
 
+            //finally tidy up spurious events from database...
             command.CommandText = Database_Versioning.text_for_stored_procedures.spUpdate_Images_With_Event_ID_step4_tidy_up_stage(user_id);
             command.ExecuteNonQuery();
 
             cnn.Close();
-            /*
-            //call a database stored procedure to update the Master_Events table
-            SqlConnection con = new SqlConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
-            SqlCommand selectCmd = new SqlCommand("spUpdate_Images_With_Event_ID", con);
-            selectCmd.CommandType = CommandType.StoredProcedure;
-            selectCmd.Parameters.Add("@USER_ID", SqlDbType.Int).Value = user_id;
-            selectCmd.CommandTimeout = 240;
-            con.Open();
-            selectCmd.ExecuteNonQuery();
-            con.Close();
-            */
         } //end method update_event_id_field_of_all_images_table
 
 

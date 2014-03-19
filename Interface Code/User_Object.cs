@@ -20,6 +20,8 @@ using System.Text;
 using System.Data;
 using System.Data.SqlClient;
 using System.Configuration;
+using System.Data.SQLite;
+using System.Data.Common;
 
 namespace SenseCamBrowser1
 {
@@ -50,11 +52,10 @@ namespace SenseCamBrowser1
             //this method calls the relevant database stored procedure to retrieve a list of events
 
             List<User_Object> list_of_users = new List<User_Object>();
-            SqlConnection con = new SqlConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
-            SqlCommand selectCmd = new SqlCommand("feb_10_spGet_List_Of_Users", con);
-            selectCmd.CommandType = CommandType.StoredProcedure;
+            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.feb_10_spGet_List_Of_Users(), con);            
             con.Open();            
-            SqlDataReader read_events = selectCmd.ExecuteReader();
+            SQLiteDataReader read_events = selectCmd.ExecuteReader();
 
             int user_id;
             string username, password, name; //values that just allow me to store individual database values before storing them in an object of type Event_Rep
@@ -82,20 +83,28 @@ namespace SenseCamBrowser1
         /// <param name="usr_name"></param>
         public static int insert_new_user_into_database_and_get_id(string usr_name)
         {
-            int new_user_id = -1;
+            int new_user_id = -1, new_event_id = -1;
 
             //this method calls the relevant database stored procedure to insert a new user and then return the ID of this newly added user...
-            SqlConnection con = new SqlConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
-            SqlCommand selectCmd = new SqlCommand("feb_10_spInsert_New_User_Into_Database_and_Return_ID", con);
+            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.feb_10_spInsert_New_User_Into_Database_and_Return_ID_part1_insert_into_users_table_and_get_id(usr_name), con);
             //todo make sql command calls like this ... SqlCommand selectCmd = new SqlCommand(Database_Versioning.text_for_stored_procedures.feb_10_spInsert_New_User_Into_Database_and_Return_ID(usr_name), con);
-            selectCmd.CommandType = CommandType.StoredProcedure;
-            selectCmd.Parameters.Add("@NEW_USER_NAME", SqlDbType.VarChar).Value = usr_name;
             con.Open();
-            try
-            {
-                new_user_id = int.Parse(selectCmd.ExecuteScalar().ToString());
-            }
+
+            //insert into Users table and get user_id
+            try { new_user_id = int.Parse(selectCmd.ExecuteScalar().ToString()); }
             catch (Exception excep) { }
+
+            //insert dummy event into All_Events table and get event id
+            selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.feb_10_spInsert_New_User_Into_Database_and_Return_ID_part2_insert_into_events_and_get_event_id(new_user_id), con);
+            try { new_event_id = int.Parse(selectCmd.ExecuteScalar().ToString()); }
+            catch (Exception excep) { }
+
+            //insert dummy image into All_Images table
+            selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.feb_10_spInsert_New_User_Into_Database_and_Return_ID_part3_insert_into_images(new_user_id, new_event_id), con);
+            try { selectCmd.ExecuteNonQuery(); }
+            catch (Exception excep) { }
+
             con.Close();
 
             return new_user_id;

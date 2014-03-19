@@ -173,9 +173,9 @@ namespace SenseCamBrowser1
                 //this method calls the relevant database stored procedure to retrieve a list of events
                 List<Event_Rep> list_of_events = new List<Event_Rep>();
 
-                SQLiteConnection cnn = new SQLiteConnection(@"Data Source=C:\software development\APIs downloaded\Databases\sql lite\aiden_test.db;Pooling=true;FailIfMissing=false;Version=3");
-                SQLiteCommand command = new SQLiteCommand(cnn);
-                cnn.Open();
+                SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+                SQLiteCommand command = new SQLiteCommand(con);
+                con.Open();
                 command.CommandText = Database_Versioning.text_for_stored_procedures.spGet_All_Events_In_Day(user_id, day);
                 SQLiteDataReader read_events = command.ExecuteReader();
 
@@ -194,33 +194,7 @@ namespace SenseCamBrowser1
 
                     list_of_events.Add(new Event_Rep(event_id, start_time, end_time, keyframe_path, comment));
                 } //end while (read_chunk_ids.Read())
-                cnn.Close();
-
-                /*
-                SqlConnection con = new SqlConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
-                SqlCommand selectCmd = new SqlCommand(stored_procedure_name, con);
-                selectCmd.CommandType = CommandType.StoredProcedure;
-                selectCmd.Parameters.Add("@USER_ID", SqlDbType.Int).Value = user_id;
-                selectCmd.Parameters.Add("@DAY", SqlDbType.DateTime).Value = day;
-                con.Open();
-                SqlDataReader read_events = selectCmd.ExecuteReader();
-
-                int event_id;
-                DateTime start_time, end_time;
-                string keyframe_path, comment; //values that just allow me to store individual database values before storing them in an object of type Event_Rep
-
-                while (read_events.Read())
-                {
-                    try { event_id = int.Parse(read_events[0].ToString()); } catch (Exception excep) { event_id = -1; }
-                    start_time = (DateTime)read_events[1];
-                    end_time = (DateTime)read_events[2];
-                    keyframe_path = read_events[3].ToString();
-                    comment = read_events[4].ToString();
-                    
-                    list_of_events.Add(new Event_Rep(event_id, start_time, end_time, keyframe_path, comment));
-                } //end while (read_chunk_ids.Read())		
                 con.Close();
-                */
 
                 return list_of_events;
             } //end method get_list_of_events_from_query()

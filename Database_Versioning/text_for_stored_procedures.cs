@@ -598,7 +598,7 @@ END
             string end_string = "SELECT MIN([day])";
             end_string += "\n" + "FROM All_Events";
             end_string += "\n" + "WHERE [user_id] = " + user_id;
-            end_string += "\n" + "GROUP BY DATEPART(YEAR, [day]), DATEPART(DAYOFYEAR, [day])";
+            end_string += "\n" + "GROUP BY strftime('%Y-%m-%d',day)";
             end_string += "\n" + "ORDER BY MIN([day]) DESC";
 
             return end_string;
@@ -1013,7 +1013,8 @@ END
 
         public static string JAN11_GET_ANNOTATED_EVENTS_IN_DAY(int user_id, DateTime day)
         {
-            string end_string = "SELECT annotations.event_id, annotations.annotation_name,DATEDIFF(SECOND, All_Events.start_time, All_Events.end_time) AS duration_in_seconds";
+            //string end_string = "SELECT annotations.event_id, annotations.annotation_name,DATEDIFF(SECOND, All_Events.start_time, All_Events.end_time) AS duration_in_seconds";
+            string end_string = "SELECT annotations.event_id, annotations.annotation_name, strftime('%s',All_Events.end_time) - strftime('%s',All_Events.start_time) AS duration_in_seconds";
             end_string += "\n" + "FROM SC_Browser_User_Annotations AS annotations";
             end_string += "\n" + "";
             end_string += "\n" + "INNER JOIN All_Events";
@@ -1312,30 +1313,15 @@ END
 
 
 
-        public static string feb_10_spInsert_New_User_Into_Database_and_Return_ID(string new_user_name)
+        public static string feb_10_spInsert_New_User_Into_Database_and_Return_ID_part1_insert_into_users_table_and_get_id(string new_user_name)
         {
             //todo multiquery
-            return "";
-
             string end_string = "";
-            end_string += "\n" + "insert into Users values ('" + new_user_name + "','" + new_user_name + "','" + new_user_name + "');";
+            end_string += "\n" + "insert into Users (username,password,name) values ('" + new_user_name + "','" + new_user_name + "','" + new_user_name + "');";
             end_string += "\n" + "";
-            end_string += "\n" + "declare @tmp_uid as int";
-            end_string += "\n" + "set @tmp_uid = (select max([user_id]) from Users)";
-            end_string += "\n" + "insert into All_Events values (@tmp_uid,'1999-01-23 08:00:00','1999-01-23 07:00:00', '1999-01-23 08:00:00', '1999-01-23 08:05:00', '','test event',0);";
-            end_string += "\n" + "";
-            end_string += "\n" + "declare @tmp_eid as int";
-            end_string += "\n" + "set @tmp_eid = (select max(event_id) from All_Events where [user_id]=@tmp_uid)";
-            end_string += "\n" + "insert into All_Images values (@tmp_uid, @tmp_eid,'','1991-01-23 08:02:00');";
-            end_string += "\n" + "";
-            end_string += "\n" + "select top 1 [user_id] from Users where [name]='" + new_user_name + "';";
-            end_string += "\n" + "";
-            end_string += "\n" + "";
-            end_string += "\n" + "";
-            end_string += "\n" + "";
-            end_string += "\n" + "";
-
-            return end_string;
+            end_string += "\n" + "select max([user_id]) from Users;";
+            
+            return end_string;        
             /*
              * CREATE PROCEDURE [dbo].[feb_10_spInsert_New_User_Into_Database_and_Return_ID]
 -- Add the parameters for the stored procedure here
@@ -1367,6 +1353,27 @@ select top 1 [user_id] from Users where [name]=@NEW_USER_NAME;
 END
              */
         } //close method feb_10_spInsert_New_User_Into_Database_and_Return_ID()...
+        
+
+        public static string feb_10_spInsert_New_User_Into_Database_and_Return_ID_part2_insert_into_events_and_get_event_id(int user_id)
+        {
+            //todo multiquery
+            string end_string = "";
+            end_string += "\n" + "insert into All_Events (user_id,day,utc_day,start_time,end_time,keyframe_path,comment,number_times_viewed) values (" + user_id + ",'1999-01-23 08:00:00','1999-01-23 07:00:00', '1999-01-23 08:00:00', '1999-01-23 08:05:00', '','test event',0);";
+            end_string += "\n" + "";
+            end_string += "\n" + "select max(event_id) from All_Events where [user_id]=" + user_id + ";";
+
+            return end_string;
+        }
+
+
+        public static string feb_10_spInsert_New_User_Into_Database_and_Return_ID_part3_insert_into_images(int user_id, int event_id)
+        {
+            //todo multiquery
+            string end_string = "";
+            end_string += "\n" + "insert into All_Images (user_id,event_id,image_path,image_time) values (" + user_id + "," + event_id + ",'','1991-01-23 08:02:00');";
+            return end_string;
+        }
 
 
 
@@ -1618,7 +1625,8 @@ END
             end_string += "\n" + "";
             end_string += "\n" + "FROM (";
             end_string += "\n" + "  SELECT annotations.annotation_name, ";
-            end_string += "\n" + "  DATEDIFF(SECOND, All_Events.start_time, All_Events.end_time) AS duration_in_seconds";
+            //end_string += "\n" + "  DATEDIFF(SECOND, All_Events.start_time, All_Events.end_time) AS duration_in_seconds";
+            end_string += "\n" + "  strftime('%s', All_Events.end_time) - strftime('%s', All_Events.start_time) AS duration_in_seconds";
             end_string += "\n" + "";
             end_string += "\n" + "  FROM SC_Browser_User_Annotations AS annotations";
             end_string += "\n" + "      INNER JOIN All_Events";
