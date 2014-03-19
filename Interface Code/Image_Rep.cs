@@ -19,6 +19,8 @@ using System.Windows.Media.Imaging;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Data.SQLite;
+using System.Data.Common;
 
 namespace SenseCamBrowser1
 {
@@ -244,6 +246,15 @@ namespace SenseCamBrowser1
         /// <param name="day_end_time">updated by reference</param>
         public static void get_start_and_end_time_of_images_in_day(int user_id, DateTime day_in_question, ref DateTime day_start_time, ref DateTime day_end_time)
         {
+            //this method calls the relevant database stored procedure to retrieve a list of events
+            List<Event_Rep> list_of_events = new List<Event_Rep>();
+
+            SQLiteConnection con = new SQLiteConnection(@"Data Source=C:\software development\APIs downloaded\Databases\sql lite\aiden_test.db;Pooling=true;FailIfMissing=false;Version=3");
+            SQLiteCommand command = new SQLiteCommand(con);
+            con.Open();
+            command.CommandText = Database_Versioning.text_for_stored_procedures.spGet_Day_Start_and_End_Times(user_id, day_in_question);
+            SQLiteDataReader read_start_and_end_time_row = command.ExecuteReader();
+            /*
             //this method calls a database stored procedure and returns the start and end time of all the images in this day
             SqlConnection con = new SqlConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
             SqlCommand selectCmd = new SqlCommand("spGet_Day_Start_and_End_Times", con);
@@ -252,11 +263,15 @@ namespace SenseCamBrowser1
             selectCmd.Parameters.Add("@DAY", SqlDbType.DateTime).Value = day_in_question;
             con.Open();
             SqlDataReader read_start_and_end_time_row = selectCmd.ExecuteReader();
+            */ 
             read_start_and_end_time_row.Read();
 
+            string ha, ha1;
             //and here we update the parameters passed in by reference, meaning they'll be updated in the interface class (if called by that class), which means we don't need to pass out any values (hence it's a void method, rather than a DateTime method)
             try
             {
+                ha = read_start_and_end_time_row[0].ToString();
+                ha1 = read_start_and_end_time_row[1].ToString();
                 day_start_time = (DateTime)read_start_and_end_time_row[0];
                 day_end_time = (DateTime)read_start_and_end_time_row[1];
             }
