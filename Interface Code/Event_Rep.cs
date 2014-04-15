@@ -130,46 +130,6 @@ namespace SenseCamBrowser1
 
             public static List<Event_Rep> get_list_of_day_events(int user_id, DateTime day)
             {
-                //this method calls a database stored procedure to retrieve the list of events that happened in the morning of a given day
-                return get_list_of_events_from_query("spGet_All_Events_In_Day", user_id, day);
-            } //end method get_list_of_day_events
-
-
-            public static List<Event_Rep> get_list_of_day_morning_events(int user_id, DateTime day)
-            {
-                //this method calls a database stored procedure to retrieve the list of events that happened in the morning of a given day
-                return get_list_of_events_from_query("spGet_Morning_Events", user_id, day); //todo update for sqlite
-            } //end method get_list_of_day_morning_events
-
-
-
-
-            public static List<Event_Rep> get_list_of_day_afternoon_events(int user_id, DateTime day)
-            {
-                //this method calls a database stored procedure to retrieve the list of events that happened in the morning of a given day
-                return get_list_of_events_from_query("spGet_Afternoon_Events", user_id, day); //todo update for sqlite
-            } //end method get_list_of_day_morning_events
-
-
-
-
-            public static List<Event_Rep> get_list_of_day_evening_events(int user_id, DateTime day)
-            {
-                //this method calls a database stored procedure to retrieve the list of events that happened in the morning of a given day
-                return get_list_of_events_from_query("spGet_Evening_Events", user_id, day); //todo update for sqlite
-            } //end method get_list_of_day_morning_events
-
-
-
-            /// <summary>
-            /// this method retrieves events from the database, depending on the stored procedure name
-            /// </summary>
-            /// <param name="stored_procedure_name"></param>
-            /// <param name="user_id"></param>
-            /// <param name="day"></param>
-            /// <returns></returns>
-            private static List<Event_Rep> get_list_of_events_from_query(string stored_procedure_name, int user_id, DateTime day)
-            {
                 //this method calls the relevant database stored procedure to retrieve a list of events
                 List<Event_Rep> list_of_events = new List<Event_Rep>();
 
