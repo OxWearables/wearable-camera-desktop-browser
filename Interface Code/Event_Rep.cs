@@ -258,6 +258,7 @@ namespace SenseCamBrowser1
                 int new_event_id = -1;
                 try { new_event_id = int.Parse(command.ExecuteScalar().ToString()); } catch (Exception excep) { }
 
+                //if no previous event exists, we create a new event
                 if (new_event_id < 0)
                 {
                     //then create and get the id of a new event where the split images will be sent to...
@@ -287,16 +288,38 @@ namespace SenseCamBrowser1
             /// <param name="time_of_start_image"></param>
             public static void send_images_to_next_event(int user_id, int event_id_of_source_images, DateTime time_of_start_image)
             {
-                //step 1, identify the ID of the previous event...
-                //step 2, update the All_Images table, to change the given images in the event_id_source_of_new_images to the ID of their new event
-                //step 3, update the start/end time of the two events in question...
-                //step 4, update the keyframe path of the events in question...
-
-                //all the above steps are covered by the stored procedure below...
                 SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
-                SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.Oct10_ADD_NEW_MERGED_IMAGES_TO_NEXT_EVENT(),con);//todo write SQL syntax! "Oct10_ADD_NEW_MERGED_IMAGES_TO_NEXT_EVENT", con);
+                SQLiteCommand command = new SQLiteCommand(con);
                 con.Open();
-                selectCmd.ExecuteNonQuery();
+
+                //firstly get the day of the source event...
+                command.CommandText = Database_Versioning.text_for_stored_procedures.Jan11_SPLIT_EVENT_INTO_TWO_part1_get_day_of_source_event(user_id, event_id_of_source_images);
+                DateTime day_of_source_event = DateTime.Parse(command.ExecuteScalar().ToString());
+
+                //then get the id of the next event (which to append images to)
+                command.CommandText = Database_Versioning.text_for_stored_procedures.Oct10_ADD_NEW_MERGED_IMAGES_TO_NEXT_EVENT_part1_get_id_of_event_to_append_images_to(user_id, event_id_of_source_images, time_of_start_image, day_of_source_event);
+                int new_event_id = -1;
+                try { new_event_id = int.Parse(command.ExecuteScalar().ToString()); }
+                catch (Exception excep) { }
+
+                //if no next event exists, we create a new event
+                if (new_event_id < 0)
+                {
+                    //then create and get the id of a new event where the split images will be sent to...
+                    command.CommandText = Database_Versioning.text_for_stored_procedures.Jan11_SPLIT_EVENT_INTO_TWO_part2_get_id_of_new_event(user_id, day_of_source_event);
+                    new_event_id = int.Parse(command.ExecuteScalar().ToString());
+                } //close if (new_event_id < 0)...
+
+                //then update image and sensor tables transferring relevant images from original event id to new/previous event id...
+                command.CommandText = Database_Versioning.text_for_stored_procedures.Jan11_SPLIT_EVENT_INTO_TWO_part3_update_image_sensors_tables_with_new_event_id(user_id, new_event_id, event_id_of_source_images, time_of_start_image);
+                command.ExecuteNonQuery();
+
+                //update the event information (start time, end time, keyframe path) of the newly created event...
+                update_event_information_in_database(user_id, new_event_id);
+
+                //now update the event information of what is left of the old event
+                update_event_information_in_database(user_id, event_id_of_source_images);
+
                 con.Close();
             } //close method send_images_to_next_event()...
 
@@ -357,7 +380,7 @@ namespace SenseCamBrowser1
                 DateTime target_time = start_time.AddSeconds(event_length_seconds.TotalSeconds/2);
                 
                 //then select a random image around the target time to be the new keyframe path
-                int ALLOWABLE_TIME_WINDOW_FOR_KEYFRAME_AROUND_TARGET_TIME_IN_MINUTES = 1;
+                int ALLOWABLE_TIME_WINDOW_FOR_KEYFRAME_AROUND_TARGET_TIME_IN_MINUTES = 2;
                 command.CommandText = Database_Versioning.text_for_stored_procedures.Oct10_UPDATE_EVENT_KEYFRAME_IMAGE_select_random_image_from_event_target_window(user_id, event_id, target_time, ALLOWABLE_TIME_WINDOW_FOR_KEYFRAME_AROUND_TARGET_TIME_IN_MINUTES);
                 string new_keyframe_path="";
                 try { new_keyframe_path = command.ExecuteScalar().ToString(); } catch (Exception excep) { }

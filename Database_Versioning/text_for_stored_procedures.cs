@@ -2721,6 +2721,41 @@ END
 
 
 
+        public static string Oct10_ADD_NEW_MERGED_IMAGES_TO_NEXT_EVENT_part1_get_id_of_event_to_append_images_to(int user_id, int event_id_of_source_images, DateTime time_of_start_image, DateTime day_of_source_event)
+        {
+            //todo multiple query...
+
+            string end_string = "SELECT event_id";
+            end_string += "\n" + "FROM All_Events";
+            end_string += "\n" + "WHERE [user_id]=" + user_id;
+            end_string += "\n" + "AND event_id!=" + event_id_of_source_images;// --ad update on 25/01/10";
+            end_string += "\n" + "AND start_time > " + convert_datetime_to_sql_string(time_of_start_image);
+            end_string += "\n" + "AND start_time <= " + convert_datetime_to_sql_string(time_of_start_image.AddHours(6));
+            end_string += "\n" + "AND [day] = " + convert_datetime_to_sql_string(day_of_source_event);
+            end_string += "\n" + "ORDER BY start_time DESC";
+            end_string += "\n" + "LIMIT 1 ;";
+
+
+            return end_string;
+            /*
+            -- step 1, identify the ID of the next event...
+            DECLARE @EVENT_ID_TO_APPEND_IMAGES_TO AS INT
+            SET @EVENT_ID_TO_APPEND_IMAGES_TO = (SELECT TOP 1 event_id
+            FROM All_Events
+            WHERE [user_id]=@USER_ID
+            AND event_id!=@EVENT_ID_OF_NEW_SOURCE_IMAGES
+            AND start_time > @TIME_OF_START_IMAGE
+            AND start_time <= DATEADD(HOUR,6,@TIME_OF_START_IMAGE)
+            AND [day] = @DAY_OF_SOURCE_EVENT
+            ORDER BY start_time --order ascending, i.e. select the next event (that's our target)
+            );
+
+
+                         */
+        } //close method Oct10_ADD_NEW_MERGED_IMAGES_TO_PREVIOUS_EVENT()...
+
+
+
         #endregion aiden
 
     } //close class text_for_stored_procedures...
