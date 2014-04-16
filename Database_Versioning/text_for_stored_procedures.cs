@@ -1009,6 +1009,97 @@ END
         } //close method Oct10_UPDATE_EVENT_KEYFRAME_IMAGE()...
 
 
+        public static string Oct10_UPDATE_EVENT_KEYFRAME_IMAGE_select_random_image_from_event_target_window(int user_id, int event_id, DateTime target_time, int search_window_minutes)
+        {
+            //todo multiple query
+            string end_string = "SELECT image_path";
+            end_string += "\n" + "FROM All_Images";
+            end_string += "\n" + "WHERE [user_id] = " + user_id;
+            end_string += "\n" + "AND event_id = " + event_id;
+            end_string += "\n" + "AND image_time >= " + convert_datetime_to_sql_string(target_time.AddMinutes(-search_window_minutes));
+            end_string += "\n" + "AND image_time <= " + convert_datetime_to_sql_string(target_time.AddMinutes(search_window_minutes));            
+            end_string += "\n" + "ORDER BY RANDOM()";
+            end_string += "\n" + "LIMIT 1;";
+            
+            return end_string;
+            /*
+             * 
+-- STEP 3. CONSIDERING OUR TARGET_TIME, AND THE AMOUND OF LEEWAY, LET'S SELECT A RANDOM IMAGE FROM AROUND THIS TIME TO BE OUR KEYFRAME PATH
+DECLARE @NEW_KEYFRAME_PATH AS VARCHAR(255)
+SET @NEW_KEYFRAME_PATH = 
+(
+SELECT TOP 1 image_path
+FROM All_Images
+WHERE [user_id] = @USER_ID
+AND event_id = @EVENT_ID
+AND DATEDIFF(MINUTE, image_time, @NEW_KEYFRAME_TARGET_TIME) > -@ALLOWABLE_TIME_WINDOW_FOR_KEYFRAME_AROUND_TARGET_TIME_IN_MINUTES
+AND DATEDIFF(MINUTE, image_time, @NEW_KEYFRAME_TARGET_TIME) < @ALLOWABLE_TIME_WINDOW_FOR_KEYFRAME_AROUND_TARGET_TIME_IN_MINUTES
+ORDER BY NEWID()
+)
+
+
+             */
+        } //close method Oct10_UPDATE_EVENT_KEYFRAME_IMAGE()...
+
+
+        public static string Oct10_UPDATE_EVENT_KEYFRAME_IMAGE_select_any_random_image_from_event(int user_id, int event_id)
+        {
+            //todo multiple query
+            string end_string = "SELECT image_path";
+            end_string += "\n" + "FROM All_Images";
+            end_string += "\n" + "WHERE [user_id] = " + user_id;
+            end_string += "\n" + "AND event_id = " + event_id;
+            end_string += "\n" + "ORDER BY RANDOM()";
+            end_string += "\n" + "LIMIT 1;";
+            
+            return end_string;
+            /*
+             * 
+
+
+-- STEP 4. JUST IN CASE, STEP 3 DIDN'T PRODUCE A KEYFRAME IMAGE (e.g. no images taken around that time window in the middle as privacy button was hit on the camera)
+--
+IF @NEW_KEYFRAME_PATH IS NULL
+BEGIN
+SET @NEW_KEYFRAME_PATH = 
+(
+SELECT TOP 1 image_path
+FROM All_Images
+WHERE [user_id] = @USER_ID
+AND event_id = @EVENT_ID
+ORDER BY NEWID()
+)
+END
+
+             */
+        } //close method Oct10_UPDATE_EVENT_KEYFRAME_IMAGE()...
+
+
+        public static string Oct10_UPDATE_EVENT_KEYFRAME_IMAGE_update_table(int user_id, int event_id, DateTime start_time, DateTime end_time, string new_keyframe_path)
+        {
+            //todo multiple query
+            string end_string = "UPDATE All_Events";
+            end_string += "\n" + "SET start_time = " + convert_datetime_to_sql_string(start_time) + ",";
+            end_string += "\n" + "end_time = " + convert_datetime_to_sql_string(end_time) + ",";
+            end_string += "\n" + "keyframe_path = '" + new_keyframe_path + "'";            
+            end_string += "\n" + "WHERE [user_id] = " + user_id;
+            end_string += "\n" + "AND event_id = " + event_id + ";";
+            
+            return end_string;
+            /*
+       
+-- STEP 5. AND LASTLY LET'S UPDATE THE All_Events TABLE WITH THE NEW KEYFRAME PATH INFORMATION!
+UPDATE All_Events
+SET keyframe_path = @NEW_KEYFRAME_PATH
+WHERE [user_id] = @USER_ID
+AND event_id = @EVENT_ID
+
+
+END
+             */
+        } //close method Oct10_UPDATE_EVENT_KEYFRAME_IMAGE()...
+
+
 
 
         public static string JAN11_GET_ANNOTATED_EVENTS_IN_DAY(int user_id, DateTime day)
@@ -1947,6 +2038,176 @@ END
 
 
 
+        public static string Jan11_SPLIT_EVENT_INTO_TWO_part1_get_day_of_source_event(int user_id, int event_id_of_source_images)
+        {
+            return Oct10_ADD_NEW_MERGED_IMAGES_TO_PREVIOUS_EVENT_part1_get_day_of_source_event(user_id, event_id_of_source_images);
+            
+            /*
+             * 
+DECLARE @DAY_OF_SOURCE_EVENT AS DATETIME
+SET @DAY_OF_SOURCE_EVENT = (SELECT [day] FROM All_Events WHERE [user_id]=@USER_ID AND event_id=@EVENT_ID_OF_SOURCE_IMAGES);
+
+END
+             */
+        } //close method Jan11_SPLIT_EVENT_INTO_TWO()...
+
+
+        public static string Jan11_SPLIT_EVENT_INTO_TWO_part2_get_id_of_new_event(int user_id, DateTime day_of_source_event)
+        {
+            return Oct10_ADD_NEW_MERGED_IMAGES_TO_PREVIOUS_EVENT_part3_optional_create_new_event_to_append_images_to(user_id, day_of_source_event);
+            
+            /*
+             
+
+-- step 1, identify the ID of the new event...
+DECLARE @EVENT_ID_TO_APPEND_IMAGES_TO AS INT
+
+--AND LET'S INSERT A NEW EVENT IN TO OUR EVENTS TABLE... 
+INSERT INTO All_Events VALUES (@USER_ID, @DAY_OF_SOURCE_EVENT, @DAY_OF_SOURCE_EVENT, @DAY_OF_SOURCE_EVENT, @DAY_OF_SOURCE_EVENT, '', NULL, 0)
+
+--AND NOW OUR NEW EVENT TO APPEND THE END IMAGES TO, WILL BE THIS EVENT HERE...
+SET @EVENT_ID_TO_APPEND_IMAGES_TO = (SELECT MAX(Event_ID) FROM All_Events WHERE [user_id]=@USER_ID AND [day]=@DAY_OF_SOURCE_EVENT);
+
+             */
+        } //close method Jan11_SPLIT_EVENT_INTO_TWO()...
+
+
+        public static string Jan11_SPLIT_EVENT_INTO_TWO_part3_update_image_sensors_tables_with_new_event_id(int user_id, int event_id_to_append_images_to, int event_id_of_source_images, DateTime time_of_start_image)
+        {
+            string end_string = "UPDATE All_Images";
+            end_string += "\n" + "SET event_id = " + event_id_to_append_images_to;
+            end_string += "\n" + "WHERE [user_id] = " + user_id;
+            end_string += "\n" + "AND event_id = " + event_id_of_source_images;
+            end_string += "\n" + "AND image_time >= " + convert_datetime_to_sql_string(time_of_start_image) + ";";
+            end_string += "\n" + "";
+            end_string += "\n" + "UPDATE Sensor_Readings";
+            end_string += "\n" + "SET event_id = " + event_id_to_append_images_to;
+            end_string += "\n" + "WHERE [user_id] = " + user_id;
+            end_string += "\n" + "AND event_id = " + event_id_of_source_images;
+            end_string += "\n" + "AND sample_time >= " + convert_datetime_to_sql_string(time_of_start_image) + ";";
+            end_string += "\n" + "";
+
+            return end_string;
+            /*
+           
+--step 2, update the All_Images table, to change the given images in the event_id_source_of_new_images to the ID of their new event
+UPDATE All_Images
+SET event_id = @EVENT_ID_TO_APPEND_IMAGES_TO
+WHERE [user_id] = @USER_ID
+AND event_id = @EVENT_ID_OF_SOURCE_IMAGES
+AND image_time >= @TIME_OF_START_IMAGE --i.e. all images including and after this image time...
+
+--ALSO UPDATE THE SENSOR_READINGS TABLE...
+UPDATE Sensor_Readings
+SET event_id = @EVENT_ID_TO_APPEND_IMAGES_TO
+WHERE [user_id] = @USER_ID
+AND event_id = @EVENT_ID_OF_SOURCE_IMAGES
+AND sample_time >= @TIME_OF_START_IMAGE --i.e. all images including and after this image time...
+
+             */
+        } //close method Jan11_SPLIT_EVENT_INTO_TWO()...
+
+
+        public static string Jan11_SPLIT_EVENT_INTO_TWO_part4_update_start_end_time_of_newly_created_event(int user_id, int event_id_to_append_images_to)
+        {
+            return Oct10_ADD_NEW_MERGED_IMAGES_TO_PREVIOUS_EVENT_part5_update_start_end_time_of_newly_created_event(user_id, event_id_to_append_images_to);
+            /*
+           
+-- step 3, update the start/end time, plus the keyframe path, of the two events in question ...
+DECLARE @NEW_START_TIME AS DATETIME
+DECLARE @NEW_END_TIME AS DATETIME 
+
+--firstly the event which has the images added to it...
+SELECT @NEW_START_TIME = MIN(image_time), @NEW_END_TIME = MAX(image_time)
+FROM All_Images
+WHERE [user_id] = @USER_ID
+AND event_id = @EVENT_ID_TO_APPEND_IMAGES_TO
+
+UPDATE All_Events
+SET start_time = @NEW_START_TIME, end_time = @NEW_END_TIME
+WHERE [user_id] = @USER_ID
+AND event_id = @EVENT_ID_TO_APPEND_IMAGES_TO;
+
+-- and let's update the keyframe image for the event by calling this stored procedure
+EXEC Oct10_UPDATE_EVENT_KEYFRAME_IMAGE @USER_ID, @EVENT_ID_TO_APPEND_IMAGES_TO;
+
+             */
+        } //close method Jan11_SPLIT_EVENT_INTO_TWO()...
+
+
+
+        public static string Jan11_SPLIT_EVENT_INTO_TWO_part6_get_start_end_time_of_event_with_removed_images(int user_id, int event_id_of_source_images)
+        {
+            return Oct10_ADD_NEW_MERGED_IMAGES_TO_PREVIOUS_EVENT_part8_get_start_end_time_of_event_with_removed_images(user_id, event_id_of_source_images);
+            /*
+     
+
+--and secondly the event which has the images removed from it...
+SELECT @NEW_START_TIME = MIN(image_time), @NEW_END_TIME = MAX(image_time)
+FROM All_Images
+WHERE [user_id] = @USER_ID
+AND event_id = @EVENT_ID_OF_SOURCE_IMAGES
+
+             */
+        } //close method Jan11_SPLIT_EVENT_INTO_TWO()...
+
+
+        public static string Jan11_SPLIT_EVENT_INTO_TWO_part7_optional_delete_event_with_removed_images(int user_id, int event_id_of_source_images)
+        {
+            return Oct10_ADD_NEW_MERGED_IMAGES_TO_PREVIOUS_EVENT_part9_optional_delete_event_with_removed_images(user_id, event_id_of_source_images);
+            /*
+     
+
+--if the start_time is null, then that means that there's no images left in the source event
+-- therefore we'll delete it
+IF @NEW_START_TIME IS NULL
+BEGIN
+DELETE FROM All_Events
+WHERE [user_id] = @USER_ID
+AND event_id = @EVENT_ID_OF_SOURCE_IMAGES;
+END --CLOSE IF @NEW_START_TIME IS NULL...
+
+             */
+        } //close method Jan11_SPLIT_EVENT_INTO_TWO()...
+
+
+        public static string Jan11_SPLIT_EVENT_INTO_TWO_part8_optional_update_start_end_times_of_event_with_removed_images(int user_id, int event_id_of_source_images, DateTime start_time, DateTime end_time)
+        {
+            return Oct10_ADD_NEW_MERGED_IMAGES_TO_PREVIOUS_EVENT_part10_optional_update_start_end_times_of_event_with_removed_images(user_id, event_id_of_source_images, start_time, end_time);
+            /*
+     
+
+ELSE -- however for most scenarios it's more likely that there'll still be images left
+--therefore we'll update the start/end times, plus the keyframe path too
+BEGIN
+UPDATE All_Events
+SET start_time = @NEW_START_TIME, end_time = @NEW_END_TIME
+WHERE [user_id] = @USER_ID
+AND event_id = @EVENT_ID_OF_SOURCE_IMAGES;
+
+-- and let's update the keyframe image for the event by calling this stored procedure
+EXEC Oct10_UPDATE_EVENT_KEYFRAME_IMAGE @USER_ID, @EVENT_ID_OF_SOURCE_IMAGES;
+END --CLOSE ELSE ... IF @NEW_START_TIME IS NULL
+
+
+END --CLOSE ... IF(@TIME_OF_START_IMAGE > @EVENT_START_TIME AND @EVENT_START_TIME IS NOT NULL)
+
+
+
+
+
+--finally return the ID of our new event...
+select @EVENT_ID_TO_APPEND_IMAGES_TO;
+
+END
+             */
+        } //close method Jan11_SPLIT_EVENT_INTO_TWO()...
+
+
+
+
+
+
 
         public static string APR11_ADD_ANNOTATION_TYPE(string annotation_type_name)
         {
@@ -2127,9 +2388,9 @@ END
             end_string += "\n" + "FROM All_Events";
             end_string += "\n" + "WHERE [user_id]=" + user_id;
             end_string += "\n" + "AND event_id!=" + event_id_of_new_source_images;// --ad update on 25/01/10";
-            end_string += "\n" + "AND start_time >= DATEADD(HOUR,-6,@TIME_OF_END_IMAGE)";
-            end_string += "\n" + "AND start_time < @TIME_OF_END_IMAGE";
-            end_string += "\n" + "AND [day] = '" + day_of_source_event.ToString() + "'";
+            end_string += "\n" + "AND start_time >= " + convert_datetime_to_sql_string(time_of_end_image.AddHours(-6));
+            end_string += "\n" + "AND start_time < " + convert_datetime_to_sql_string(time_of_end_image);
+            end_string += "\n" + "AND [day] = " + convert_datetime_to_sql_string(day_of_source_event);
             end_string += "\n" + "ORDER BY start_time DESC;";            
 
 
@@ -2155,7 +2416,7 @@ END
         {
             //todo multiple query...
 
-            string end_string = "INSERT INTO All_Events VALUES (" + user_id + ", '" + day_of_source_event.ToString() + "', '" + day_of_source_event.ToString() + "', '" + day_of_source_event.ToString() + "', '" + day_of_source_event.ToString() + "', '', NULL, 0);";
+            string end_string = "INSERT INTO All_Events(user_id,day,utc_day,start_time,end_time,keyframe_path,number_times_viewed) VALUES (" + user_id + ", " + convert_datetime_to_sql_string(day_of_source_event) + ", " + convert_datetime_to_sql_string(day_of_source_event) + ", " + convert_datetime_to_sql_string(day_of_source_event) + ", " + convert_datetime_to_sql_string(day_of_source_event) + ", '', 0);";
             end_string += "\n" + "SELECT MAX(Event_ID) FROM All_Events WHERE [user_id]=" + user_id + ";";
             
             return end_string;
@@ -2184,14 +2445,14 @@ END
             end_string += "\n" + "SET event_id = " + event_id_to_append_images_to;
             end_string += "\n" + "WHERE [user_id] = " + user_id;
             end_string += "\n" + "AND event_id = " + event_id_of_new_source_images;
-            end_string += "\n" + "AND image_time <= @TIME_OF_END_IMAGE;";
+            end_string += "\n" + "AND image_time <= " + convert_datetime_to_sql_string(time_of_end_image) + ";";
             end_string += "\n" + "";
             end_string += "\n" + "UPDATE Sensor_Readings";
             end_string += "\n" + "SET event_id = " + event_id_to_append_images_to;
             end_string += "\n" + "WHERE [user_id] = " + user_id;
             end_string += "\n" + "AND event_id = " + event_id_of_new_source_images;
-            end_string += "\n" + "AND sample_time <= @TIME_OF_END_IMAGE";
-            end_string += "\n" + "";
+            end_string += "\n" + "AND sample_time <= " + convert_datetime_to_sql_string(time_of_end_image) + ";";
+            
 
             return end_string;
             /*
@@ -2251,7 +2512,7 @@ END
         {
             //todo multiple query...
 
-            string end_string = "SELECT @NEW_START_TIME = MIN(image_time), @NEW_END_TIME = MAX(image_time)";
+            string end_string = "SELECT MIN(image_time) as start_time, MAX(image_time) as end_time";
             end_string += "\n" + "FROM All_Images";
             end_string += "\n" + "WHERE [user_id] = " + user_id;
             end_string += "\n" + "AND event_id = " + event_id_of_new_source_images + ";";
@@ -2302,7 +2563,7 @@ END
             //todo multiple query...
 
             string end_string = "UPDATE All_Events";
-            end_string += "\n" + "SET start_time = '" + new_start_time + "', end_time = '" + new_end_time + "'";
+            end_string += "\n" + "SET start_time = " + convert_datetime_to_sql_string(new_start_time) + ", end_time = " + convert_datetime_to_sql_string(new_end_time);
             end_string += "\n" + "WHERE [user_id] = " + user_id;
             end_string += "\n" + "AND event_id = " + event_id_of_new_source_images + ";";
 

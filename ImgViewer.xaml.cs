@@ -764,12 +764,17 @@ namespace SenseCamBrowser1
                 Image_Rep.sort_list_of_images_by_id(selected_images_for_splitting);
 
                 foreach (Image_Rep selected_image_to_start_new_event in selected_images_for_splitting)
-                {
-                    //call this method to execute the database stored procedure to handle splitting the event into two
-                    current_event_id = Event_Rep.split_event_into_two(Window1.OVERALL_USER_ID, current_event_id, selected_image_to_start_new_event.image_time); //current event id will be updated to be the new split event... (i.e. so next pass of loop treats it like we're now in this new event and trying to split the first image in it...)
+                {    
+                    //todo is there a bug here where I select the first image and/or last image in a multi-select?
+                    if (selected_image_to_start_new_event.array_position_in_event > 0 && selected_image_to_start_new_event.array_position_in_event < lst_display_images.Items.Count - 1)
+                    {
+                        //call this method to execute the database stored procedure to handle splitting the event into two
+                        current_event_id = Event_Rep.split_event_into_two(Window1.OVERALL_USER_ID, current_event_id, selected_image_to_start_new_event.image_time); //current event id will be updated to be the new split event... (i.e. so next pass of loop treats it like we're now in this new event and trying to split the first image in it...)
 
-                    //let's log this interaction
-                    Record_User_Interactions.log_interaction_to_database("scImgViewer_btnSplit_Event_Click_splitting_multiple", current_event.event_id + "," + selected_image_to_start_new_event.image_time);
+                        //let's log this interaction
+                        Record_User_Interactions.log_interaction_to_database("scImgViewer_btnSplit_Event_Click_splitting_multiple", current_event.event_id + "," + selected_image_to_start_new_event.image_time);
+                    }
+                    else Record_User_Interactions.log_interaction_to_database("scImgViewer_btnSplit_Event_Click_splitting_multiple_first_last_images", current_event.event_id + "," + selected_image_to_start_new_event.image_time);
                 }
 
                 //now what I'll need to do is close the current window, and then reload the day (to reflect the new images/events situation after clicking on this button)
@@ -778,7 +783,7 @@ namespace SenseCamBrowser1
             } //close for case when multiple items were selected
             
             
-            else if (lst_display_images.SelectedIndex >0) //no point in trying to split an event when person selects first image (as it puts the current image and all others after it into the new event...)
+            else if (lst_display_images.SelectedIndex >0 && lst_display_images.SelectedIndex < lst_display_images.Items.Count-1) //no point in trying to split an event when person selects first image (as it puts the current image and all others after it into the new event...)
             {
                 //this is our normal case where the event is split into two ... all imagee after, and including, the selected one, are merged with the next event...
                 Image_Rep selected_photo_in_event = (Image_Rep)lst_display_images.SelectedItem;
