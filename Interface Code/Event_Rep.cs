@@ -191,7 +191,7 @@ namespace SenseCamBrowser1
             {
                 //THIS METHOD IS RESPONSIBLE FOR UPDATING AN EVENT'S COMMENT FIELD
                 SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
-                SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.feb10_spUpdateEvent_Number_Times_Viewed(user_id, event_id), con);
+                SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spUpdateEvent_Number_Times_Viewed(user_id, event_id), con);
                 con.Open();
                 selectCmd.ExecuteNonQuery();
                 con.Close();
@@ -395,7 +395,7 @@ namespace SenseCamBrowser1
 
                     //then select a random image around the target time to be the new keyframe path
                     int ALLOWABLE_TIME_WINDOW_FOR_KEYFRAME_AROUND_TARGET_TIME_IN_MINUTES = 2;
-                    command.CommandText = Database_Versioning.text_for_stored_procedures.Oct10_UPDATE_EVENT_KEYFRAME_IMAGE_select_random_image_from_event_target_window(user_id, event_id, target_time, ALLOWABLE_TIME_WINDOW_FOR_KEYFRAME_AROUND_TARGET_TIME_IN_MINUTES);
+                    command.CommandText = Database_Versioning.text_for_stored_procedures.spSelect_random_image_from_event_around_target_window(user_id, event_id, target_time, ALLOWABLE_TIME_WINDOW_FOR_KEYFRAME_AROUND_TARGET_TIME_IN_MINUTES);
                     string new_keyframe_path = "";
                     try { new_keyframe_path = command.ExecuteScalar().ToString(); }
                     catch (Exception excep) { }
@@ -403,12 +403,12 @@ namespace SenseCamBrowser1
                     //if no image is found around the target time, then just resort to selecting any random image from the event...
                     if (new_keyframe_path.Equals(""))
                     {
-                        command.CommandText = Database_Versioning.text_for_stored_procedures.Oct10_UPDATE_EVENT_KEYFRAME_IMAGE_select_any_random_image_from_event(user_id, event_id);
+                        command.CommandText = Database_Versioning.text_for_stored_procedures.spSelect_any_random_image_from_event(user_id, event_id);
                         new_keyframe_path = command.ExecuteScalar().ToString();
                     }
 
                     //finally update the event keyframe path in the All_Events table...
-                    command.CommandText = Database_Versioning.text_for_stored_procedures.Oct10_UPDATE_EVENT_KEYFRAME_IMAGE_update_table(user_id, event_id, start_time, end_time, new_keyframe_path);
+                    command.CommandText = Database_Versioning.text_for_stored_procedures.spUpdate_Event_time_keyframe_info(user_id, event_id, start_time, end_time, new_keyframe_path);
                     command.ExecuteNonQuery();
                 } //close else ... if (num_images_in_event == 0)
                 con.Close();

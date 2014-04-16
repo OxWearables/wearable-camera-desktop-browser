@@ -42,7 +42,7 @@ namespace SenseCamBrowser1.Interface_Code
             List<Event_Activity_Annotation> list_of_annotated_events = new List<Event_Activity_Annotation>();
 
             SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
-            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.JAN11_GET_ANNOTATED_EVENTS_IN_DAY(user_id,day), con);
+            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spGet_annotated_events_in_day(user_id,day), con);
             
             int event_index_counter = 1;
             int event_id;

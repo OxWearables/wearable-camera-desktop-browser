@@ -20,8 +20,20 @@ namespace SenseCamBrowser1.Database_Versioning
         } //close method spUpdateEventComment()...
         
 
+        public static string spUpdate_Event_Keyframe_Path(int user_id, int event_id, string keyframe_path)
+        {
+            string end_string = "UPDATE All_Events";
+            end_string += "\n" + "SET keyframe_path = '" + keyframe_path + "'";
+            end_string += "\n" + "WHERE [user_id] = " + user_id;
+            end_string += "\n" + "AND [event_id] = " + event_id;
+
+            return end_string;
+        } //end method spUpdate_Event_Keyframe_Path()...
 
 
+
+
+        #region update event id of all images (usually for newly uploaded data)
         public static string spUpdate_Images_With_Event_ID_step1_get_most_recent_event_id_for_user(int user_id)
         {
             string end_string = "";
@@ -88,19 +100,8 @@ namespace SenseCamBrowser1.Database_Versioning
             return end_string;
         } //close method spUpdate_Images_With_Event_ID_step2_update_images_with_relevant_event_id()....
 
-
-
-
-        public static string spUpdate_Event_Keyframe_Path(int user_id, int event_id, string keyframe_path)
-        {
-            string end_string = "UPDATE All_Events";
-            end_string += "\n" + "SET keyframe_path = '" + keyframe_path + "'";
-            end_string += "\n" + "WHERE [user_id] = " + user_id;
-            end_string += "\n" + "AND [event_id] = " + event_id;
-
-            return end_string;
-        } //end method spUpdate_Event_Keyframe_Path()...
-
+        #endregion update event id of all images (usually for newly uploaded data)
+        
 
 
 
@@ -142,6 +143,53 @@ namespace SenseCamBrowser1.Database_Versioning
 
 
 
+
+        public static string spGet_Last_Keyframe_Path(int user_id)
+        {
+            string end_string = "SELECT keyframe_path";
+            end_string += "\n" + "FROM All_Events";
+            end_string += "\n" + "WHERE [user_id] = " + user_id;
+            end_string += "\n" + "ORDER BY [day] DESC";
+            end_string += "\n" + "LIMIT 1";
+
+            return end_string;
+        } //close method spGet_Last_Keyframe_Path()
+
+
+
+        public static string spGet_List_Of_All_Days_For_User(int user_id)
+        {
+            string end_string = "SELECT MIN([day])";
+            end_string += "\n" + "FROM All_Events";
+            end_string += "\n" + "WHERE [user_id] = " + user_id;
+            end_string += "\n" + "GROUP BY strftime('%Y-%m-%d',day)";
+            end_string += "\n" + "ORDER BY MIN([day]) DESC";
+
+            return end_string;
+        } //close method spGet_List_Of_All_Days_For_User()...
+
+
+
+
+        
+
+
+
+
+        public static string spGet_Day_Start_and_End_Times(int user_id, DateTime day)
+        {
+            string end_string = "SELECT MIN(start_time) AS start_time, MAX(end_time) AS end_time";
+            end_string += "\n" + "FROM All_Events";
+            end_string += "\n" + "WHERE [user_id] = " + user_id;
+            end_string += "\n" + "AND day >=" + convert_datetime_to_sql_string(new DateTime(day.Year, day.Month, day.Day)) + "";
+            end_string += "\n" + "AND day <=" + convert_datetime_to_sql_string(new DateTime(day.Year, day.Month, day.Day, 23, 59, 59)) + "";
+            //end_string += "\n" + "AND DATEPART(YEAR, [day]) = DATEPART(YEAR, " + convert_datetime_to_sql_string(day) + ")";
+            //end_string += "\n" + "AND DATEPART(DAYOFYEAR, [day]) = DATEPART(DAYOFYEAR, " + convert_datetime_to_sql_string(day) + ")";
+
+            return end_string;
+        } //close method spGet_Day_Start_and_End_Times()...
+
+
         public static string spGet_Num_Images_In_Day(int user_id, DateTime day)
         {
             string end_string = "SELECT COUNT(*)";
@@ -161,50 +209,6 @@ namespace SenseCamBrowser1.Database_Versioning
             end_string += "\n" + ")";
             return end_string;
         } //close method spGet_Num_Images_In_Day()...
-
-
-
-
-        public static string spGet_List_Of_All_Days_For_User(int user_id)
-        {
-            string end_string = "SELECT MIN([day])";
-            end_string += "\n" + "FROM All_Events";
-            end_string += "\n" + "WHERE [user_id] = " + user_id;
-            end_string += "\n" + "GROUP BY strftime('%Y-%m-%d',day)";
-            end_string += "\n" + "ORDER BY MIN([day]) DESC";
-
-            return end_string;
-        } //close method spGet_List_Of_All_Days_For_User()...
-
-
-
-
-        public static string spGet_Last_Keyframe_Path(int user_id)
-        {
-            string end_string = "SELECT keyframe_path";
-            end_string += "\n" + "FROM All_Events";
-            end_string += "\n" + "WHERE [user_id] = " + user_id;
-            end_string += "\n" + "ORDER BY [day] DESC";
-            end_string += "\n" + "LIMIT 1";
-
-            return end_string;
-        } //close method spGet_Last_Keyframe_Path()
-
-
-
-
-        public static string spGet_Day_Start_and_End_Times(int user_id, DateTime day)
-        {
-            string end_string = "SELECT MIN(start_time) AS start_time, MAX(end_time) AS end_time";
-            end_string += "\n" + "FROM All_Events";
-            end_string += "\n" + "WHERE [user_id] = " + user_id;
-            end_string += "\n" + "AND day >=" + convert_datetime_to_sql_string(new DateTime(day.Year, day.Month, day.Day)) + "";
-            end_string += "\n" + "AND day <=" + convert_datetime_to_sql_string(new DateTime(day.Year, day.Month, day.Day, 23, 59, 59)) + "";
-            //end_string += "\n" + "AND DATEPART(YEAR, [day]) = DATEPART(YEAR, " + convert_datetime_to_sql_string(day) + ")";
-            //end_string += "\n" + "AND DATEPART(DAYOFYEAR, [day]) = DATEPART(DAYOFYEAR, " + convert_datetime_to_sql_string(day) + ")";
-
-            return end_string;
-        } //close method spGet_Day_Start_and_End_Times()...
 
 
 
@@ -253,9 +257,8 @@ namespace SenseCamBrowser1.Database_Versioning
 
 
 
-        public static string Oct10_UPDATE_EVENT_KEYFRAME_IMAGE_select_random_image_from_event_target_window(int user_id, int event_id, DateTime target_time, int search_window_minutes)
+        public static string spSelect_random_image_from_event_around_target_window(int user_id, int event_id, DateTime target_time, int search_window_minutes)
         {
-            //todo multiple query
             string end_string = "SELECT image_path";
             end_string += "\n" + "FROM All_Images";
             end_string += "\n" + "WHERE [user_id] = " + user_id;
@@ -271,9 +274,8 @@ namespace SenseCamBrowser1.Database_Versioning
 
 
 
-        public static string Oct10_UPDATE_EVENT_KEYFRAME_IMAGE_select_any_random_image_from_event(int user_id, int event_id)
+        public static string spSelect_any_random_image_from_event(int user_id, int event_id)
         {
-            //todo multiple query
             string end_string = "SELECT image_path";
             end_string += "\n" + "FROM All_Images";
             end_string += "\n" + "WHERE [user_id] = " + user_id;
@@ -287,9 +289,8 @@ namespace SenseCamBrowser1.Database_Versioning
 
 
 
-        public static string Oct10_UPDATE_EVENT_KEYFRAME_IMAGE_update_table(int user_id, int event_id, DateTime start_time, DateTime end_time, string new_keyframe_path)
+        public static string spUpdate_Event_time_keyframe_info(int user_id, int event_id, DateTime start_time, DateTime end_time, string new_keyframe_path)
         {
-            //todo multiple query
             string end_string = "UPDATE All_Events";
             end_string += "\n" + "SET start_time = " + convert_datetime_to_sql_string(start_time) + ",";
             end_string += "\n" + "end_time = " + convert_datetime_to_sql_string(end_time) + ",";
@@ -303,7 +304,7 @@ namespace SenseCamBrowser1.Database_Versioning
 
 
 
-        public static string JAN11_GET_ANNOTATED_EVENTS_IN_DAY(int user_id, DateTime day)
+        public static string spGet_annotated_events_in_day(int user_id, DateTime day)
         {
             //string end_string = "SELECT annotations.event_id, annotations.annotation_name,DATEDIFF(SECOND, All_Events.start_time, All_Events.end_time) AS duration_in_seconds";
             string end_string = "SELECT annotations.event_id, annotations.annotation_name, strftime('%s',All_Events.end_time) - strftime('%s',All_Events.start_time) AS duration_in_seconds";
@@ -355,7 +356,7 @@ namespace SenseCamBrowser1.Database_Versioning
 
 
 
-        public static string feb10_spUpdateEvent_Number_Times_Viewed(int user_id, int event_id)
+        public static string spUpdateEvent_Number_Times_Viewed(int user_id, int event_id)
         {
             string end_string = "";
             end_string += "\n" + "UPDATE All_Events";
