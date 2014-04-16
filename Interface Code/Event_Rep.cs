@@ -245,16 +245,36 @@ namespace SenseCamBrowser1
             /// <param name="time_of_end_image"></param>
             public static void send_images_to_previous_event(int user_id, int event_id_of_source_images, DateTime time_of_end_image)
             {
-                //step 1, identify the ID of the previous event...
-                //step 2, update the All_Images table, to change the given images in the event_id_source_of_new_images to the ID of their new event
-                //step 3, update the start/end time of the two events in question...
-                //step 4, update the keyframe path of the events in question...
-                
-                //all the above steps are covered by the stored procedure below...
                 SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
-                SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.Oct10_ADD_NEW_MERGED_IMAGES_TO_PREVIOUS_EVENT(),con);//todo write SQL syntax! "Oct10_ADD_NEW_MERGED_IMAGES_TO_PREVIOUS_EVENT", con);
+                SQLiteCommand command = new SQLiteCommand(con);
                 con.Open();
-                selectCmd.ExecuteNonQuery();
+
+                //firstly get the day of the source event...
+                command.CommandText = Database_Versioning.text_for_stored_procedures.Jan11_SPLIT_EVENT_INTO_TWO_part1_get_day_of_source_event(user_id, event_id_of_source_images);
+                DateTime day_of_source_event = DateTime.Parse(command.ExecuteScalar().ToString());
+
+                //then get the id of the previous event (which to append images to)
+                command.CommandText = Database_Versioning.text_for_stored_procedures.Oct10_ADD_NEW_MERGED_IMAGES_TO_PREVIOUS_EVENT_part2_get_id_of_event_to_append_images_to(user_id, event_id_of_source_images, time_of_end_image, day_of_source_event);
+                int new_event_id = -1;
+                try { new_event_id = int.Parse(command.ExecuteScalar().ToString()); } catch (Exception excep) { }
+
+                if (new_event_id < 0)
+                {
+                    //then create and get the id of a new event where the split images will be sent to...
+                    command.CommandText = Database_Versioning.text_for_stored_procedures.Jan11_SPLIT_EVENT_INTO_TWO_part2_get_id_of_new_event(user_id, day_of_source_event);
+                    new_event_id = int.Parse(command.ExecuteScalar().ToString());
+                } //close if (new_event_id < 0)...
+
+                //then update image and sensor tables transferring relevant images from original event id to new/previous event id...
+                command.CommandText = Database_Versioning.text_for_stored_procedures.Oct10_ADD_NEW_MERGED_IMAGES_TO_PREVIOUS_EVENT_part4_update_images_sensors_tables_with_new_event_id(user_id, new_event_id, event_id_of_source_images, time_of_end_image);
+                command.ExecuteNonQuery();
+
+                //update the event information (start time, end time, keyframe path) of the newly created event...
+                update_event_information_in_database(user_id, new_event_id);
+
+                //now update the event information of what is left of the old event
+                update_event_information_in_database(user_id, event_id_of_source_images);
+
                 con.Close();
             } //close method send_images_to_previous_event()...
 
@@ -293,7 +313,7 @@ namespace SenseCamBrowser1
                 SQLiteCommand command = new SQLiteCommand(con);
                 con.Open();
 
-                //firstly the day of the source event...
+                //firstly get the day of the source event...
                 command.CommandText = Database_Versioning.text_for_stored_procedures.Jan11_SPLIT_EVENT_INTO_TWO_part1_get_day_of_source_event(user_id, event_id_of_source_images);
                 DateTime day_of_source_event = DateTime.Parse(command.ExecuteScalar().ToString());
 

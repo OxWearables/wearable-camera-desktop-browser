@@ -2384,14 +2384,15 @@ END
         {
             //todo multiple query...
 
-            string end_string = "SELECT TOP 1 event_id";
+            string end_string = "SELECT event_id";
             end_string += "\n" + "FROM All_Events";
             end_string += "\n" + "WHERE [user_id]=" + user_id;
             end_string += "\n" + "AND event_id!=" + event_id_of_new_source_images;// --ad update on 25/01/10";
             end_string += "\n" + "AND start_time >= " + convert_datetime_to_sql_string(time_of_end_image.AddHours(-6));
             end_string += "\n" + "AND start_time < " + convert_datetime_to_sql_string(time_of_end_image);
             end_string += "\n" + "AND [day] = " + convert_datetime_to_sql_string(day_of_source_event);
-            end_string += "\n" + "ORDER BY start_time DESC;";            
+            end_string += "\n" + "ORDER BY start_time DESC";
+            end_string += "\n" + "LIMIT 1 ;";
 
 
             return end_string;
