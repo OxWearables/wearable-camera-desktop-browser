@@ -367,35 +367,50 @@ namespace SenseCamBrowser1
                 SQLiteCommand command = new SQLiteCommand(con);
                 con.Open();
 
-                //firstly get event start/end time info (from All_Images table)...
-                command.CommandText = Database_Versioning.text_for_stored_procedures.Oct10_ADD_NEW_MERGED_IMAGES_TO_PREVIOUS_EVENT_part8_get_start_end_time_of_event_with_removed_images(user_id, event_id);
-                SQLiteDataReader read_events = command.ExecuteReader();
-                read_events.Read();
-                DateTime start_time = DateTime.Parse(read_events[0].ToString());
-                DateTime end_time = DateTime.Parse(read_events[1].ToString());
-                read_events.Close();
-                
-                //then get a target keyframe time (i.e. exactly between start/end times)
-                TimeSpan event_length_seconds = end_time - start_time;
-                DateTime target_time = start_time.AddSeconds(event_length_seconds.TotalSeconds/2);
-                
-                //then select a random image around the target time to be the new keyframe path
-                int ALLOWABLE_TIME_WINDOW_FOR_KEYFRAME_AROUND_TARGET_TIME_IN_MINUTES = 2;
-                command.CommandText = Database_Versioning.text_for_stored_procedures.Oct10_UPDATE_EVENT_KEYFRAME_IMAGE_select_random_image_from_event_target_window(user_id, event_id, target_time, ALLOWABLE_TIME_WINDOW_FOR_KEYFRAME_AROUND_TARGET_TIME_IN_MINUTES);
-                string new_keyframe_path="";
-                try { new_keyframe_path = command.ExecuteScalar().ToString(); } catch (Exception excep) { }
+                //firstly check if there are now any images left in the event...
+                command.CommandText = Database_Versioning.text_for_stored_procedures.spGet_Num_Images_In_Event(user_id, event_id);
+                int num_images_in_event = int.Parse(command.ExecuteScalar().ToString());
 
-                //if no image is found around the target time, then just resort to selecting any random image from the event...
-                if (new_keyframe_path.Equals(""))
+                //if no images are left in the event then we will delete this event
+                if (num_images_in_event == 0)
                 {
-                    command.CommandText = Database_Versioning.text_for_stored_procedures.Oct10_UPDATE_EVENT_KEYFRAME_IMAGE_select_any_random_image_from_event(user_id, event_id);
-                    new_keyframe_path = command.ExecuteScalar().ToString();
-                }
+                    command.CommandText = Database_Versioning.text_for_stored_procedures.spDelete_Event(user_id, event_id);
+                    command.ExecuteNonQuery();
+                } //close if (num_images_in_event == 0)...
+                else
+                {
+                    //if images are present in the event, then let's update it's start/end time and keyframe information
 
-                //finally update the event keyframe path in the All_Events table...
-                command.CommandText = Database_Versioning.text_for_stored_procedures.Oct10_UPDATE_EVENT_KEYFRAME_IMAGE_update_table(user_id, event_id, start_time, end_time, new_keyframe_path);
-                command.ExecuteNonQuery();
+                    //firstly get event start/end time info (from All_Images table)...
+                    command.CommandText = Database_Versioning.text_for_stored_procedures.Oct10_ADD_NEW_MERGED_IMAGES_TO_PREVIOUS_EVENT_part8_get_start_end_time_of_event_with_removed_images(user_id, event_id);
+                    SQLiteDataReader read_events = command.ExecuteReader();
+                    read_events.Read();
+                    DateTime start_time = DateTime.Parse(read_events[0].ToString());
+                    DateTime end_time = DateTime.Parse(read_events[1].ToString());
+                    read_events.Close();
 
+                    //then get a target keyframe time (i.e. exactly between start/end times)
+                    TimeSpan event_length_seconds = end_time - start_time;
+                    DateTime target_time = start_time.AddSeconds(event_length_seconds.TotalSeconds / 2);
+
+                    //then select a random image around the target time to be the new keyframe path
+                    int ALLOWABLE_TIME_WINDOW_FOR_KEYFRAME_AROUND_TARGET_TIME_IN_MINUTES = 2;
+                    command.CommandText = Database_Versioning.text_for_stored_procedures.Oct10_UPDATE_EVENT_KEYFRAME_IMAGE_select_random_image_from_event_target_window(user_id, event_id, target_time, ALLOWABLE_TIME_WINDOW_FOR_KEYFRAME_AROUND_TARGET_TIME_IN_MINUTES);
+                    string new_keyframe_path = "";
+                    try { new_keyframe_path = command.ExecuteScalar().ToString(); }
+                    catch (Exception excep) { }
+
+                    //if no image is found around the target time, then just resort to selecting any random image from the event...
+                    if (new_keyframe_path.Equals(""))
+                    {
+                        command.CommandText = Database_Versioning.text_for_stored_procedures.Oct10_UPDATE_EVENT_KEYFRAME_IMAGE_select_any_random_image_from_event(user_id, event_id);
+                        new_keyframe_path = command.ExecuteScalar().ToString();
+                    }
+
+                    //finally update the event keyframe path in the All_Events table...
+                    command.CommandText = Database_Versioning.text_for_stored_procedures.Oct10_UPDATE_EVENT_KEYFRAME_IMAGE_update_table(user_id, event_id, start_time, end_time, new_keyframe_path);
+                    command.ExecuteNonQuery();
+                } //close else ... if (num_images_in_event == 0)
                 con.Close();
             } //close method update_event_information_in_database()...
 
