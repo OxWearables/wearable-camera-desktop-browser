@@ -917,7 +917,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
             SQLiteCommand command = new SQLiteCommand(cnn);
             cnn.Open();
             //firstly get the most recent event not updated...
-            command.CommandText = Database_Versioning.text_for_stored_procedures.spUpdate_Images_With_Event_ID_step1_get_most_recent_event_id_for_user(user_id);
+            command.CommandText = Database_Versioning.text_for_stored_procedures.spGet_most_recent_event_id_for_user(user_id);
             int most_recent_event_id = int.Parse(command.ExecuteScalar().ToString());
             
             //then update images table with relevant event id values

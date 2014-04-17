@@ -270,7 +270,7 @@ namespace SenseCamBrowser1
         {
             int user_id_of_user_with_most_recent_data = -1;
             SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
-            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.feb_10_spGet_UserID_of_Most_Recent_Data_Upload(), con);
+            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spGet_UserID_of_Most_Recent_Data_Upload(), con);
             con.Open();
             try
             {

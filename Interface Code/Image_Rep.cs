@@ -178,7 +178,7 @@ namespace SenseCamBrowser1
 
             //this method calls a database stored procedure and returns the paths of all the images in this event
             SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
-            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spGet_Paths_Of_All_Images_In_Events(user_id, event_id), con);
+            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spGet_Paths_Of_All_Images_In_Event(user_id, event_id), con);
             con.Open();
             SQLiteDataReader read_events = selectCmd.ExecuteReader();
 

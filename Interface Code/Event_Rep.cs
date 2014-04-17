@@ -250,11 +250,11 @@ namespace SenseCamBrowser1
                 con.Open();
 
                 //firstly get the day of the source event...
-                command.CommandText = Database_Versioning.text_for_stored_procedures.Jan11_SPLIT_EVENT_INTO_TWO_part1_get_day_of_source_event(user_id, event_id_of_source_images);
+                command.CommandText = Database_Versioning.text_for_stored_procedures.spGet_day_of_source_event(user_id, event_id_of_source_images);
                 DateTime day_of_source_event = DateTime.Parse(command.ExecuteScalar().ToString());
 
                 //then get the id of the previous event (which to append images to)
-                command.CommandText = Database_Versioning.text_for_stored_procedures.Oct10_ADD_NEW_MERGED_IMAGES_TO_PREVIOUS_EVENT_part2_get_id_of_event_to_append_images_to(user_id, event_id_of_source_images, time_of_end_image, day_of_source_event);
+                command.CommandText = Database_Versioning.text_for_stored_procedures.spGet_id_of_event_before_ID_and_time(user_id, event_id_of_source_images, time_of_end_image, day_of_source_event);
                 int new_event_id = -1;
                 try { new_event_id = int.Parse(command.ExecuteScalar().ToString()); } catch (Exception excep) { }
 
@@ -262,7 +262,7 @@ namespace SenseCamBrowser1
                 if (new_event_id < 0)
                 {
                     //then create and get the id of a new event where the split images will be sent to...
-                    command.CommandText = Database_Versioning.text_for_stored_procedures.Jan11_SPLIT_EVENT_INTO_TWO_part2_get_id_of_new_event(user_id, day_of_source_event);
+                    command.CommandText = Database_Versioning.text_for_stored_procedures.spCreate_new_event_and_return_its_ID(user_id, day_of_source_event);
                     new_event_id = int.Parse(command.ExecuteScalar().ToString());
                 } //close if (new_event_id < 0)...
 
@@ -293,11 +293,11 @@ namespace SenseCamBrowser1
                 con.Open();
 
                 //firstly get the day of the source event...
-                command.CommandText = Database_Versioning.text_for_stored_procedures.Jan11_SPLIT_EVENT_INTO_TWO_part1_get_day_of_source_event(user_id, event_id_of_source_images);
+                command.CommandText = Database_Versioning.text_for_stored_procedures.spGet_day_of_source_event(user_id, event_id_of_source_images);
                 DateTime day_of_source_event = DateTime.Parse(command.ExecuteScalar().ToString());
 
                 //then get the id of the next event (which to append images to)
-                command.CommandText = Database_Versioning.text_for_stored_procedures.Oct10_ADD_NEW_MERGED_IMAGES_TO_NEXT_EVENT_part1_get_id_of_event_to_append_images_to(user_id, event_id_of_source_images, time_of_start_image, day_of_source_event);
+                command.CommandText = Database_Versioning.text_for_stored_procedures.spGet_id_of_event_after_ID_and_time(user_id, event_id_of_source_images, time_of_start_image, day_of_source_event);
                 int new_event_id = -1;
                 try { new_event_id = int.Parse(command.ExecuteScalar().ToString()); }
                 catch (Exception excep) { }
@@ -306,7 +306,7 @@ namespace SenseCamBrowser1
                 if (new_event_id < 0)
                 {
                     //then create and get the id of a new event where the split images will be sent to...
-                    command.CommandText = Database_Versioning.text_for_stored_procedures.Jan11_SPLIT_EVENT_INTO_TWO_part2_get_id_of_new_event(user_id, day_of_source_event);
+                    command.CommandText = Database_Versioning.text_for_stored_procedures.spCreate_new_event_and_return_its_ID(user_id, day_of_source_event);
                     new_event_id = int.Parse(command.ExecuteScalar().ToString());
                 } //close if (new_event_id < 0)...
 
@@ -337,11 +337,11 @@ namespace SenseCamBrowser1
                 con.Open();
 
                 //firstly get the day of the source event...
-                command.CommandText = Database_Versioning.text_for_stored_procedures.Jan11_SPLIT_EVENT_INTO_TWO_part1_get_day_of_source_event(user_id, event_id_of_source_images);
+                command.CommandText = Database_Versioning.text_for_stored_procedures.spGet_day_of_source_event(user_id, event_id_of_source_images);
                 DateTime day_of_source_event = DateTime.Parse(command.ExecuteScalar().ToString());
 
                 //then create and get the id of a new event where the split images will be sent to...
-                command.CommandText = Database_Versioning.text_for_stored_procedures.Jan11_SPLIT_EVENT_INTO_TWO_part2_get_id_of_new_event(user_id, day_of_source_event);
+                command.CommandText = Database_Versioning.text_for_stored_procedures.spCreate_new_event_and_return_its_ID(user_id, day_of_source_event);
                 int new_event_id = int.Parse(command.ExecuteScalar().ToString());
 
                 //then update image and sensor tables with the new event id...
@@ -382,7 +382,7 @@ namespace SenseCamBrowser1
                     //if images are present in the event, then let's update it's start/end time and keyframe information
 
                     //firstly get event start/end time info (from All_Images table)...
-                    command.CommandText = Database_Versioning.text_for_stored_procedures.Oct10_ADD_NEW_MERGED_IMAGES_TO_PREVIOUS_EVENT_part8_get_start_end_time_of_event_with_removed_images(user_id, event_id);
+                    command.CommandText = Database_Versioning.text_for_stored_procedures.spGet_start_end_time_of_event(user_id, event_id);
                     SQLiteDataReader read_events = command.ExecuteReader();
                     read_events.Read();
                     DateTime start_time = DateTime.Parse(read_events[0].ToString());

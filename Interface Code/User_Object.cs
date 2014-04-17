@@ -53,7 +53,7 @@ namespace SenseCamBrowser1
 
             List<User_Object> list_of_users = new List<User_Object>();
             SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
-            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.feb_10_spGet_List_Of_Users(), con);            
+            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spGet_List_Of_Users(), con);            
             con.Open();            
             SQLiteDataReader read_events = selectCmd.ExecuteReader();
 
@@ -87,7 +87,7 @@ namespace SenseCamBrowser1
 
             //this method calls the relevant database stored procedure to insert a new user and then return the ID of this newly added user...
             SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
-            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.feb_10_spInsert_New_User_Into_Database_and_Return_ID_part1_insert_into_users_table_and_get_id(usr_name), con);
+            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spInsert_New_User_Into_Database_and_Return_ID(usr_name), con);
             //todo make sql command calls like this ... SqlCommand selectCmd = new SqlCommand(Database_Versioning.text_for_stored_procedures.feb_10_spInsert_New_User_Into_Database_and_Return_ID(usr_name), con);
             con.Open();
 
@@ -96,12 +96,12 @@ namespace SenseCamBrowser1
             catch (Exception excep) { }
 
             //insert dummy event into All_Events table and get event id
-            selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.feb_10_spInsert_New_User_Into_Database_and_Return_ID_part2_insert_into_events_and_get_event_id(new_user_id), con);
+            selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spCreate_new_event_and_return_its_ID(new_user_id), con);
             try { new_event_id = int.Parse(selectCmd.ExecuteScalar().ToString()); }
             catch (Exception excep) { }
 
             //insert dummy image into All_Images table
-            selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.feb_10_spInsert_New_User_Into_Database_and_Return_ID_part3_insert_into_images(new_user_id, new_event_id), con);
+            selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spCreate_dummy_image(new_user_id, new_event_id), con);
             try { selectCmd.ExecuteNonQuery(); }
             catch (Exception excep) { }
 
