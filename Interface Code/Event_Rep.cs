@@ -267,7 +267,7 @@ namespace SenseCamBrowser1
                 } //close if (new_event_id < 0)...
 
                 //then update image and sensor tables transferring relevant images from original event id to new/previous event id...
-                command.CommandText = Database_Versioning.text_for_stored_procedures.Oct10_ADD_NEW_MERGED_IMAGES_TO_PREVIOUS_EVENT_part4_update_images_sensors_tables_with_new_event_id(user_id, new_event_id, event_id_of_source_images, time_of_end_image);
+                command.CommandText = Database_Versioning.text_for_stored_procedures.spUpdate_image_sensors_tables_with_new_event_id_before_target_time(user_id, new_event_id, event_id_of_source_images, time_of_end_image);
                 command.ExecuteNonQuery();
 
                 //update the event information (start time, end time, keyframe path) of the newly created event...
@@ -311,7 +311,7 @@ namespace SenseCamBrowser1
                 } //close if (new_event_id < 0)...
 
                 //then update image and sensor tables transferring relevant images from original event id to new/previous event id...
-                command.CommandText = Database_Versioning.text_for_stored_procedures.Jan11_SPLIT_EVENT_INTO_TWO_part3_update_image_sensors_tables_with_new_event_id(user_id, new_event_id, event_id_of_source_images, time_of_start_image);
+                command.CommandText = Database_Versioning.text_for_stored_procedures.spUpdate_image_sensors_tables_with_new_event_id_after_target_time(user_id, new_event_id, event_id_of_source_images, time_of_start_image);
                 command.ExecuteNonQuery();
 
                 //update the event information (start time, end time, keyframe path) of the newly created event...
@@ -345,7 +345,7 @@ namespace SenseCamBrowser1
                 int new_event_id = int.Parse(command.ExecuteScalar().ToString());
 
                 //then update image and sensor tables with the new event id...
-                command.CommandText = Database_Versioning.text_for_stored_procedures.Jan11_SPLIT_EVENT_INTO_TWO_part3_update_image_sensors_tables_with_new_event_id(user_id, new_event_id, event_id_of_source_images, time_of_start_image);
+                command.CommandText = Database_Versioning.text_for_stored_procedures.spUpdate_image_sensors_tables_with_new_event_id_after_target_time(user_id, new_event_id, event_id_of_source_images, time_of_start_image);
                 command.ExecuteNonQuery();
 
                 //update the event information (start time, end time, keyframe path) of the newly created event...

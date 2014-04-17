@@ -8,7 +8,7 @@ namespace SenseCamBrowser1.Database_Versioning
     class text_for_stored_procedures
     {
 
-        #region get user details
+        #region get/set user details
 
         public static string spGet_List_Of_Users()
         {
@@ -50,7 +50,8 @@ namespace SenseCamBrowser1.Database_Versioning
             return end_string;
         } //close method spCreate_dummy_image()...
         
-        #endregion get user details
+        #endregion get/set user details
+
 
 
 
@@ -76,9 +77,20 @@ namespace SenseCamBrowser1.Database_Versioning
             string end_string = "DELETE";
             end_string += "\n" + "FROM All_Events";
             end_string += "\n" + "WHERE [user_id] = " + user_id;
-            end_string += "\n" + "AND [event_id] = " + event_id;
+            end_string += "\n" + "AND [event_id] = " + event_id + ";";
             return end_string;
         } //close method spDelete_Event()...
+
+
+        public static string spDelete_Image_From_Event(int user_id, int event_id, DateTime image_time)
+        {
+            string end_string = "DELETE";
+            end_string += "\n" + "FROM All_Images";
+            end_string += "\n" + "WHERE [user_id] = " + user_id;
+            end_string += "\n" + "AND [event_id] = " + event_id;
+            end_string += "\n" + "AND image_time = " + convert_datetime_to_sql_string(image_time) + ";";
+            return end_string;
+        } //close method spDelete_Image_From_Event()...
 
 
         public static string spUpdateEventComment(int user_id, int event_id, string comment)
@@ -86,7 +98,7 @@ namespace SenseCamBrowser1.Database_Versioning
             string end_string = "UPDATE All_Events";
             end_string += "\n" + "SET comment = '" + comment + "'";
             end_string += "\n" + "WHERE [user_id] = " + user_id;
-            end_string += "\n" + "AND [event_id] = " + event_id;
+            end_string += "\n" + "AND [event_id] = " + event_id + ";";
             return end_string;
         } //close method spUpdateEventComment()...
         
@@ -96,7 +108,7 @@ namespace SenseCamBrowser1.Database_Versioning
             string end_string = "UPDATE All_Events";
             end_string += "\n" + "SET keyframe_path = '" + keyframe_path + "'";
             end_string += "\n" + "WHERE [user_id] = " + user_id;
-            end_string += "\n" + "AND [event_id] = " + event_id;
+            end_string += "\n" + "AND [event_id] = " + event_id + ";";
             return end_string;
         } //end method spUpdate_Event_Keyframe_Path()...
 
@@ -122,7 +134,41 @@ namespace SenseCamBrowser1.Database_Versioning
             end_string += "\n" + "and event_id = " + event_id + ";";
             return end_string;
         } //close method spUpdateEvent_Number_Times_Viewed()...
-        
+
+
+        public static string spUpdate_image_sensors_tables_with_new_event_id_after_target_time(int user_id, int new_event_id, int source_event_id, DateTime target_start_time)
+        {
+            string end_string = "UPDATE All_Images";
+            end_string += "\n" + "SET event_id = " + new_event_id;
+            end_string += "\n" + "WHERE [user_id] = " + user_id;
+            end_string += "\n" + "AND event_id = " + source_event_id;
+            end_string += "\n" + "AND image_time >= " + convert_datetime_to_sql_string(target_start_time) + ";";
+            end_string += "\n" + "";
+            end_string += "\n" + "UPDATE Sensor_Readings";
+            end_string += "\n" + "SET event_id = " + new_event_id;
+            end_string += "\n" + "WHERE [user_id] = " + user_id;
+            end_string += "\n" + "AND event_id = " + source_event_id;
+            end_string += "\n" + "AND sample_time >= " + convert_datetime_to_sql_string(target_start_time) + ";";
+            return end_string;
+        } //close method spUpdate_image_sensors_tables_with_new_event_id_after_target_time()...
+
+
+        public static string spUpdate_image_sensors_tables_with_new_event_id_before_target_time(int user_id, int new_event_id, int source_event_id, DateTime target_end_time)
+        {
+            string end_string = "UPDATE All_Images";
+            end_string += "\n" + "SET event_id = " + new_event_id;
+            end_string += "\n" + "WHERE [user_id] = " + user_id;
+            end_string += "\n" + "AND event_id = " + source_event_id;
+            end_string += "\n" + "AND image_time <= " + convert_datetime_to_sql_string(target_end_time) + ";";
+            end_string += "\n" + "";
+            end_string += "\n" + "UPDATE Sensor_Readings";
+            end_string += "\n" + "SET event_id = " + new_event_id;
+            end_string += "\n" + "WHERE [user_id] = " + user_id;
+            end_string += "\n" + "AND event_id = " + source_event_id;
+            end_string += "\n" + "AND sample_time <= " + convert_datetime_to_sql_string(target_end_time) + ";";
+            return end_string;
+        } //close method spUpdate_image_sensors_tables_with_new_event_id_after_target_time()...
+
         #endregion update event details
 
 
@@ -134,8 +180,7 @@ namespace SenseCamBrowser1.Database_Versioning
         {
             string end_string = "";
             end_string += "\n" + "SELECT CASE WHEN MAX(event_id) IS NOT NULL THEN MAX(event_id)-1 ELSE -1 END "; //WILL JUST GO BACK 1 JUST TO BE ON THE SAFE SIDE SO THAT I DON'T MISS ASSIGNING THE EVENT TO ANY IMAGE
-            end_string += "\n" + "FROM All_Images where [user_id] = " + user_id;
-
+            end_string += "\n" + "FROM All_Images where [user_id] = " + user_id + ";";
             return end_string;
         } //close method spGet_most_recent_event_id_for_user()....
 
@@ -149,8 +194,7 @@ namespace SenseCamBrowser1.Database_Versioning
             end_string += "\n" + "AND day <=" + convert_datetime_to_sql_string(new DateTime(day.Year, day.Month, day.Day, 23, 59, 59)) + "";
             //end_string += "\n" + "AND DATEPART(YEAR, [day]) = DATEPART(YEAR, " + convert_datetime_to_sql_string(day) + ")";
             //end_string += "\n" + "AND DATEPART(DAYOFYEAR, [day]) = DATEPART(DAYOFYEAR, " + convert_datetime_to_sql_string(day) + ")";
-            end_string += "\n" + "ORDER BY start_time";
-
+            end_string += "\n" + "ORDER BY start_time;";
             return end_string;
         } //close method spGet_All_Events_In_Day()...
 
@@ -161,8 +205,7 @@ namespace SenseCamBrowser1.Database_Versioning
             end_string += "\n" + "FROM All_Events";
             end_string += "\n" + "WHERE [user_id] = " + user_id;
             end_string += "\n" + "ORDER BY [day] DESC";
-            end_string += "\n" + "LIMIT 1";
-
+            end_string += "\n" + "LIMIT 1;";
             return end_string;
         } //close method spGet_Last_Keyframe_Path()
 
@@ -170,7 +213,6 @@ namespace SenseCamBrowser1.Database_Versioning
         public static string spGet_day_of_source_event(int user_id, int event_id)
         {
             string end_string = "SELECT [day] FROM All_Events WHERE [user_id]=" + user_id + " AND event_id=" + event_id + ";";
-
             return end_string;
         } //close method spGet_day_of_source_event()...
 
@@ -181,7 +223,6 @@ namespace SenseCamBrowser1.Database_Versioning
             end_string += "\n" + "FROM All_Images";
             end_string += "\n" + "WHERE [user_id] = " + user_id;
             end_string += "\n" + "AND event_id = " + event_id + ";";
-
             return end_string;
         } //close method spGet_start_end_time_of_event()...
 
@@ -191,8 +232,7 @@ namespace SenseCamBrowser1.Database_Versioning
             string end_string = "SELECT COUNT(image_id)";
             end_string += "\n" + "FROM All_Images";
             end_string += "\n" + "WHERE [user_id] = " + user_id;
-            end_string += "\n" + "AND [event_id] = " + event_id;
-
+            end_string += "\n" + "AND [event_id] = " + event_id + ";";
             return end_string;
         } //close method spGet_Num_Images_In_Event()...
 
@@ -203,8 +243,7 @@ namespace SenseCamBrowser1.Database_Versioning
             end_string += "\n" + "FROM All_Images";
             end_string += "\n" + "WHERE [user_id] = " + user_id;
             end_string += "\n" + "AND [event_id] = " + event_id;
-            end_string += "\n" + "ORDER BY image_time";
-
+            end_string += "\n" + "ORDER BY image_time;";
             return end_string;
         } //close method spGet_Paths_Of_All_Images_In_Events()...
         
@@ -219,7 +258,6 @@ namespace SenseCamBrowser1.Database_Versioning
             end_string += "\n" + "AND image_time <= " + convert_datetime_to_sql_string(target_time.AddMinutes(search_window_minutes));
             end_string += "\n" + "ORDER BY RANDOM()";
             end_string += "\n" + "LIMIT 1;";
-
             return end_string;
         } //close method spSelect_random_image_from_event_around_target_window()...
 
@@ -232,7 +270,6 @@ namespace SenseCamBrowser1.Database_Versioning
             end_string += "\n" + "AND event_id = " + event_id;
             end_string += "\n" + "ORDER BY RANDOM()";
             end_string += "\n" + "LIMIT 1;";
-
             return end_string;
         } //close method spSelect_any_random_image_from_event()...
 
@@ -263,10 +300,8 @@ namespace SenseCamBrowser1.Database_Versioning
             end_string += "\n" + "AND [day] = " + convert_datetime_to_sql_string(source_day);
             end_string += "\n" + "ORDER BY start_time DESC";
             end_string += "\n" + "LIMIT 1 ;";
-
             return end_string;
         } //close method spGet_id_of_event_after_ID_and_time()...
-
 
         #endregion get event details
 
@@ -274,8 +309,6 @@ namespace SenseCamBrowser1.Database_Versioning
 
 
         #region update event id of all images (usually for newly uploaded data)
-
-
 
         public static string spUpdate_Images_With_Event_ID_step2_update_images_with_relevant_event_id(int user_id, int most_recent_event_id)
         {
@@ -292,7 +325,6 @@ namespace SenseCamBrowser1.Database_Versioning
             end_string += "\n" + ")";
             end_string += "\n" + "WHERE [user_id] = " + user_id;
             end_string += "\n" + "AND event_id IS NULL;";
-
             return end_string;
         } //close method spUpdate_Images_With_Event_ID_step2_update_images_with_relevant_event_id()....
 
@@ -312,7 +344,6 @@ namespace SenseCamBrowser1.Database_Versioning
             end_string += "\n" + ")";
             end_string += "\n" + "WHERE [user_id] = " + user_id;
             end_string += "\n" + "AND event_id IS NULL;";
-
             return end_string;
         } //close method spUpdate_Images_With_Event_ID_step2_update_images_with_relevant_event_id()....
 
@@ -329,7 +360,6 @@ namespace SenseCamBrowser1.Database_Versioning
             end_string += "\n" + "SET event_id = (SELECT MAX(event_id) FROM All_Events WHERE [user_id] = " + user_id + ")";
             end_string += "\n" + "WHERE [user_id] = " + user_id;
             end_string += "\n" + "AND event_id IS NULL;";
-
             return end_string;
         } //close method spUpdate_Images_With_Event_ID_step2_update_images_with_relevant_event_id()....
 
@@ -389,71 +419,7 @@ namespace SenseCamBrowser1.Database_Versioning
 
 
 
-
-        public static string Jan11_SPLIT_EVENT_INTO_TWO_part3_update_image_sensors_tables_with_new_event_id(int user_id, int event_id_to_append_images_to, int event_id_of_source_images, DateTime time_of_start_image)
-        {
-            string end_string = "UPDATE All_Images";
-            end_string += "\n" + "SET event_id = " + event_id_to_append_images_to;
-            end_string += "\n" + "WHERE [user_id] = " + user_id;
-            end_string += "\n" + "AND event_id = " + event_id_of_source_images;
-            end_string += "\n" + "AND image_time >= " + convert_datetime_to_sql_string(time_of_start_image) + ";";
-            end_string += "\n" + "";
-            end_string += "\n" + "UPDATE Sensor_Readings";
-            end_string += "\n" + "SET event_id = " + event_id_to_append_images_to;
-            end_string += "\n" + "WHERE [user_id] = " + user_id;
-            end_string += "\n" + "AND event_id = " + event_id_of_source_images;
-            end_string += "\n" + "AND sample_time >= " + convert_datetime_to_sql_string(time_of_start_image) + ";";
-            end_string += "\n" + "";
-            return end_string;
-        } //close method Jan11_SPLIT_EVENT_INTO_TWO()...
-
-
-
-
-
-        public static string Oct10_ADD_NEW_MERGED_IMAGES_TO_PREVIOUS_EVENT_part4_update_images_sensors_tables_with_new_event_id(int user_id, int event_id_to_append_images_to, int event_id_of_new_source_images, DateTime time_of_end_image)
-        {
-            string end_string = "UPDATE All_Images";
-            end_string += "\n" + "SET event_id = " + event_id_to_append_images_to;
-            end_string += "\n" + "WHERE [user_id] = " + user_id;
-            end_string += "\n" + "AND event_id = " + event_id_of_new_source_images;
-            end_string += "\n" + "AND image_time <= " + convert_datetime_to_sql_string(time_of_end_image) + ";";
-            end_string += "\n" + "";
-            end_string += "\n" + "UPDATE Sensor_Readings";
-            end_string += "\n" + "SET event_id = " + event_id_to_append_images_to;
-            end_string += "\n" + "WHERE [user_id] = " + user_id;
-            end_string += "\n" + "AND event_id = " + event_id_of_new_source_images;
-            end_string += "\n" + "AND sample_time <= " + convert_datetime_to_sql_string(time_of_end_image) + ";";
-            return end_string;
-        } //close method Oct10_ADD_NEW_MERGED_IMAGES_TO_PREVIOUS_EVENT()...
-
-
-
-
-
-        public static string spLog_User_Interaction(int user_id, DateTime interaction_time, string uixaml_element, string comma_seperated_parameters)
-        {
-            string end_string = "INSERT INTO User_Interaction_Log";
-            end_string += "\n" + "VALUES(" + user_id + ", " + convert_datetime_to_sql_string(interaction_time) + ", '" + uixaml_element + "', '" + comma_seperated_parameters + "');";
-            return end_string;
-        } //close method spLog_User_Interaction()...
-
-
-
-
-        public static string spDelete_Image_From_Event(int user_id, int event_id, DateTime image_time)
-        {
-            string end_string = "DELETE";
-            end_string += "\n" + "FROM All_Images";
-            end_string += "\n" + "WHERE [user_id] = " + user_id;
-            end_string += "\n" + "AND [event_id] = " + event_id;
-            end_string += "\n" + "AND image_time = " + convert_datetime_to_sql_string(image_time) + ";";
-            return end_string;
-        } //close method spDelete_Image_From_Event()...
-
-
-
-
+        #region get/set event annotations
 
         public static string spGet_annotated_events_in_day(int user_id, DateTime day)
         {
@@ -470,42 +436,10 @@ namespace SenseCamBrowser1.Database_Versioning
             //end_string += "\n" + "AND DATEPART(YEAR, All_Events.[day]) = DATEPART(YEAR, " + convert_datetime_to_sql_string(day) + ")";
             //end_string += "\n" + "AND DATEPART(DAYOFYEAR, All_Events.[day]) = DATEPART(DAYOFYEAR, " + convert_datetime_to_sql_string(day) + ")";
             end_string += "\n" + "";
-            end_string += "\n" + "ORDER BY All_Events.start_time";
-
+            end_string += "\n" + "ORDER BY All_Events.start_time;";
             return end_string;
         } //close method JAN11_GET_ANNOTATED_EVENTS_IN_DAY()...
-
-
-
-
-        private static string convert_datetime_to_sql_string(DateTime time)
-        {
-            string month, day, hour, minute, second;
-            if (time.Month < 10)
-                month = "0" + time.Month;
-            else month = time.Month.ToString();
-
-            if (time.Day < 10)
-                day = "0" + time.Day;
-            else day = time.Day.ToString();
-            
-            if (time.Hour < 10)
-                hour = "0" + time.Hour;
-            else hour = time.Hour.ToString();
-
-            if (time.Minute < 10)
-                minute = "0" + time.Minute;
-            else minute = time.Minute.ToString();
-
-            if (time.Second < 10)
-                second = "0" + time.Second;
-            else second = time.Second.ToString();
-
-            return "'" + time.Year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second + "'";// +"." + time.Millisecond + "'";
-        } //close method convert_datetime_to_sql_string()...
-
-
-
+        
 
         public static string AUG12_CLEAR_EVENT_ANNOTATIONS_INDIVIDUAL(int user_id, int event_id, string individual_annotation_text)
         {
@@ -514,37 +448,25 @@ namespace SenseCamBrowser1.Database_Versioning
             end_string += "\n" + "WHERE [user_id] = " + user_id;
             end_string += "\n" + "AND [event_id] = " + event_id;
             end_string += "\n" + "AND [annotation_name] = '" + individual_annotation_text + "';";
-            end_string += "\n" + "";
-            end_string += "\n" + "";
-
             return end_string;
         } //close method AUG12_CLEAR_EVENT_ANNOTATIONS_INDIVIDUAL()...
-
-
-
+        
 
         public static string APR11_REMOVE_ANNOTATION_TYPE(string annotation_type_name)
         {
             string end_string = "";
             end_string += "\n" + "DELETE FROM Annotation_Types";
-            end_string += "\n" + "WHERE annotation_type = '" + annotation_type_name + "'";
-            end_string += "\n" + "";
-
+            end_string += "\n" + "WHERE annotation_type = '" + annotation_type_name + "';";;
             return end_string;
         } //close method APR11_REMOVE_ANNOTATION_TYPE()...
-
-
 
 
         public static string APR11_REMOVE_ALL_ANNOTATION_TYPES()
         {
             string end_string = "";
             end_string += "\n" + "DELETE FROM Annotation_Types;";
-
             return end_string;
         } //close APR11_REMOVE_ALL_ANNOTATION_TYPES()...
-
-
 
 
         public static string NOV10_GET_LIST_OF_ANNOTATION_CLASSES()
@@ -553,11 +475,8 @@ namespace SenseCamBrowser1.Database_Versioning
             end_string += "\n" + "SELECT annotation_id, annotation_type, [description]";
             end_string += "\n" + "FROM Annotation_Types";
             end_string += "\n" + "order by annotation_type;";
-
             return end_string;
         } //close method NOV10_GET_LIST_OF_ANNOTATION_CLASSES()...
-
-
 
 
         public static string NOV10_GET_EVENTS_IDS_IN_DAY_FOR_GIVEN_ACTIVITY(int user_id, DateTime day, string annotation_type)
@@ -576,13 +495,8 @@ namespace SenseCamBrowser1.Database_Versioning
             end_string += "\n" + "AND annotations.annotation_name='" + annotation_type + "'";
             end_string += "\n" + "";
             end_string += "\n" + "ORDER BY annotations.event_id;";
-            end_string += "\n" + "";
-            end_string += "\n" + "";
-
             return end_string;
         } //close method NOV10_GET_EVENTS_IDS_IN_DAY_FOR_GIVEN_ACTIVITY()...
-
-
 
 
         public static string NOV10_GET_DAILY_ACTIVITY_SUMMARY_FROM_ANNOTATIONS(int user_id, DateTime day)
@@ -609,13 +523,8 @@ namespace SenseCamBrowser1.Database_Versioning
             end_string += "\n" + "";
             end_string += "\n" + "GROUP BY annotation_name";
             end_string += "\n" + "ORDER BY annotation_name;";
-            end_string += "\n" + "";
-            end_string += "\n" + "";
-
             return end_string;
         } //close method NOV10_GET_DAILY_ACTIVITY_SUMMARY_FROM_ANNOTATIONS()...
-
-
 
 
         public static string NOV10_GET_ANNOTATIONS_FOR_EVENT(int user_id, int event_id)
@@ -624,12 +533,9 @@ namespace SenseCamBrowser1.Database_Versioning
             end_string += "\n" + "SELECT annotation_name";
             end_string += "\n" + "FROM SC_Browser_User_Annotations AS annotations";
             end_string += "\n" + "WHERE annotations.[user_id]=" + user_id;
-            end_string += "\n" + "AND annotations.event_id=" + event_id;
-
+            end_string += "\n" + "AND annotations.event_id=" + event_id + ";";
             return end_string;
         } //close method NOV10_GET_ANNOTATIONS_FOR_EVENT()...
-
-
 
 
         public static string NOV10_CLEAR_EVENT_ANNOTATIONS(int user_id, int event_id)
@@ -637,27 +543,18 @@ namespace SenseCamBrowser1.Database_Versioning
             string end_string = "";
             end_string += "\n" + "DELETE FROM SC_Browser_User_Annotations";
             end_string += "\n" + "WHERE [user_id] = " + user_id;
-            end_string += "\n" + "AND [event_id] = " + event_id;
-
+            end_string += "\n" + "AND [event_id] = " + event_id + ";";
             return end_string;
         } //close method NOV10_CLEAR_EVENT_ANNOTATIONS()...
-
-
 
 
         public static string NOV10_ADD_EVENT_ANNOTATION(int user_id, int event_id, string event_annotation_name)
         {
             string end_string = "";
             end_string += "\n" + "INSERT INTO SC_Browser_User_Annotations";
-            end_string += "\n" + "VALUES (" + user_id + "," + event_id + "," + convert_datetime_to_sql_string(DateTime.Now) + ",'" + event_annotation_name + "')";
-
+            end_string += "\n" + "VALUES (" + user_id + "," + event_id + "," + convert_datetime_to_sql_string(DateTime.Now) + ",'" + event_annotation_name + "');";
             return end_string;
         } //close method NOV10_ADD_EVENT_ANNOTATION()...
-
-
-        
-        
-
 
 
         public static string APR11_ADD_ANNOTATION_TYPE(string annotation_type_name)
@@ -667,11 +564,46 @@ namespace SenseCamBrowser1.Database_Versioning
             end_string += "\n" + "DELETE FROM Annotation_Types";
             end_string += "\n" + "WHERE annotation_type = '" + annotation_type_name + "';";
             end_string += "\n" + "INSERT INTO Annotation_Types (annotation_type,description) VALUES('" + annotation_type_name + "','" + annotation_type_name + "');";
-
             return end_string;
         } //close method APR11_ADD_ANNOTATION_TYPE()...
 
+        #endregion get/set event annotations
 
+
+
+        public static string spLog_User_Interaction(int user_id, DateTime interaction_time, string uixaml_element, string comma_seperated_parameters)
+        {
+            string end_string = "INSERT INTO User_Interaction_Log";
+            end_string += "\n" + "VALUES(" + user_id + ", " + convert_datetime_to_sql_string(interaction_time) + ", '" + uixaml_element + "', '" + comma_seperated_parameters + "');";
+            return end_string;
+        } //close method spLog_User_Interaction()...
+
+
+        private static string convert_datetime_to_sql_string(DateTime time)
+        {
+            string month, day, hour, minute, second;
+            if (time.Month < 10)
+                month = "0" + time.Month;
+            else month = time.Month.ToString();
+
+            if (time.Day < 10)
+                day = "0" + time.Day;
+            else day = time.Day.ToString();
+
+            if (time.Hour < 10)
+                hour = "0" + time.Hour;
+            else hour = time.Hour.ToString();
+
+            if (time.Minute < 10)
+                minute = "0" + time.Minute;
+            else minute = time.Minute.ToString();
+
+            if (time.Second < 10)
+                second = "0" + time.Second;
+            else second = time.Second.ToString();
+
+            return "'" + time.Year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second + "'";// +"." + time.Millisecond + "'";
+        } //close method convert_datetime_to_sql_string()...
 
     } //close class text_for_stored_procedures...
 } //close namespace...
