@@ -606,8 +606,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                     //now let's get what the current header is with this image (the first 20 bytes)
                     jpeg_filestream.Read(current_header, 0, current_header.Length);
 
-                    //AD fix for journey to school project on 16-May-2011...
-                    //unscramble images here!!!
+                    //todo consider how to unscramble images here!!!
                     //now we check if the first 2 bytes are 0, which means that it's not recognised as a JPEG
                     if (current_header[0] == 0 && current_header[1] == 0)
                     {
