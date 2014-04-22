@@ -219,8 +219,6 @@
     <Compile Include="CalendarView.xaml.cs">
       <DependentUpon>CalendarView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Database_Versioning\DB_Version_Handler.cs" />
-    <Compile Include="Database_Versioning\Initiate_DCU_SenseCam_Database.cs" />
     <Compile Include="FolderSelecter.cs">
       <SubType>Form</SubType>
     </Compile>
