@@ -52,6 +52,9 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
         private bool upload_is_direct_from_sensecam, is_multiple_folder_upload_class_variable;
         private string SenseCam_data_directory, current_root_folder, episode_data_csv_file_obj;
         private int user_id;
+
+
+
         public Upload_and_Segment_Images_Thread(Information_Callback param_feedback_callback, Processing_Finished_Callback param_data_processing_finished, string SC_data_directory, string PC_root_folder, int param_user_id, bool uploading_direct_from_sensecam, bool is_multiple_folder_upload, string episode_data_csv_file_obj)
         {
             data_feedback_callback = param_feedback_callback;
@@ -65,12 +68,12 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
         } //close method Upload_and_Segment_Images_Thread()...
 
 
+
         private void write_output(string msg)
         {
             Record_User_Interactions.log_interaction_to_database("Upload_And_Segment_Images_Thread_write_output", msg);
             data_feedback_callback(msg); //and report this back to the UI...
         } //close method write_output()...
-
 
 
 
@@ -115,7 +118,6 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
             if ( (episode_data_csv_file_obj.Equals("")) || (!episode_data_csv_file_obj.Equals("") && selected_folder.Equals(overall_root_directory)) )
                 upload_device_data(device_type, is_multiple_folder_upload, episode_data_csv_file_obj);            
             
-
             //and when we're finished the recursion (if using multiple folder upload)...
             //let's give a data processing finished call back..
             if (is_multiple_folder_upload && selected_folder.Equals(overall_root_directory))
@@ -168,10 +170,8 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
 
 
-
         private void upload_device_data(DeviceType device_type, bool is_part_of_multiple_folder_upload, string csv_file_of_associated_episodes)
         {
-
             write_output(DateTime.Now.ToLongTimeString() + " processing, please wait...");
 
             string local_machine_folder_path_for_new_images;
@@ -200,9 +200,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                         else //if (device_type == DeviceType.SenseCam)
                         {
                             write_SenseCam_time_csv_file();
-                        }
-                        
-
+                        }                        
 
                         //2. create a new folder on the current machine, where the SenseCam images are installed
                         //the folder name will be a reflection of the current datetime
@@ -211,13 +209,11 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                                 format_number(current_folder_time.Hour) + "-" + format_number(current_folder_time.Minute) + "-" + format_number(current_folder_time.Second);
                         Directory.CreateDirectory(local_machine_folder_path_for_new_images);
 
-
                         //3. copy the sensor.csv file and all the image files from the "data" folder in the SenseCam device, to the new folder we created on the local desktop machine
                         write_output(DateTime.Now.ToLongTimeString() + " copying files across...");
                         //todo image uploader status needs to be updated for Autographer!
                         copy_SenseCam_files_to_local_machine(SenseCam_data_directory, local_machine_folder_path_for_new_images, false);
                         write_output(DateTime.Now.ToLongTimeString() + " files copied across...");
-
 
                         //4. delete the files from the SenseCam - this is a seperate process, so we may as well kick start it as early as possible, i.e. just after uploading the images
                         //while at the same time we could have another thread/process that extracts the image features that we'd like...
@@ -227,14 +223,12 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                     } //close if (upload_is_direct_from_sensecam)...
                     else local_machine_folder_path_for_new_images = SenseCam_data_directory;
 
-
                     //5. segment the data into events and upload the database...                                        
                     write_output(DateTime.Now.ToLongTimeString() + " all files have now been copied across, now segmenting data into events...");
                     if(!csv_file_of_associated_episodes.Equals(""))
                         segment_folder_images_into_events_and_upload_to_db(user_id, local_machine_folder_path_for_new_images, device_type,csv_file_of_associated_episodes);
                     else segment_folder_images_into_events_and_upload_to_db(user_id, local_machine_folder_path_for_new_images, device_type);
                     write_output(DateTime.Now.ToLongTimeString() + " all images have now been segmented into events and uploaded to the database...");
-
 
                     //6. as there's a problem with the EXIF header of the SenseCam images, we'll call a method to fix this header, so WPF can display the images we've just copied across...
                     //thanks to Dian Zhang, a CLARITY intern student for help with this code!
@@ -244,7 +238,6 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                     else if(device_type!=DeviceType.Autographer)
                         fix_JPG_header_of_all_images_in_folder(local_machine_folder_path_for_new_images, 0, 100);
                     write_output(DateTime.Now.ToLongTimeString() + " exif headers fixed...");
-
 
                     //7. inform user when all files are deleted, hence we're finished...
                     if (device_type == DeviceType.Autographer)
@@ -284,12 +277,10 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
             {
                 DateTime utc_now = DateTime.UtcNow;
                 TextWriter time_csv_file = new StreamWriter(SenseCam_data_directory.Replace("DATA", "SYSTEM") + "TIME.CSV");
-
                 //TIM,09,02,12 (hour,minute,second)
                 //DAT,09,06,12 (year,month,day)
                 time_csv_file.WriteLine("TIM," + utc_now.Hour + "," + utc_now.Minute + "," + utc_now.Second);
                 time_csv_file.WriteLine("DAT," + utc_now.Year + "," + utc_now.Month + "," + utc_now.Day);
-
                 time_csv_file.Close(); //and finally let's close the file writer object...
             }
             catch (Exception excep)
@@ -306,7 +297,6 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
             {
                 DateTime utc_now = DateTime.UtcNow;
                 TextWriter time_csv_file = new StreamWriter(SenseCam_data_directory.Replace("DATA", "SYSTEM") + "TIME.CSV");
-
                 time_csv_file.WriteLine("tim " + utc_now.Hour + " " + utc_now.Minute + " " + utc_now.Second);
                 time_csv_file.WriteLine();
                 time_csv_file.WriteLine("dat " + utc_now.Year + " " + utc_now.Month + " " + utc_now.Day);
@@ -319,12 +309,13 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
             }
         } //close method write_Vicon_Revue_time_csv_file()...
 
+
+
         private void write_Vicon_Revue_boot_bat_file()
         {
             try
             {
                 TextWriter boot_bat_file = new StreamWriter(SenseCam_data_directory.Replace("DATA", "SYSTEM") + "BOOT.BAT");
-
                 boot_bat_file.WriteLine("# Vicon Revue boot file executed after every USB cable # disconnect or hard reset.");
                 boot_bat_file.WriteLine("# the trig command below will enable the manual, time");
                 boot_bat_file.WriteLine("# triggered, light triggered and accelerator triggered ");
@@ -333,7 +324,6 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                 boot_bat_file.WriteLine();
                 boot_bat_file.WriteLine("# to activate PIR triggered captures, use trig 0x1F02");
                 boot_bat_file.WriteLine("trig 0x1F02");
-
                 boot_bat_file.Close(); //and finally let's close the file writer object...
             }
             catch (Exception excep)
@@ -342,13 +332,14 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
             }
         } //close method write_Vicon_Revue_boot_bat_file()...
 
+
+
         private void write_Autographer_time_file()
         {
             try
             {
                 DateTime utc_now = DateTime.UtcNow;
                 TextWriter autographer_auto_ini_file = new StreamWriter(SenseCam_data_directory.Replace(@"\DATA", "") + "auto.ini");
-
                 autographer_auto_ini_file.WriteLine("#");
                 autographer_auto_ini_file.WriteLine("#    auto.ini file V10a");
                 autographer_auto_ini_file.WriteLine("#");
@@ -376,8 +367,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                 autographer_auto_ini_file.WriteLine("");
                 autographer_auto_ini_file.WriteLine("[Format]");
                 autographer_auto_ini_file.WriteLine("");
-                autographer_auto_ini_file.WriteLine("#FormatVolume=true");
-                
+                autographer_auto_ini_file.WriteLine("#FormatVolume=true");                
                 autographer_auto_ini_file.Close(); //and finally let's close the file writer object...
             }
             catch (Exception excep)
@@ -396,8 +386,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
         } //end format_number()
 
 
-
-
+        
         #region copying files from SenseCam to PC
 
         //these variables must be declared outside methods, as they will be updated by recursively called folders (i.e. must transfer multiple (sub)folders
@@ -422,16 +411,13 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
             } //close if (!sensor_csv_found)...
 
-
             //if there are images here, we'll copy them all over to the local desktop directory
             //foreach (FileInfo image_file in new DirectoryInfo(SenseCam_folder).GetFiles("*.JPG"))
             foreach (FileInfo image_file in attempt_to_retrieve_files_from_directory(SenseCam_folder, "*.JPG"))// new DirectoryInfo(SenseCam_folder).GetFiles("*.JPG"))
                 attempt_to_copy_image_file(SenseCam_folder, local_machine_directory, image_file);
 
-
             //let's inform the user on how we're getting on
             send_image_transfer_progress_update_to_user(0, 50); //for copying we'll update progress between 0 and 50 percent
-
                         
             //and let's traverse through all the folders on the SenseCam system
             foreach (string subfolder in attempt_to_retrieve_subdirectories_from_directory(SenseCam_folder))
@@ -451,6 +437,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
         } //close method send_progress_update_to_user;
 
 
+
         private int get_percentage_of_files_transferred(int start_number, int end_number)
         {
             try
@@ -461,6 +448,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
             }
             catch (Exception excep) { return DateTime.Now.Second; }
         } //close method get_percentage_of_files_transferred()...
+
 
 
         /// <summary>
@@ -480,6 +468,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                 write_output("Couldn't copy file: " + source_file);
             } //close catch ... try ...
         } //end method attempt_to_copy_file()
+
 
 
         /// <summary>
@@ -504,6 +493,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
         } //end method attempt_to_copy_image_file()
 
 
+
         /// <summary>
         /// this method retrieves files (of a type) from a directory, with error handling
         /// </summary>
@@ -522,6 +512,8 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
             } //end try...catch
         } //close method attempt_to_retrieve_files_from_directory()...
 
+
+
         private FileInfo[] attempt_to_retrieve_files_from_directory(string directory_path, string file_type1, string file_type2)
         {
             //here we'll try to return files of "file_type2" if we can't retrieve files of "file_type1"
@@ -532,6 +524,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
             return output_files; //then return our output files
         } //close method attempt_to_retrieve_files_from_directory()...private F
+
 
 
         /// <summary>
@@ -556,7 +549,6 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
 
 
-
         #region deleting files from SenseCam
 
         private void delete_files_on_SenseCam(string SenseCam_data_directory)
@@ -578,8 +570,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
         #endregion end deleting files from SenseCam
 
-
-
+        
 
         #region fixing JPG headers of SenseCam images
 
@@ -590,7 +581,6 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
         private void fix_JPG_header_of_all_images_in_folder(string selected_folder, int start_percent_progress_to_show_to_user, int end_percent_progress_to_show_to_user)
         {
             //thanks to Dian Zhang, a CLARITY intern, who helped figured out how to change the JPG header so "raw" SenseCam images can be displayed on a WPF browser
-
             selected_folder += @"\";
 
             //1. let's get all the image files in the directory
@@ -598,11 +588,9 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
             try { upload_transer_num_images_to_copy_in_total = all_jpeg_files_in_directory.Length; }
             catch (Exception excep) { }
 
-
             //2. then let's make a FileStream object, and also a "valid header" to replace any invalid exif headers
             FileStream jpeg_filestream;
             byte[] valid_exif_header = new byte[] { 17, 74, 70, 73, 70, 0, 1, 1, 1, 0, 96, 0, 96, 0, 0, 255 }; //from the 5th byte onwards
-
 
             int update_progress_counter = 0, update_progress_send_message = 50;
             upload_transfer_num_images_copied_so_far = 0;
@@ -618,8 +606,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                     //now let's get what the current header is with this image (the first 20 bytes)
                     jpeg_filestream.Read(current_header, 0, current_header.Length);
 
-
-                     //AD fix for journey to school project on 16-May-2011...
+                    //AD fix for journey to school project on 16-May-2011...
                     //unscramble images here!!!
                     //now we check if the first 2 bytes are 0, which means that it's not recognised as a JPEG
                     if (current_header[0] == 0 && current_header[1] == 0)
@@ -629,8 +616,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                         //and now fix the invalid header
                         jpeg_filestream.WriteByte(255); //the first 2 bytes should be 255 & 216
                         jpeg_filestream.WriteByte(216); //as this corresponds to Hexidecimal 0xFFD8 (JPEG header which indicates it's actually a JPEG)
-                    } //close if (current_header[0] == 0 && current_header[1] == 0)...
-                    
+                    } //close if (current_header[0] == 0 && current_header[1] == 0)...                    
                     
                     //now we check if the 5th byte is 17 and the 19th byte is 9, which means the image has an invalid header
                     //the 19th bit check see whether the image has been fixed or not. 
@@ -638,12 +624,10 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                     if (current_header[5] == 17 && current_header[19] == 9)
                     {
                         jpeg_filestream.Seek(5, SeekOrigin.Begin);
-
                         //and now fix the invalid header
                         for (int c = 0; c < valid_exif_header.Length; c++)
                             jpeg_filestream.WriteByte(valid_exif_header[c]);
-                    } //close if (current_header[5] == 17 && current_header[19] == 9)...
-                    
+                    } //close if (current_header[5] == 17 && current_header[19] == 9)...                    
 
                     //and let's close the filestream that's open, to allievate any memory leak problems that may occur
                     jpeg_filestream.Close();
@@ -685,8 +669,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
         #endregion fixing JPG headers of SenseCam images
 
 
-
-
+        
         private void segment_folder_images_into_events_and_upload_to_db(int user_id, string selected_folder, DeviceType device_type)
         {
             selected_folder += @"\";
@@ -720,7 +703,6 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                 {
                     //3. AND WRITE OUT THE LIST OF IMAGES AND EVENTS TO THE DATABASE!			
                     upload_all_data_to_database(manipulated_images, list_of_calculated_events, selected_folder, user_id, get_local_hours_ahead_of_utc_time());
-
 
                     //4. FINALLY UPDATE THE IMAGE.DAT FILE SO AS TO REFLECT THE NEW BOUNDARIES AS BOOKMARKS!
                     //the reason I leave this step to last is that there may be a problem in updating the database ... if there is, I don't want to update the image.dat file as that would then mean that if I try to redo this process it'll think that it's already successfully completed (going by the image.dat file being updated) ... now this will not happen as image.dat isn't updated unto after the database updating
@@ -770,14 +752,12 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                 //todo create example CSV file to show correct format for: start_time, end_time, description
                 List<Segmentation_Event_Rep> user_defined_episodes = new List<Segmentation_Event_Rep>();
                 user_defined_episodes = Segmentation_Event_Rep.read_in_list_of_user_defined_episodes_from_file(external_episode_definition_csv_file, selected_folder);
-                list_of_calculated_events = Fuse_And_Identify_Segments.SET_boundary_times_for_all_images(manipulated_images, user_defined_episodes);
-                
+                list_of_calculated_events = Fuse_And_Identify_Segments.SET_boundary_times_for_all_images(manipulated_images, user_defined_episodes);                
 
                 if (list_of_calculated_events != null)
                 {
                     //3. AND WRITE OUT THE LIST OF IMAGES AND EVENTS TO THE DATABASE!			
                     upload_all_data_to_database(manipulated_images, list_of_calculated_events, selected_folder, user_id, get_local_hours_ahead_of_utc_time());
-
 
                     //4. FINALLY UPDATE THE IMAGE.DAT FILE SO AS TO REFLECT THE NEW BOUNDARIES AS BOOKMARKS!
                     //the reason I leave this step to last is that there may be a problem in updating the database ... if there is, I don't want to update the image.dat file as that would then mean that if I try to redo this process it'll think that it's already successfully completed (going by the image.dat file being updated) ... now this will not happen as image.dat isn't updated unto after the database updating
@@ -798,6 +778,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
         } //end method segment_folder_images_into_events_and_upload_to_db()
 
 
+
         private int get_local_hours_ahead_of_utc_time()
         {
             TimeSpan time_diff = DateTime.Now - DateTime.UtcNow;
@@ -805,8 +786,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
         } //close method get_utc_hours_ahead_of_local_time()...
 
 
-
-
+        
         private void upload_all_data_to_database(Segmentation_Image_Rep[] all_images, Segmentation_Event_Rep[] all_events, string images_folder, int user_id, int local_hours_ahead_of_utc_time)
         {
             //write_output("start upload_all_images => " + DateTime.Now.ToString());
@@ -830,7 +810,6 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
         {
             // http://sqlite.phxsoftware.com/forums/t/134.aspx
             DbConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
-
             con.Open();
             using (DbTransaction dbTrans = con.BeginTransaction())
             {
@@ -845,21 +824,19 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                     cmd.Parameters.Add(user_id_field);
                     cmd.Parameters.Add(image_path_field);
                     cmd.Parameters.Add(image_time_field);
-
                     for (int n = 0; n < image_list.Length; n++)
                     {
                         user_id_field.Value = user_id;
                         image_path_field.Value = images_folder + image_list[n].get_image_name();
                         image_time_field.Value = image_list[n].get_image_time();
                         cmd.ExecuteNonQuery();
-                    }
-                }
+                    } //close for (int n = 0; n < image_list.Length; n++)...
+                } //close using (DbCommand cmd = con.CreateCommand())...
                 dbTrans.Commit();
-            }
+            } //close using (DbTransaction dbTrans = con.BeginTransaction())...
             con.Close();
         } //end method uplodat_images_to_database()
         
-
 
 
         private void upload_new_events(Segmentation_Event_Rep[] event_list, string images_folder, int user_id, int local_hours_ahead_of_utc_time)
@@ -888,7 +865,6 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                     cmd.Parameters.Add(end_time_field);
                     cmd.Parameters.Add(keyframe_path_field);
                     cmd.Parameters.Add(number_times_viewed_field);
-
                     for (int row_counter = 0; row_counter < event_list.Length; row_counter++)
                     {
                         user_id_field.Value = user_id;
@@ -899,22 +875,21 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                         keyframe_path_field.Value = images_folder + event_list[row_counter].get_keyframe_image_name();
                         number_times_viewed_field.Value = 0;
                         cmd.ExecuteNonQuery();
-                    }
-                }
+                    } //close for (int row_counter = 0; row_counter < event_list.Length; row_counter++)...
+                } //close using (DbCommand cmd = con.CreateCommand())...
                 dbTrans.Commit();
-            }
+            } //close using (DbTransaction dbTrans = con.BeginTransaction())...
             con.Close();
-
         } //end method upload_new_events()
 
 
 
-        
         private void update_event_id_field_of_all_images_table(int user_id)
         {
             SQLiteConnection cnn = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
             SQLiteCommand command = new SQLiteCommand(cnn);
             cnn.Open();
+
             //firstly get the most recent event not updated...
             command.CommandText = Database_Versioning.text_for_stored_procedures.spGet_most_recent_event_id_for_user(user_id);
             int most_recent_event_id = int.Parse(command.ExecuteScalar().ToString());
@@ -929,6 +904,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
             cnn.Close();
         } //end method update_event_id_field_of_all_images_table
+
 
 
     } //end class...
