@@ -88,7 +88,6 @@ namespace SenseCamBrowser1
             //this method calls the relevant database stored procedure to insert a new user and then return the ID of this newly added user...
             SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
             SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spInsert_New_User_Into_Database_and_Return_ID(usr_name), con);
-            //todo make sql command calls like this ... SqlCommand selectCmd = new SqlCommand(Database_Versioning.text_for_stored_procedures.feb_10_spInsert_New_User_Into_Database_and_Return_ID(usr_name), con);
             con.Open();
 
             //insert into Users table and get user_id

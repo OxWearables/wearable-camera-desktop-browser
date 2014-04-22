@@ -174,7 +174,7 @@ namespace SenseCamBrowser1.Database_Versioning
             end_string += "\n" + "UPDATE All_Images";
             end_string += "\n" + "SET event_id=";
             end_string += "\n" + "(";
-            end_string += "\n" + "SELECT event_id"; //todo may have to change this to max(event_id) and remove limit 1 a few lines below?
+            end_string += "\n" + "SELECT event_id";
             end_string += "\n" + "FROM All_Events";
             end_string += "\n" + "WHERE event_id > " + most_recent_event_id;
             end_string += "\n" + "AND [user_id] = " + user_id;

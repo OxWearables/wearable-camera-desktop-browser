@@ -51,40 +51,7 @@ using System.Configuration;
 
 namespace SenseCamBrowser1
 {
-
-    /*
-     * list of fixes on 10th May 2011
-            - bug fixed for handling when camera firmware is reset
-            - participant name now displayed on main screen
-            - new participant subfolder now uses participant name rather than participant integer id
-            - calendar updated to now visually show complete bottom line of days
-     *      - upload of troublesome images now reports more accurate progress percentage
-     *      - ability to do multiple uploads in single browsing session
-     *      - ability to cancel concept annotations (little "x" button in image viewer)
-     *      - ability to modify concept annotation categories ("Edit Event Type List") in event image viewer mode
-     *      - can now click on yellow buttons either side of horizontal zoom scrollbar on main page to zoom in/out
-     *      - function to control speed of image playback in event image viewer...
-     *      - better positioning of caption textbox in imgViewer
-     *      - bugs fixed for more robust uploading of images to deal with various errors that can occur in sensor.csv file
-     *      - now possible to upload multiple subfolders (given a root folder) of SenseCam images for a given participant. Option available when clicking add-> advanced options -> upload old sensecam images -> (then browse to root folder, and click yes to browser warning on uploading multiple folders to same participant)
-     *      - bug fixed to now allow user delete entire set of images from a day with just 1 event
-     */
-
-
-    /*
-     *  List of fixes on 20th October 2011
-     *      - now allow longer annotation names/classes
-     *      - proper handling of UTC/local time differences...
-     * 
-     * 
-     * 
-     */ 
-
-
-    //todo on Aug-12
-    //clean-up code ... also updating 3 DB stored procedures -> AUG12_CLEAR_EVENT_ANNOTATIONS (create), Jan11_SPLIT_EVENT_INTO_TWO (alter), ... update character length fields for annotation descriptions (currently just 40 chars in 2 relevant tables in Database by default!)
-    //clean-up code around editing annotation types, image viewer, and all the annotation_rep and annotation_rep_tree_data, etc.
-
+    //todo on Aug-12    
     /*
      *  list of things to-do:
      *  
@@ -95,28 +62,20 @@ namespace SenseCamBrowser1
      * 
      * 
  - export to excel button (list of annotations on events) ... remember to record it in user annotations table too
- - ability to copy photos (so can be put into other application of choice...) ... remember to record it in user annotations table too
  - movie of a day in the life of... (possible to put an Oxford CLARITY watermark on it?) ... remember to record it in user annotations table too
-     * 
      * SenseCam browser -> play through movie of whole day
      * SenseCam browser -> give explicit instructions on adding in images from USB stick (i.e. copy to local machine at first)
      * Oxford in-house -> write app to share images...
  
-* update all database initialisation code again as I've made quite a few changes to stored procedures, tables, etc.
-     * image scrambling function code is on line 533 of Upload_and_Segment_Images_Thread.cs (now commented out for duration of journey to school project)
-
  
      * 
   DOCUMENTATION
-- make 64 bit version of SC browser available to download too...     
 -add sample day of SenseCam images + pdf of most recent changes to codeplex
 - make voice-over (or captioned) video showing browser in operation, and various features available
 - make video of the whole process being done for a single day to get the summary for a person...
 
 FAQ item:
 how to find where my SenseCam images are stored?
-     * 
-
 
      */
 

@@ -23,12 +23,13 @@ using System.Data;
 using System.Diagnostics;
 using System.Data.SQLite;
 using System.Data.Common;
+using System.Configuration;
 
 namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 {
     class Upload_and_Segment_Images_Thread
     {
-
+        public static int HOUR_OFFSET_OF_UPLOADED_DATA = int.Parse(ConfigurationSettings.AppSettings["hour_offset_of_uploaded_data"].ToString());
 
 
 
@@ -249,7 +250,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                     if (device_type == DeviceType.Autographer)
                     {
                         //write_Autographer_time_file(); //todo, it appears this should be done as near as possible to when the Autographer USB is disconnected (i.e. as late as possible)
-                        write_output(DateTime.Now.ToLongTimeString() + " all processing finished, you may now plug out your Autographer whenever you wish"); //todo can I make this dialog box that demands the users attention to unplug the device?
+                        write_output(DateTime.Now.ToLongTimeString() + " all processing finished, you may now plug out your Autographer whenever you wish");
                     }
                     else if (device_type == DeviceType.Revue)
                         write_output(DateTime.Now.ToLongTimeString() + " all processing finished, you may now plug out your Vicon Revue whenever you wish");
@@ -766,7 +767,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                 //write_output("start list of calculated events => " + DateTime.Now.ToString());
                 Segmentation_Event_Rep[] list_of_calculated_events;
 
-                //todo think of better way to visualise request for CSV file of events formatted correctly in format of: start_time, end_time, description
+                //todo create example CSV file to show correct format for: start_time, end_time, description
                 List<Segmentation_Event_Rep> user_defined_episodes = new List<Segmentation_Event_Rep>();
                 user_defined_episodes = Segmentation_Event_Rep.read_in_list_of_user_defined_episodes_from_file(external_episode_definition_csv_file, selected_folder);
                 list_of_calculated_events = Fuse_And_Identify_Segments.SET_boundary_times_for_all_images(manipulated_images, user_defined_episodes);
@@ -799,10 +800,8 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
         private int get_local_hours_ahead_of_utc_time()
         {
-            //todo, how to deal with uploading data when it's winter time, but the data was collected ages ago in summer time ... then the UTC/now time difference changes by one ... how to account for this?
-            //return 12; //for actical_sensecam processing...
             TimeSpan time_diff = DateTime.Now - DateTime.UtcNow;
-            return time_diff.Hours;
+            return time_diff.Hours + HOUR_OFFSET_OF_UPLOADED_DATA;
         } //close method get_utc_hours_ahead_of_local_time()...
 
 

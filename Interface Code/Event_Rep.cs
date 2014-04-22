@@ -89,8 +89,6 @@ namespace SenseCamBrowser1
         /// <param name="list_of_events"></param>
         public static void release_imagesource_resources_from_all_Simple_Event_Rep_items(List<Event_Rep> list_of_events)
         {
-            //todo we're not releasing memory of the bitmap image correctly so this part of the application isn't working right
-
             //firstly make sure the image source is released ok...
             foreach (Event_Rep individual_event in list_of_events)
                 individual_event.keyframe_path = null; //and hopefully this will release the system resources...

@@ -43,36 +43,14 @@ namespace SenseCamBrowser1
         private static List<User_Object> list_of_users_in_db;
 
 
-        public static int DATABASE_ALREADY_INSTALLED;// = int.Parse(ConfigurationSettings.AppSettings["db_already_installed"].ToString()); //this value is updated by User_Management_Window.xaml;
-                
-
         public User_Management_Window()
         {
 
             //todo now change things here, so that the localDB database will be installed in the working director (Deployment) ... and then make sure that SQL Server LocalDB is firstly installed before/with SenseCam browser
             //todo also install some sample data with the browser too, and show it annotated... maybe not in the current version (unto published?)...
-            /*
-
-            try
-            {
-                DATABASE_ALREADY_INSTALLED = int.Parse(ConfigurationSettings.AppSettings["db_already_installed"].ToString()); //this value is updated by User_Management_Window.xaml;
-            }
-            catch (Exception excep)
-            {
-                DATABASE_ALREADY_INSTALLED = 0;
-            }
-            
-
-            
-            //check_correct_database_version_is_installed();
-            
-             */
             InitializeComponent();
             lblHeading.Content = "Welcome to DCU CLARITY SenseCam browser";
             
-            
-            //now we can open the browser and proceed as normal...
-           
             //firstly get the list of users we have stored in the database...
             list_of_users_in_db = User_Object.get_list_of_users_in_database();
 
@@ -86,43 +64,6 @@ namespace SenseCamBrowser1
             txtUser.Visibility = Visibility.Hidden;
             lblUser.Visibility = Visibility.Hidden;
         } //close constructor()...
-
-
-
-
-        /// <summary>
-        /// this method is responsible for checking the database is installed and is up to date too ...
-        /// this method is very important on first time of opening the browser...
-        /// </summary>
-        private void check_correct_database_version_is_installed()
-        {
-            //just disallow the user to do too much when we're updating the database...
-            cboUserList.Visibility = Visibility.Hidden;
-            txtUser.Visibility = Visibility.Hidden;
-
-            //first let's check if the database hasn't been installed yet...
-            if (DATABASE_ALREADY_INSTALLED == 0)
-            {
-                lblHeading.Content = "First time using browser, now installing database (please wait around 5 minutes)...";
-
-                //firstly install the SenseCam browser, this will take around 5 minutes I'd estimate...
-                //string new_db_connection_string = Database_Versioning.DB_Version_Handler.install_DCU_SenseCam_database();
-                string new_db_connection_string = Database_Versioning.DB_Version_Handler.install_DCU_SenseCam_localDB_database();
-
-                //secondly, let's update the configuration file, so that the browser will always correctly connect to the database on upload...
-                if (!new_db_connection_string.Equals(""))
-                {
-                    //now update the config file... so the connection string, and the db_already_installed fields are then up to date
-                    Database_Versioning.DB_Version_Handler.update_config_file(1, new_db_connection_string);
-                } //close if (!new_db_connection_string.Equals(""))...
-            } //close if (browser_already_installed == 0)
-            
-            
-            //now the user can click on these again...
-            cboUserList.Visibility = Visibility.Visible;
-            txtUser.Visibility = Visibility.Visible;
-        } //close method check_correct_database_version_is_installed()...
-
 
 
 
