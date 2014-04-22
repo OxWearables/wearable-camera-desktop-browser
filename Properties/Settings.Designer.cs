@@ -26,8 +26,8 @@ namespace SenseCamBrowser1.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=.\\SQLExpress;Initial Catalog=Oxford_CLARITY_SenseCam_May_2011;Integra" +
-            "ted Security = True;")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=C:\\software development\\APIs downloaded\\Databases\\sql lite\\aiden_test" +
+            ".db;Pooling=true;FailIfMissing=false;Version=3")]
         public string DCU_SenseCamConnectionString {
             get {
                 return ((string)(this["DCU_SenseCamConnectionString"]));

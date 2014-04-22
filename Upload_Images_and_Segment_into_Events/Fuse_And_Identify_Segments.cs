@@ -28,6 +28,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
         private static double PIR_WEIGHT = 0.40;
         public static int AUTOMATIC_EVENT_SEGMENTATION_ENABLED = int.Parse(ConfigurationSettings.AppSettings["automatic_event_segmentation_enabled"].ToString());
         public static int MINIMUM_LENGTH_OF_AUTOMATICALLY_SEGMENTED_EVENTS = int.Parse(ConfigurationSettings.AppSettings["minimum_length_of_automatically_segmented_events"].ToString());
+        public static int NUM_END_IMAGES_IN_DAY_TO_IGNORE_IN_EVENT_CLUSTERING = int.Parse(ConfigurationSettings.AppSettings["num_end_images_in_day_to_ignore_in_event_clustering"].ToString());
         
 
 
@@ -68,8 +69,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
 
                     //5. CLEAN UP BOUNDARY IMAGES (I.E. ONES WITHING SAY 5 MINUTES OF EACH OTHER)
-                    //todo, must define a variable to indicate number end images to ignore (i.e. not hard coded as 4)
-                    Segmentation_Image_Rep[] final_boundary_images = cluster_boundary_list(vals_above_threshold, MINIMUM_LENGTH_OF_AUTOMATICALLY_SEGMENTED_EVENTS, chunk_raw_values.Length, 4);
+                    Segmentation_Image_Rep[] final_boundary_images = cluster_boundary_list(vals_above_threshold, MINIMUM_LENGTH_OF_AUTOMATICALLY_SEGMENTED_EVENTS, chunk_raw_values.Length, NUM_END_IMAGES_IN_DAY_TO_IGNORE_IN_EVENT_CLUSTERING);
                     
                     
                     //6. APPEND LIST OF BOUNDARY IMAGES TO AN ARRAY LIST OF EVENTS
@@ -512,8 +512,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
 
                 //5. CLEAN UP BOUNDARY IMAGES (I.E. ONES WITHING SAY 5 MINUTES OF EACH OTHER)
-                //todo, must define a variable to indicate number end images to ignore (i.e. not hard coded as 4)
-                Segmentation_Image_Rep[] final_boundary_images = cluster_boundary_list_non_csv(vals_above_threshold, MINIMUM_LENGTH_OF_AUTOMATICALLY_SEGMENTED_EVENTS, chunk_raw_values.Length, 4);
+                Segmentation_Image_Rep[] final_boundary_images = cluster_boundary_list_non_csv(vals_above_threshold, MINIMUM_LENGTH_OF_AUTOMATICALLY_SEGMENTED_EVENTS, chunk_raw_values.Length, NUM_END_IMAGES_IN_DAY_TO_IGNORE_IN_EVENT_CLUSTERING);
 
 
                 //6. APPEND LIST OF BOUNDARY IMAGES TO AN ARRAY LIST OF EVENTS
