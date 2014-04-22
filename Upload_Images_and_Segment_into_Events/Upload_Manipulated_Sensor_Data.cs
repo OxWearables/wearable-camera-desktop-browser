@@ -31,8 +31,8 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
 
         private static int MINIMUM_FILE_SIZE = 48;//AD 11/09/12 2048; //THE SMALLEST SIZE (IN BYTES) ANY SENSECAM IMAGE IS ALLOWED TO BE ... IF IT'S SMALLER THAN THIS WE DISREGARD IT (AS OTHERWISE IT MAY AFFECT any subsequent image PROCESSING as these images are generally corrupt images or uniform black ones)
-        public static int MAXIMUM_NUMBER_MINUTES_BETWEEN_IMAGES_ALLOWED_TO_STAY_IN_THE_SAME_EVENT = int.Parse(ConfigurationSettings.AppSettings["maximum_num_minutes_between_images_allowed_to_stay_in_same_event"].ToString());
-        public static int USER_HOUR_TIME_ADJUSTMENT_HOURS = int.Parse(ConfigurationSettings.AppSettings["hour_offset_of_uploaded_data"].ToString());
+        public static int MAXIMUM_NUMBER_MINUTES_BETWEEN_IMAGES_ALLOWED_TO_STAY_IN_THE_SAME_EVENT = int.Parse(ConfigurationManager.AppSettings["maximum_num_minutes_between_images_allowed_to_stay_in_same_event"].ToString());
+        public static int USER_HOUR_TIME_ADJUSTMENT_HOURS = int.Parse(ConfigurationManager.AppSettings["hour_offset_of_uploaded_data"].ToString());
 
 
         public static Segmentation_Image_Rep[] process_csv_file(string local_folder, int user_id, Upload_and_Segment_Images_Thread.DeviceType device_type)

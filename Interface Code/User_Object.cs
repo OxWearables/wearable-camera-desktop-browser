@@ -27,7 +27,7 @@ namespace SenseCamBrowser1
 {
     class User_Object
     {
-        public static int OVERALL_USER_ID = int.Parse(ConfigurationSettings.AppSettings["user_id"].ToString()); //this value is updated by User_Management_Window.xaml
+        public static int OVERALL_USER_ID = int.Parse(ConfigurationManager.AppSettings["user_id"].ToString()); //this value is updated by User_Management_Window.xaml
         public static string OVERALL_USER_NAME = "Aiden"; //this value is updated by User_Management_Window.xaml
 
 
