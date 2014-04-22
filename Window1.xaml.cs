@@ -55,8 +55,6 @@ namespace SenseCamBrowser1
     /*
      *  list of things to-do:
      *  
-     * minor -> opening default event...
-     * 
      * minor: for multiple folder upload, give exact progress percentage upload (i.e. get estimate of total num images across all subfolders, then start processing and calculating the progress vs. this number)
        minor: double CAM line... (requires a fair rewrite of CSV processing code to handle this...)
      * 
