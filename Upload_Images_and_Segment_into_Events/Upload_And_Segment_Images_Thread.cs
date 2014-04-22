@@ -920,15 +920,12 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
             command.CommandText = Database_Versioning.text_for_stored_procedures.spGet_most_recent_event_id_for_user(user_id);
             int most_recent_event_id = int.Parse(command.ExecuteScalar().ToString());
             
-            //then update images table with relevant event id values
-            command.CommandText = Database_Versioning.text_for_stored_procedures.spUpdate_Images_With_Event_ID_step2_update_images_with_relevant_event_id(user_id, most_recent_event_id);
-            command.ExecuteNonQuery();
-            //afterwards update sensor table with relevent event id values
-            command.CommandText = Database_Versioning.text_for_stored_procedures.spUpdate_Images_With_Event_ID_step3_update_sensor_readings_with_relevant_event_id(user_id, most_recent_event_id);
+            //then update images and sensor_readings table with relevant event id values
+            command.CommandText = Database_Versioning.text_for_stored_procedures.spUpdate_newly_uploaded_images_and_sensor_readings_with_relevant_event_id(user_id, most_recent_event_id);
             command.ExecuteNonQuery();
 
             //finally tidy up spurious events from database...
-            command.CommandText = Database_Versioning.text_for_stored_procedures.spUpdate_Images_With_Event_ID_step4_tidy_up_stage(user_id);
+            command.CommandText = Database_Versioning.text_for_stored_procedures.spUpdate_newly_uploaded_images_tidy_up_spurious_events(user_id);
             command.ExecuteNonQuery();
 
             cnn.Close();

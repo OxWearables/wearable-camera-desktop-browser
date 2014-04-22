@@ -765,7 +765,6 @@ namespace SenseCamBrowser1
 
                 foreach (Image_Rep selected_image_to_start_new_event in selected_images_for_splitting)
                 {    
-                    //todo is there a bug here where I select the first image and/or last image in a multi-select?
                     if (selected_image_to_start_new_event.array_position_in_event > 0 && selected_image_to_start_new_event.array_position_in_event < lst_display_images.Items.Count - 1)
                     {
                         //call this method to execute the database stored procedure to handle splitting the event into two

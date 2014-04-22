@@ -33,7 +33,6 @@ namespace SenseCamBrowser1.Database_Versioning
 
         public static string spInsert_New_User_Into_Database_and_Return_ID(string new_user_name)
         {
-            //todo multiquery
             string end_string = "";
             end_string += "\n" + "insert into Users (username,password,name) values ('" + new_user_name + "','" + new_user_name + "','" + new_user_name + "');";
             end_string += "\n" + "";
@@ -44,7 +43,6 @@ namespace SenseCamBrowser1.Database_Versioning
 
         public static string spCreate_dummy_image(int user_id, int event_id)
         {
-            //todo multiquery
             string end_string = "";
             end_string += "\n" + "insert into All_Images (user_id,event_id,image_path,image_time) values (" + user_id + "," + event_id + ",'','1991-01-23 08:02:00');";
             return end_string;
@@ -169,6 +167,54 @@ namespace SenseCamBrowser1.Database_Versioning
             return end_string;
         } //close method spUpdate_image_sensors_tables_with_new_event_id_after_target_time()...
 
+
+        public static string spUpdate_newly_uploaded_images_and_sensor_readings_with_relevant_event_id(int user_id, int most_recent_event_id)
+        {
+            string end_string = "";
+            end_string += "\n" + "UPDATE All_Images";
+            end_string += "\n" + "SET event_id=";
+            end_string += "\n" + "(";
+            end_string += "\n" + "SELECT event_id"; //todo may have to change this to max(event_id) and remove limit 1 a few lines below?
+            end_string += "\n" + "FROM All_Events";
+            end_string += "\n" + "WHERE event_id > " + most_recent_event_id;
+            end_string += "\n" + "AND [user_id] = " + user_id;
+            end_string += "\n" + "AND start_time <= All_Images.image_time AND end_time >= All_Images.image_time";
+            end_string += "\n" + "LIMIT 1";
+            end_string += "\n" + ")";
+            end_string += "\n" + "WHERE [user_id] = " + user_id;
+            end_string += "\n" + "AND event_id IS NULL;";
+            end_string += "\n" + "";
+            end_string += "\n" + "UPDATE Sensor_Readings";
+            end_string += "\n" + "SET event_id=";
+            end_string += "\n" + "(";
+            end_string += "\n" + "SELECT MAX(event_id)";
+            end_string += "\n" + "FROM All_Events";
+            end_string += "\n" + "WHERE event_id > " + most_recent_event_id;
+            end_string += "\n" + "AND [user_id] = " + user_id;
+            //end_string += "\n" + "AND DATEADD(MINUTE,-1,start_time) <= Sensor_Readings.sample_time AND DATEADD(MINUTE,1,end_time) >= Sensor_Readings.sample_time";
+            end_string += "\n" + "AND DATETIME(start_time,'-1 minute') <= Sensor_Readings.sample_time AND DATETIME(end_time,'+1 minute') >= Sensor_Readings.sample_time";
+            end_string += "\n" + ")";
+            end_string += "\n" + "WHERE [user_id] = " + user_id;
+            end_string += "\n" + "AND event_id IS NULL;";
+            return end_string;
+        } //close method spUpdate_newly_uploaded_images_and_sensor_readings_with_relevant_event_id()....
+
+
+        public static string spUpdate_newly_uploaded_images_tidy_up_spurious_events(int user_id)
+        {
+            string end_string = "";
+            end_string += "\n" + "DELETE FROM All_Events";
+            end_string += "\n" + "WHERE [user_id] = " + user_id;
+            end_string += "\n" + "and start_time>end_time;";
+            end_string += "\n" + "";
+            end_string += "\n" + "";
+            end_string += "\n" + "UPDATE All_Images";
+            end_string += "\n" + "SET event_id = (SELECT MAX(event_id) FROM All_Events WHERE [user_id] = " + user_id + ")";
+            end_string += "\n" + "WHERE [user_id] = " + user_id;
+            end_string += "\n" + "AND event_id IS NULL;";
+            return end_string;
+        } //close method spUpdate_newly_uploaded_images_tidy_up_spurious_events()....
+        
         #endregion update event details
 
 
@@ -304,66 +350,6 @@ namespace SenseCamBrowser1.Database_Versioning
         } //close method spGet_id_of_event_after_ID_and_time()...
 
         #endregion get event details
-
-
-
-
-        #region update event id of all images (usually for newly uploaded data)
-
-        public static string spUpdate_Images_With_Event_ID_step2_update_images_with_relevant_event_id(int user_id, int most_recent_event_id)
-        {
-            string end_string = "";
-            end_string += "\n" + "UPDATE All_Images";
-            end_string += "\n" + "SET event_id=";
-            end_string += "\n" + "(";
-            end_string += "\n" + "SELECT event_id"; //todo may have to change this to max(event_id) and remove limit 1 a few lines below?
-            end_string += "\n" + "FROM All_Events";
-            end_string += "\n" + "WHERE event_id > " + most_recent_event_id;
-            end_string += "\n" + "AND [user_id] = " + user_id;
-            end_string += "\n" + "AND start_time <= All_Images.image_time AND end_time >= All_Images.image_time";
-            end_string += "\n" + "LIMIT 1";
-            end_string += "\n" + ")";
-            end_string += "\n" + "WHERE [user_id] = " + user_id;
-            end_string += "\n" + "AND event_id IS NULL;";
-            return end_string;
-        } //close method spUpdate_Images_With_Event_ID_step2_update_images_with_relevant_event_id()....
-
-
-        public static string spUpdate_Images_With_Event_ID_step3_update_sensor_readings_with_relevant_event_id(int user_id, int most_recent_event_id)
-        {
-            string end_string = "";
-            end_string += "\n" + "UPDATE Sensor_Readings";
-            end_string += "\n" + "SET event_id=";
-            end_string += "\n" + "(";
-            end_string += "\n" + "SELECT MAX(event_id)";
-            end_string += "\n" + "FROM All_Events";
-            end_string += "\n" + "WHERE event_id > " + most_recent_event_id;
-            end_string += "\n" + "AND [user_id] = " + user_id;
-            //end_string += "\n" + "AND DATEADD(MINUTE,-1,start_time) <= Sensor_Readings.sample_time AND DATEADD(MINUTE,1,end_time) >= Sensor_Readings.sample_time";
-            end_string += "\n" + "AND DATETIME(start_time,'-1 minute') <= Sensor_Readings.sample_time AND DATETIME(end_time,'+1 minute') >= Sensor_Readings.sample_time";
-            end_string += "\n" + ")";
-            end_string += "\n" + "WHERE [user_id] = " + user_id;
-            end_string += "\n" + "AND event_id IS NULL;";
-            return end_string;
-        } //close method spUpdate_Images_With_Event_ID_step2_update_images_with_relevant_event_id()....
-
-
-        public static string spUpdate_Images_With_Event_ID_step4_tidy_up_stage(int user_id)
-        {
-            string end_string = "";
-            end_string += "\n" + "DELETE FROM All_Events";
-            end_string += "\n" + "WHERE [user_id] = " + user_id;
-            end_string += "\n" + "and start_time>end_time;";
-            end_string += "\n" + "";
-            end_string += "\n" + "";
-            end_string += "\n" + "UPDATE All_Images";
-            end_string += "\n" + "SET event_id = (SELECT MAX(event_id) FROM All_Events WHERE [user_id] = " + user_id + ")";
-            end_string += "\n" + "WHERE [user_id] = " + user_id;
-            end_string += "\n" + "AND event_id IS NULL;";
-            return end_string;
-        } //close method spUpdate_Images_With_Event_ID_step2_update_images_with_relevant_event_id()....
-
-        #endregion update event id of all images (usually for newly uploaded data)
 
 
 
@@ -552,7 +538,6 @@ namespace SenseCamBrowser1.Database_Versioning
 
         public static string spAdd_annotation_type(string annotation_type_name)
         {
-            //todo multiple query
             string end_string = "";
             end_string += "\n" + "DELETE FROM Annotation_Types";
             end_string += "\n" + "WHERE annotation_type = '" + annotation_type_name + "';";
