@@ -51,7 +51,7 @@ using System.Configuration;
 
 namespace SenseCamBrowser1
 {
-    //todo on Aug-12    
+    //todo general list
     /*
      *  list of things to-do:
      *  

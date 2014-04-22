@@ -836,13 +836,11 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                 month = attempt_to_parse_string_to_int(date_time_string_element[0].Split('-')[1]);
                 day = attempt_to_parse_string_to_int(date_time_string_element[0].Split('-')[2]);
 
-
                 //02:35:37
                 //01234567                
                 hour = attempt_to_parse_string_to_int(date_time_string_element[1].Split(':')[0]);
                 minute = attempt_to_parse_string_to_int(date_time_string_element[1].Split(':')[1]);
                 second = attempt_to_parse_string_to_int(date_time_string_element[1].Split(':')[2].Substring(0,2)); //todo Autographer, make sure I'm parsing in the time ok .. also what to do with +0100 part?
-                //todo Autographer make sure I deal with calculating local_hours_ahead_of_utc
                 return new DateTime(year, month, day, hour, minute, second).AddHours(local_hours_ahead_of_utc);
             } //close try //so in case we're dealing with a SenseCam sensor.csv (called in initial checks), we'll put the code below in a try...catch statement, in case it belongs to the SenseCam and can't be parsed
             catch (Exception excep)
@@ -850,98 +848,6 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                 return new DateTime(1, 1, 1, 1, 1, 1); //return an unhelpful datetime, the calling method will then determine this line doesn't belong to a Vicon Revue SENSOR.CSV
             } //close catch ... try catch ... try //so in case we're dealing with a SenseCam sensor.csv (called in initial checks), we'll put the code below in a try...catch statement, in case it belongs to the SenseCam and can't be parsed
         } //end method get_datetime_from_Vicon_Revue_ACC_line
-
-
-        private static double get_acc_x_from_Autographer_ACC_line(string line)
-        {
-            //ACC,2013-04-08T02:35:37+0100,-143,-1063,-29
-            //0  ,          1             , 2  , 3   ,  4
-            return attempt_to_parse_string_to_double(line.Split(',')[2]);
-        } //end method get_acc_x_from_Vicon_Revue_ACC_line()
-
-        private static double get_acc_y_from_Autographer_ACC_line(string line)
-        {
-            //ACC,2013-04-08T02:35:37+0100,-143,-1063,-29
-            //0  ,          1             , 2  , 3   ,  4
-            return attempt_to_parse_string_to_double(line.Split(',')[3]);
-        } //end method get_acc_y_from_Vicon_Revue_ACC_line()
-
-        private static double get_acc_z_from_Autographer_ACC_line(string line)
-        {
-            //ACC,2013-04-08T02:35:37+0100,-143,-1063,-29
-            //0  ,          1             , 2  , 3   ,  4
-            return attempt_to_parse_string_to_double(line.Split(',')[4]);
-        } //end method get_acc_z_from_Vicon_Revue_ACC_line()
-
-
-        private static double get_temperature_from_Autographer_TMP_line(string line)
-        {
-            //TMP,2013-04-08T02:35:37+0100,32.6
-            //0  ,          1             , 2
-            return attempt_to_parse_string_to_double(line.Split(',')[2]);
-        } //end method get_temperature_from_Vicon_Revue_TMP_line()
-
-
-        private static int get_light_level_from_Autographer_CLR_line(string line)
-        {
-            //CLR,2013-04-08T02:35:37+0100,0
-            //0  ,          1             , 2
-            return attempt_to_parse_string_to_int(line.Split(',')[2]);
-        } //end method get_light_level_from_Vicon_Revue_CLR_line()
-
-
-        private static int get_pir_from_Autographer_PIR_line(string line)
-        {
-            //PIR,2013-04-08T02:35:37+0100,1
-            //0  ,          1             , 2
-            return attempt_to_parse_string_to_int(line.Split(',')[2]);
-        } //end method get_pir_from_Vicon_Revue_PIR_line()
-
-
-        private static int get_battery_level_from_Autographer_BAT_line(string line)
-        {
-            //BAT,2013-04-08T02:35:37+0100,3970
-            //0  ,          1             , 2
-            return attempt_to_parse_string_to_int(line.Split(',')[2]);
-        } //end method get_battery_level_from_Vicon_Revue_BAT_line()
-
-
-        private static int get_mag_x_from_Autographer_MAG_line(string line)
-        {
-            //MAG,2013-04-08T02:35:37+0100,-210,368,-230
-            //0  ,          1             , 2  , 3 ,  4
-            return attempt_to_parse_string_to_int(line.Split(',')[2]);
-        } //end method get_may_x_from_Vicon_Revue_MAG_line()
-
-        private static int get_mag_y_from_Autographer_MAG_line(string line)
-        {
-            //MAG,2013-04-08T02:35:37+0100,-210,368,-230
-            //0  ,          1             , 2  , 3 ,  4
-            return attempt_to_parse_string_to_int(line.Split(',')[3]);
-        } //end method get_mag_y_from_Vicon_Revue_MAG_line()
-
-        private static int get_mag_z_from_Autographer_MAG_line(string line)
-        {
-            //MAG,2013-04-08T02:35:37+0100,-210,368,-230
-            //0  ,          1             , 2  , 3 ,  4
-            return attempt_to_parse_string_to_int(line.Split(',')[4]);
-        } //end method get_mag_z_from_Vicon_Revue_MAG_line()
-
-
-        private static string get_image_name_from_Autographer_CAM_line(string line)
-        {
-            //CAM,2013-04-08T02:35:42+0100,B00007908_048875_20130408_023541E.JPG,Unknown
-            //0  ,          1             , 2                                   ,3
-            return line.Split(',')[2];
-        } //end method get_image_name_from_CAM_line()
-
-        private static char get_trigger_from_Autographer_CAM_line(string line)
-        {
-            //todo Autographer is this last piece of the line the trigger code?
-            //CAM,2013-04-08T02:35:42+0100,B00007908_048875_20130408_023541E.JPG,Unknown
-            //0  ,          1             , 2                                   ,3
-            return line.Split(',')[3].ToCharArray()[0];
-        } //end method get_trigger_from_CAM_line()
 
 
         #endregion Autographer parsing
