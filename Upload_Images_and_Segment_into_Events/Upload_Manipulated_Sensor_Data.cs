@@ -434,17 +434,13 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
             TextReader sensor_reader = new StreamReader(sensor_file);
             string line_input;
-            double acc_x = 0.0, acc_y = 0.0, acc_z = 0.0, temperature = 0.0;
-            int white_val = 0, battery = 0, pir = 0, mag_x = 0, mag_y = 0, mag_z = 0;
+            double acc_x = 0.0, acc_y = 0.0, acc_z = 0.0, temperature = 0.0, mag_x = 0, mag_y = 0, mag_z = 0;
+            int white_val = 0, battery = 0, pir = 0;
             char trigger_code = Sensor_Reading.NULL_CHAR;
             string image_name = null;
             DateTime sample_time = new DateTime();
-
-            //todo Autographer - what do the sensor values mean? The values recorded at the instant that the image was taken? Or a summary measure of the sensed readings since the previous picture was taken?
-
-
-
             string[] line_elements;
+            //todo Autographer - what do the sensor values mean? The values recorded at the instant that the image was taken? Or a summary measure of the sensed readings since the previous picture was taken?
             //#dt                     ,id                              ,sz  ,typ ,p,accx  ,accy  ,accz  ,magx  ,magy  ,magz  ,red  ,green,blue ,lum  ,tem  ,g, lat    , lon    , alt, gs , herr, verr, exp,gain ,rbal ,gbal ,bbal ,xor   ,yor   ,zor   ,stags   ,tags
             //2013-10-28T14:15:22+0100,B00000000_21I4ZX_20131028_141522,4014,0002,1, 0.064,-0.396, 0.817,-0.015, 0.053,-0.390, 3226, 3369, 1953,10265, 19.1,0, 0.00000, 0.00000, 0.0, 0.0, 0.00, 0.00, 5  ,12.00,1.313,1.000,1.813,33.642,-152.9,8.3824,00000000, 
             //0                       ,1                               ,2   ,3   ,4, 5    ,6     ,7     ,8     ,9     ,10    ,11   ,12   ,13   ,14   ,15   ,16, 17    , 18     , 19 , 20 , 21  , 22  , 23 ,24   ,25   ,26   ,27   ,28    ,29    ,30    ,31      ,32
@@ -454,16 +450,11 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
             bool first_reading = true; //for calculating chunk_id ... just to check first sensor value against the db to see what chunk id if should belong to ... 
                                         //i.e. if it's just a continuation of what's in the database (e.g. big folder being split up into subfolders, and just starting to read 2nd subfolder),
                                         //we'll want readings to belong to the same chunk ... else we'll start a new chunk (i.e. previous incramented by one)
-
-            char x;
             while ((line_input = sensor_reader.ReadLine()) != null)
             {
-                x = line_input[0];
                 if (line_input.Length > 2 && !line_input[0].Equals('#')) //just make sure we can actually read the first 3 characters in subsequent lines... and also that it's not a comment (starting with '#')
                 {
                     line_elements = line_input.Split(',');
-
-
                     //after dealing with the last group of values, we now continue reading on and store the next group of values...
                     sample_time = get_datetime_from_Autographer_txt_line_string(line_elements[0], local_hours_ahead_of_utc_time);
                     acc_x = attempt_to_parse_string_to_double(line_elements[5]);
@@ -476,17 +467,15 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                     trigger_code = '-'; //todo Autographer confirm that there is no trigger code associated with images in the CSV file? ... maybe it's element 3?
                     image_name = line_elements[1] + "E.JPG"; //todo why does each image end with the letter E??
                     //todo important update - I now need to update Sensor_Readings table in the database to recognise mag x/y/z values as double rather than int!
-                    mag_x = (int) attempt_to_parse_string_to_double(line_elements[8]);
-                    mag_y = (int) attempt_to_parse_string_to_double(line_elements[9]);
-                    mag_z = (int) attempt_to_parse_string_to_double(line_elements[10]);
+                    mag_x = attempt_to_parse_string_to_double(line_elements[8]);
+                    mag_y = attempt_to_parse_string_to_double(line_elements[9]);
+                    mag_z = attempt_to_parse_string_to_double(line_elements[10]);
                     //todo need to update Sensor_Readings table in the database to now store the newly calculated Autographer sensor fields
-
 
                     //now let's determine the chunk_id
                     if(first_reading)
                         chunk_id = get_chunk_id(sample_time, chunk_minute_threshold);
                     else chunk_id = calculate_chunk_id(chunk_id, sample_time, previous_sample_time, chunk_minute_threshold);
-                    
 
                     line_of_sensor_vals = new Sensor_Reading(chunk_id, sample_time, acc_x, acc_y, acc_z, white_val, battery, temperature, pir, trigger_code, image_name, mag_x, mag_y, mag_z);
                     //and add it to the ArrayList below
@@ -498,8 +487,6 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                     image_name = null;
                     trigger_code = Sensor_Reading.NULL_CHAR;
                     previous_sample_time = sample_time; //for calculating the chunk_id of the next image
-                                            
-                                        
                 } //close if (line_input.Length > 2)...
             } //end method while (sensor_reader.Read())
             sensor_reader.Close(); //closing the stream

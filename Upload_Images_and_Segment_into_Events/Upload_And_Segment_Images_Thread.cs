@@ -31,8 +31,6 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
     {
         public static int HOUR_OFFSET_OF_UPLOADED_DATA = int.Parse(ConfigurationSettings.AppSettings["hour_offset_of_uploaded_data"].ToString());
 
-
-
         ///////////////////////////// THREAD CALLBACK PROPERTIES /////////////////////////////////////////////
         ///////////////////////////// THREAD CALLBACK PROPERTIES /////////////////////////////////////////////
         ///////////////////////////// THREAD CALLBACK PROPERTIES /////////////////////////////////////////////
@@ -781,7 +779,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
         private int get_local_hours_ahead_of_utc_time()
         {
             TimeSpan time_diff = DateTime.Now - DateTime.UtcNow;
-            return time_diff.Hours + HOUR_OFFSET_OF_UPLOADED_DATA;
+            return time_diff.Hours + HOUR_OFFSET_OF_UPLOADED_DATA -1;
         } //close method get_utc_hours_ahead_of_local_time()...
 
 

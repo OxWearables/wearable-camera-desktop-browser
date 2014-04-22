@@ -25,9 +25,9 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
 
         private int chunk_id, white_val, battery, pir; //I'm not going to bother storing user_id, as it will be the same for all these records and only will tax system resources
-        public int mag_x { get; set; }
-        public int mag_y { get; set; }
-        public int mag_z { get; set; }
+        public double mag_x { get; set; }
+        public double mag_y { get; set; }
+        public double mag_z { get; set; }
         private double acc_x, acc_y, acc_z, temperature, manipulated_acc_combined_value, manipulated_acc_x_value, manipulated_pir_value;
         private char trigger_code;
         private string image_name;
@@ -66,6 +66,32 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
         //for Vicon Revue...
         public Sensor_Reading(int chunk_id, DateTime sample_time, double acc_x, double acc_y, double acc_z, int white_val, int battery, double temperature, int pir, char trigger_code, string image_name, int mag_x, int mag_y, int mag_z)
+        {
+            this.chunk_id = chunk_id;
+            this.sample_time = sample_time;
+            this.acc_x = acc_x;
+            this.acc_y = acc_y;
+            this.acc_z = acc_z;
+            this.white_val = white_val;
+            this.battery = battery;
+            this.temperature = temperature;
+            this.pir = pir;
+            this.trigger_code = trigger_code;
+            this.image_name = image_name;
+
+            this.mag_x = mag_x;
+            this.mag_y = mag_y;
+            this.mag_z = mag_z;
+
+            this.manipulated_acc_combined_value = 0.0;
+            this.manipulated_acc_x_value = 0.0;
+            this.manipulated_pir_value = 0.0;
+        } //end method Sensor_Reading() i.e. the constructor
+
+
+
+        //for Autographer...
+        public Sensor_Reading(int chunk_id, DateTime sample_time, double acc_x, double acc_y, double acc_z, int white_val, int battery, double temperature, int pir, char trigger_code, string image_name, double mag_x, double mag_y, double mag_z)
         {
             this.chunk_id = chunk_id;
             this.sample_time = sample_time;
