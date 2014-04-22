@@ -419,7 +419,27 @@ namespace SenseCamBrowser1.Database_Versioning
 
 
 
-        #region get/set event annotations
+        #region get event annotations
+
+        public static string spGet_list_of_annotation_types()
+        {
+            string end_string = "";
+            end_string += "\n" + "SELECT annotation_id, annotation_type, [description]";
+            end_string += "\n" + "FROM Annotation_Types";
+            end_string += "\n" + "order by annotation_type;";
+            return end_string;
+        } //close method spGet_list_of_annotation_types()...
+
+        public static string spGet_event_annotations(int user_id, int event_id)
+        {
+            string end_string = "";
+            end_string += "\n" + "SELECT annotation_name";
+            end_string += "\n" + "FROM SC_Browser_User_Annotations AS annotations";
+            end_string += "\n" + "WHERE annotations.[user_id]=" + user_id;
+            end_string += "\n" + "AND annotations.event_id=" + event_id + ";";
+            return end_string;
+        } //close method spGet_event_annotations()...
+        
 
         public static string spGet_annotated_events_in_day(int user_id, DateTime day)
         {
@@ -438,48 +458,10 @@ namespace SenseCamBrowser1.Database_Versioning
             end_string += "\n" + "";
             end_string += "\n" + "ORDER BY All_Events.start_time;";
             return end_string;
-        } //close method JAN11_GET_ANNOTATED_EVENTS_IN_DAY()...
-        
-
-        public static string AUG12_CLEAR_EVENT_ANNOTATIONS_INDIVIDUAL(int user_id, int event_id, string individual_annotation_text)
-        {
-            string end_string = "";
-            end_string += "\n" + "DELETE FROM SC_Browser_User_Annotations";
-            end_string += "\n" + "WHERE [user_id] = " + user_id;
-            end_string += "\n" + "AND [event_id] = " + event_id;
-            end_string += "\n" + "AND [annotation_name] = '" + individual_annotation_text + "';";
-            return end_string;
-        } //close method AUG12_CLEAR_EVENT_ANNOTATIONS_INDIVIDUAL()...
-        
-
-        public static string APR11_REMOVE_ANNOTATION_TYPE(string annotation_type_name)
-        {
-            string end_string = "";
-            end_string += "\n" + "DELETE FROM Annotation_Types";
-            end_string += "\n" + "WHERE annotation_type = '" + annotation_type_name + "';";;
-            return end_string;
-        } //close method APR11_REMOVE_ANNOTATION_TYPE()...
+        } //close method spGet_annotated_events_in_day()...
 
 
-        public static string APR11_REMOVE_ALL_ANNOTATION_TYPES()
-        {
-            string end_string = "";
-            end_string += "\n" + "DELETE FROM Annotation_Types;";
-            return end_string;
-        } //close APR11_REMOVE_ALL_ANNOTATION_TYPES()...
-
-
-        public static string NOV10_GET_LIST_OF_ANNOTATION_CLASSES()
-        {
-            string end_string = "";
-            end_string += "\n" + "SELECT annotation_id, annotation_type, [description]";
-            end_string += "\n" + "FROM Annotation_Types";
-            end_string += "\n" + "order by annotation_type;";
-            return end_string;
-        } //close method NOV10_GET_LIST_OF_ANNOTATION_CLASSES()...
-
-
-        public static string NOV10_GET_EVENTS_IDS_IN_DAY_FOR_GIVEN_ACTIVITY(int user_id, DateTime day, string annotation_type)
+        public static string spGet_event_ids_in_day_for_specific_activity(int user_id, DateTime day, string annotation_type)
         {
             string end_string = "";
             end_string += "\n" + "SELECT annotations.event_id";
@@ -496,10 +478,10 @@ namespace SenseCamBrowser1.Database_Versioning
             end_string += "\n" + "";
             end_string += "\n" + "ORDER BY annotations.event_id;";
             return end_string;
-        } //close method NOV10_GET_EVENTS_IDS_IN_DAY_FOR_GIVEN_ACTIVITY()...
+        } //close method spGet_event_ids_in_day_for_specific_activity()...
 
 
-        public static string NOV10_GET_DAILY_ACTIVITY_SUMMARY_FROM_ANNOTATIONS(int user_id, DateTime day)
+        public static string spGet_daily_activity_summary_from_annotations(int user_id, DateTime day)
         {
             string end_string = "";
             end_string += "\n" + "SELECT annotation_name, sum(duration_in_seconds) as total_time_spent_at_activity";
@@ -524,40 +506,51 @@ namespace SenseCamBrowser1.Database_Versioning
             end_string += "\n" + "GROUP BY annotation_name";
             end_string += "\n" + "ORDER BY annotation_name;";
             return end_string;
-        } //close method NOV10_GET_DAILY_ACTIVITY_SUMMARY_FROM_ANNOTATIONS()...
+        } //close method spGet_daily_activity_summary_from_annotations()...
+
+        #endregion get event annotations
 
 
-        public static string NOV10_GET_ANNOTATIONS_FOR_EVENT(int user_id, int event_id)
+
+
+        #region add/remove event annotations
+
+        public static string spAdd_event_annotation(int user_id, int event_id, string event_annotation_name)
         {
             string end_string = "";
-            end_string += "\n" + "SELECT annotation_name";
-            end_string += "\n" + "FROM SC_Browser_User_Annotations AS annotations";
-            end_string += "\n" + "WHERE annotations.[user_id]=" + user_id;
-            end_string += "\n" + "AND annotations.event_id=" + event_id + ";";
+            end_string += "\n" + "INSERT INTO SC_Browser_User_Annotations";
+            end_string += "\n" + "VALUES (" + user_id + "," + event_id + "," + convert_datetime_to_sql_string(DateTime.Now) + ",'" + event_annotation_name + "');";
             return end_string;
-        } //close method NOV10_GET_ANNOTATIONS_FOR_EVENT()...
+        } //close method spAdd_event_annotation()...
 
-
-        public static string NOV10_CLEAR_EVENT_ANNOTATIONS(int user_id, int event_id)
+        public static string spClear_event_annotations(int user_id, int event_id)
         {
             string end_string = "";
             end_string += "\n" + "DELETE FROM SC_Browser_User_Annotations";
             end_string += "\n" + "WHERE [user_id] = " + user_id;
             end_string += "\n" + "AND [event_id] = " + event_id + ";";
             return end_string;
-        } //close method NOV10_CLEAR_EVENT_ANNOTATIONS()...
+        } //close method spClear_event_annotations()...
 
 
-        public static string NOV10_ADD_EVENT_ANNOTATION(int user_id, int event_id, string event_annotation_name)
+        public static string spClear_event_annotations(int user_id, int event_id, string individual_annotation_text)
         {
             string end_string = "";
-            end_string += "\n" + "INSERT INTO SC_Browser_User_Annotations";
-            end_string += "\n" + "VALUES (" + user_id + "," + event_id + "," + convert_datetime_to_sql_string(DateTime.Now) + ",'" + event_annotation_name + "');";
+            end_string += "\n" + "DELETE FROM SC_Browser_User_Annotations";
+            end_string += "\n" + "WHERE [user_id] = " + user_id;
+            end_string += "\n" + "AND [event_id] = " + event_id;
+            end_string += "\n" + "AND [annotation_name] = '" + individual_annotation_text + "';";
             return end_string;
-        } //close method NOV10_ADD_EVENT_ANNOTATION()...
+        } //close method spClear_event_annotations()...
+
+        #endregion add/remove event annotations
 
 
-        public static string APR11_ADD_ANNOTATION_TYPE(string annotation_type_name)
+
+
+        #region add/remove annotation types
+
+        public static string spAdd_annotation_type(string annotation_type_name)
         {
             //todo multiple query
             string end_string = "";
@@ -565,9 +558,26 @@ namespace SenseCamBrowser1.Database_Versioning
             end_string += "\n" + "WHERE annotation_type = '" + annotation_type_name + "';";
             end_string += "\n" + "INSERT INTO Annotation_Types (annotation_type,description) VALUES('" + annotation_type_name + "','" + annotation_type_name + "');";
             return end_string;
-        } //close method APR11_ADD_ANNOTATION_TYPE()...
+        } //close method spAdd_annotation_type()...
 
-        #endregion get/set event annotations
+        public static string spRemove_annotation_type(string annotation_type_name)
+        {
+            string end_string = "";
+            end_string += "\n" + "DELETE FROM Annotation_Types";
+            end_string += "\n" + "WHERE annotation_type = '" + annotation_type_name + "';";;
+            return end_string;
+        } //close method spRemove_annotation_type()...
+
+
+        public static string spRemove_all_annotation_types()
+        {
+            string end_string = "";
+            end_string += "\n" + "DELETE FROM Annotation_Types;";
+            return end_string;
+        } //close spRemove_all_annotation_types()...
+
+        #endregion add/remove annotation types
+
 
 
 

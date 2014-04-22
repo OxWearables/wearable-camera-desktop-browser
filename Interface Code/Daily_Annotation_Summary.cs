@@ -54,7 +54,7 @@ namespace SenseCamBrowser1
             //this method calls the relevant database stored procedure to retrieve a list of annotations already associated with this event...
             List<Daily_Annotation_Summary> list_of_annotations = new List<Daily_Annotation_Summary>();
             SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
-            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.NOV10_GET_DAILY_ACTIVITY_SUMMARY_FROM_ANNOTATIONS(user_id, day), con);
+            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spGet_daily_activity_summary_from_annotations(user_id, day), con);
             
             string annotation_type;
             int activity_total_number_of_seconds;
@@ -89,7 +89,7 @@ namespace SenseCamBrowser1
             //this method calls the relevant database stored procedure to retrieve a list of annotations already associated with this event...
             List<int> list_of_event_ids = new List<int>();
             SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
-            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.NOV10_GET_EVENTS_IDS_IN_DAY_FOR_GIVEN_ACTIVITY(user_id, day, annotation_type), con);
+            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spGet_event_ids_in_day_for_specific_activity(user_id, day, annotation_type), con);
             
             //then open the db connection, connect to the stored procedure and return the list of results...
             con.Open();
