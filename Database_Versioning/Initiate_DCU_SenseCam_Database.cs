@@ -210,7 +210,6 @@ namespace SenseCamBrowser1.Database_Versioning
             sql_text += "\n" + "[event_id] [int] IDENTITY(1,1) NOT NULL,";
             sql_text += "\n" + "[user_id] [int] NOT NULL,";
             sql_text += "\n" + "[day] [datetime] NOT NULL,";
-            sql_text += "\n" + "[utc_day] [datetime] NULL,";
             sql_text += "\n" + "[start_time] [datetime] NOT NULL,";
             sql_text += "\n" + "[end_time] [datetime] NOT NULL,";
             sql_text += "\n" + "[keyframe_path] [varchar](256) NOT NULL,";

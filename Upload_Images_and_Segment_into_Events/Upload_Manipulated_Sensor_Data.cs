@@ -32,9 +32,10 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
         private static int MINIMUM_FILE_SIZE = 48;//AD 11/09/12 2048; //THE SMALLEST SIZE (IN BYTES) ANY SENSECAM IMAGE IS ALLOWED TO BE ... IF IT'S SMALLER THAN THIS WE DISREGARD IT (AS OTHERWISE IT MAY AFFECT any subsequent image PROCESSING as these images are generally corrupt images or uniform black ones)
         public static int MAXIMUM_NUMBER_MINUTES_BETWEEN_IMAGES_ALLOWED_TO_STAY_IN_THE_SAME_EVENT = int.Parse(ConfigurationSettings.AppSettings["maximum_num_minutes_between_images_allowed_to_stay_in_same_event"].ToString());
+        public static int USER_HOUR_TIME_ADJUSTMENT_HOURS = int.Parse(ConfigurationSettings.AppSettings["hour_offset_of_uploaded_data"].ToString());
 
 
-        public static Segmentation_Image_Rep[] process_csv_file(string local_folder, int user_id, int local_hours_ahead_of_utc_time, Upload_and_Segment_Images_Thread.DeviceType device_type)
+        public static Segmentation_Image_Rep[] process_csv_file(string local_folder, int user_id, Upload_and_Segment_Images_Thread.DeviceType device_type)
         {
             //read the sensor.csv file in the given folder
             //From reading that it'll store the sensor values
@@ -44,19 +45,16 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
             //read in from the csv file
             Sensor_Reading[] sensor_values;
             if (device_type == Upload_and_Segment_Images_Thread.DeviceType.Autographer)
-                sensor_values = read_Autographer_image_table_txt_file(local_folder + "image_table.txt", local_hours_ahead_of_utc_time);
+                sensor_values = read_Autographer_image_table_txt_file(local_folder + "image_table.txt", USER_HOUR_TIME_ADJUSTMENT_HOURS);
             else if (device_type == Upload_and_Segment_Images_Thread.DeviceType.Revue)
-                sensor_values = read_Vicon_Revue_csv_file(local_folder + "sensor.csv", local_hours_ahead_of_utc_time);
-            else sensor_values = read_SenseCam_csv_file(local_folder + "sensor.csv", local_hours_ahead_of_utc_time);
-
+                sensor_values = read_Vicon_Revue_csv_file(local_folder + "sensor.csv", USER_HOUR_TIME_ADJUSTMENT_HOURS);
+            else sensor_values = read_SenseCam_csv_file(local_folder + "sensor.csv", USER_HOUR_TIME_ADJUSTMENT_HOURS);
 
             //NOW MANIPULATE THE SENSOR VALUES!
             manipulate_sensor_information(sensor_values, device_type);
 
-
             //now upload the sensor readings to the database...
             upload_sensor_readings_to_db(sensor_values, user_id, device_type);
-
 
             //FINALLY RETURN A LIST OF IMAGES WITH MANIPULATED SENSOR VALUES
             return get_image_list(sensor_values, local_folder);
@@ -176,7 +174,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
 
 
-        private static Sensor_Reading[] read_SenseCam_csv_file(string sensor_file, int local_hours_ahead_of_utc)
+        private static Sensor_Reading[] read_SenseCam_csv_file(string sensor_file, int user_hour_time_adjustment)
         {
             //this method accepts a folder path as a parameter
             //1. read the elements and store them to an arraylist
@@ -216,7 +214,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
                     if (line_input.Substring(0, 3).Equals("ACC"))
                     {
-                        sample_time = get_datetime_from_ACC_line(current_date, line_input, local_hours_ahead_of_utc);
+                        sample_time = get_datetime_from_ACC_line(current_date, line_input);
                         acc_x = get_acc_x_from_ACC_line(line_input);
                         acc_y = get_acc_y_from_ACC_line(line_input);
                         acc_z = get_acc_z_from_ACC_line(line_input);
@@ -287,7 +285,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
 
 
-        private static Sensor_Reading[] read_Vicon_Revue_csv_file(string sensor_file, int local_hours_ahead_of_utc_time)
+        private static Sensor_Reading[] read_Vicon_Revue_csv_file(string sensor_file, int user_hour_time_adjustment)
         {
             //this method accepts a folder path as a parameter
             //1. read the elements and store them to an arraylist
@@ -324,7 +322,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                         //now let's determine the chunk_id
                         if (first_reading)
                         {
-                            sample_time = get_datetime_from_Vicon_Revue_ACC_line(line_input, local_hours_ahead_of_utc_time); //this method call also works for the VER line too, if I ever want to get the time from it ...
+                            sample_time = get_datetime_from_Vicon_Revue_ACC_line(line_input); //this method call also works for the VER line too, if I ever want to get the time from it ...
                             chunk_id = get_chunk_id(sample_time, chunk_minute_threshold);
 
                             first_reading = false; //we're no longer with the first reading ... this was just to check the initial starting chunk_id value
@@ -349,7 +347,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
 
                         //after dealing with the last group of values, we now continue reading on and store the next group of values...
-                        sample_time = get_datetime_from_Vicon_Revue_ACC_line(line_input, local_hours_ahead_of_utc_time);
+                        sample_time = get_datetime_from_Vicon_Revue_ACC_line(line_input);
                         acc_x = get_acc_x_from_Vicon_Revue_ACC_line(line_input);
                         acc_y = get_acc_y_from_Vicon_Revue_ACC_line(line_input);
                         acc_z = get_acc_z_from_Vicon_Revue_ACC_line(line_input);
@@ -385,7 +383,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                     else if (line_input.Substring(0, 3).Equals("CAM")) //this line only appears when a picture is taken...
                     {
                         //let's just make sure that the image recorded will have an appropriate time marked next to it (i.e. it was recorded within 1 minute of the most recent ACC line) ... if not, we will just not record it
-                        image_sample_time = get_datetime_from_Vicon_Revue_ACC_line(line_input, local_hours_ahead_of_utc_time); //this method call also works for the VER line too, if I ever want to get the time from it ...
+                        image_sample_time = get_datetime_from_Vicon_Revue_ACC_line(line_input); //this method call also works for the VER line too, if I ever want to get the time from it ...
 
                         time_diff_between_ACC_and_CAM_lines = image_sample_time-sample_time;
 
@@ -422,7 +420,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
 
 
-        private static Sensor_Reading[] read_Autographer_image_table_txt_file(string sensor_file, int local_hours_ahead_of_utc_time)
+        private static Sensor_Reading[] read_Autographer_image_table_txt_file(string sensor_file, int user_hour_time_adjustment)
         {
             //this method accepts a folder path as a parameter
             //1. read the elements and store them to an arraylist
@@ -456,7 +454,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                 {
                     line_elements = line_input.Split(',');
                     //after dealing with the last group of values, we now continue reading on and store the next group of values...
-                    sample_time = get_datetime_from_Autographer_txt_line_string(line_elements[0], local_hours_ahead_of_utc_time);
+                    sample_time = get_datetime_from_Autographer_txt_line_string(line_elements[0]);
                     acc_x = attempt_to_parse_string_to_double(line_elements[5]);
                     acc_y = attempt_to_parse_string_to_double(line_elements[6]);
                     acc_z = attempt_to_parse_string_to_double(line_elements[7]);
@@ -528,7 +526,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
 
 
-        private static DateTime get_datetime_from_ACC_line(DateTime current_date, string line, int local_hours_ahead_of_utc)
+        private static DateTime get_datetime_from_ACC_line(DateTime current_date, string line)
         {
             int day, month, year, hour, minute, second;
             day = current_date.Day;
@@ -541,7 +539,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
             minute = attempt_to_parse_string_to_int(line.Substring(7, 2));
             second = attempt_to_parse_string_to_int(line.Substring(10, 2));
 
-            return new DateTime(year, month, day, hour, minute, second).AddHours(local_hours_ahead_of_utc);
+            return new DateTime(year, month, day, hour, minute, second).AddHours(USER_HOUR_TIME_ADJUSTMENT_HOURS);
         } //end method get_datetime_from_CAM_line
 
 
@@ -651,9 +649,8 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
         /// this method is generally called to parse the ACC line in Vicon Revue sensor file, but it's also used to check whether this line belongs to a Vicon Revue SENSOR.CSV or a SenseCam SENSOR.CSV
         /// </summary>
         /// <param name="line"></param>
-        /// <param name="local_hours_ahead_of_utc"></param>
         /// <returns></returns>
-        public static DateTime get_datetime_from_Vicon_Revue_ACC_line(string line, int local_hours_ahead_of_utc)
+        public static DateTime get_datetime_from_Vicon_Revue_ACC_line(string line)
         {
             //ACC,2010/05/10 15:28:15,-0.020,00.976,00.039
             //0  ,          1        , 2    , 3    ,    4
@@ -684,7 +681,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                 minute = attempt_to_parse_string_to_int(date_time_string_element[1].Split(':')[1]);
                 second = attempt_to_parse_string_to_int(date_time_string_element[1].Split(':')[2]);
 
-                return new DateTime(year, month, day, hour, minute, second).AddHours(local_hours_ahead_of_utc);
+                return new DateTime(year, month, day, hour, minute, second).AddHours(USER_HOUR_TIME_ADJUSTMENT_HOURS);
             } //close try //so in case we're dealing with a SenseCam sensor.csv (called in initial checks), we'll put the code below in a try...catch statement, in case it belongs to the SenseCam and can't be parsed
             catch (Exception excep)
             {
@@ -806,9 +803,8 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
         /// this method is generally called to parse the BAT line in Autographer sensor file
         /// </summary>
         /// <param name="line"></param>
-        /// <param name="local_hours_ahead_of_utc"></param>
         /// <returns></returns>
-        public static DateTime get_datetime_from_Autographer_txt_line_string(string line, int local_hours_ahead_of_utc)
+        public static DateTime get_datetime_from_Autographer_txt_line_string(string line)
         {
             //2013-04-08T02:35:37+0100
             //_123456789_123456789_123
@@ -828,7 +824,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                 hour = attempt_to_parse_string_to_int(date_time_string_element[1].Split(':')[0]);
                 minute = attempt_to_parse_string_to_int(date_time_string_element[1].Split(':')[1]);
                 second = attempt_to_parse_string_to_int(date_time_string_element[1].Split(':')[2].Substring(0,2)); //todo Autographer, make sure I'm parsing in the time ok .. also what to do with +0100 part?
-                return new DateTime(year, month, day, hour, minute, second).AddHours(local_hours_ahead_of_utc);
+                return new DateTime(year, month, day, hour, minute, second).AddHours(USER_HOUR_TIME_ADJUSTMENT_HOURS);
             } //close try //so in case we're dealing with a SenseCam sensor.csv (called in initial checks), we'll put the code below in a try...catch statement, in case it belongs to the SenseCam and can't be parsed
             catch (Exception excep)
             {

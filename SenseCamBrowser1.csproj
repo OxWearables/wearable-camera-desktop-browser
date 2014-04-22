@@ -72,7 +72,6 @@
     <TargetZone>LocalIntranet</TargetZone>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=x86" />
     <Reference Include="PresentationFramework.Luna" />
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -253,11 +252,6 @@
     <Compile Include="Interface Code\Event_Rep.cs" />
     <Compile Include="Interface Code\Image_Rep.cs" />
     <Compile Include="Upload_Images_and_Segment_into_Events\Fuse_And_Identify_Segments.cs" />
-    <Compile Include="Upload_Images_and_Segment_into_Events\images_and_events_dataset.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>images_and_events_dataset.xsd</DependentUpon>
-    </Compile>
     <Compile Include="Upload_Images_and_Segment_into_Events\Peak_Scoring.cs" />
     <Compile Include="Upload_Images_and_Segment_into_Events\Segmentation_Event_Rep.cs" />
     <Compile Include="Upload_Images_and_Segment_into_Events\Segmentation_Image_Rep.cs" />
@@ -290,17 +284,6 @@
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="Upload_Images_and_Segment_into_Events\images_and_events_dataset.xsc">
-      <DependentUpon>images_and_events_dataset.xsd</DependentUpon>
-    </None>
-    <None Include="Upload_Images_and_Segment_into_Events\images_and_events_dataset.xsd">
-      <SubType>Designer</SubType>
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>images_and_events_dataset.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="Upload_Images_and_Segment_into_Events\images_and_events_dataset.xss">
-      <DependentUpon>images_and_events_dataset.xsd</DependentUpon>
     </None>
     <AppDesigner Include="Properties\" />
   </ItemGroup>

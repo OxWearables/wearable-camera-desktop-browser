@@ -37,7 +37,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
 
 
-        public static void update_image_dat(string local_folder, Segmentation_Image_Rep[] list_of_all_images, Segmentation_Event_Rep[] list_of_events, int utc_hours_ahead_of_local_time)
+        public static void update_image_dat(string local_folder, Segmentation_Image_Rep[] list_of_all_images, Segmentation_Event_Rep[] list_of_events)
         {
             //step 1 is covered as this application reads the list_of_all_images information earlier, so we just pass it into this method
 
@@ -48,7 +48,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
             delete_original_image_dat_file(local_folder);
 
             //write out the new image.dat file
-            write_new_image_dat_file_with_bookmarks(local_folder, list_of_all_images, utc_hours_ahead_of_local_time);
+            write_new_image_dat_file_with_bookmarks(local_folder, list_of_all_images);
         } //end method update_image_dat()
 
 
@@ -127,12 +127,11 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
 
 
-        private static void write_new_image_dat_file_with_bookmarks(string folder_name, Segmentation_Image_Rep[] list_of_images, int local_hours_ahead_of_utc_time)
+        private static void write_new_image_dat_file_with_bookmarks(string folder_name, Segmentation_Image_Rep[] list_of_images)
         {
             XmlTextWriter new_image_dat_file = new XmlTextWriter(folder_name + "image.dat", Encoding.Unicode);
             new_image_dat_file.Formatting = Formatting.Indented;
             new_image_dat_file.Indentation = 2;
-
             new_image_dat_file.WriteStartDocument();
             new_image_dat_file.WriteStartElement("ImageInfoCollection");
 
@@ -140,14 +139,10 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
             {
                 //and now we secondly check if the file is greater than 2KB in size (otherwise it's probably a skewed image)
                 new_image_dat_file.WriteStartElement("Image");
-
                 new_image_dat_file.WriteAttributeString("filename", sample_image.get_image_name());
                 new_image_dat_file.WriteAttributeString("timestamp", convert_datetime_to_string(sample_image.get_image_time()));
-                new_image_dat_file.WriteAttributeString("utc_timestamp", convert_datetime_to_string(sample_image.get_image_time().AddHours(-local_hours_ahead_of_utc_time)));
                 new_image_dat_file.WriteAttributeString("distance", "0");
-
                 new_image_dat_file.WriteAttributeString("bookmark", "DCU Event " + sample_image.get_event_boundary());
-
                 new_image_dat_file.WriteEndElement(); //end of "Image"
             } //end foreach (Image_Rep sample_image in list_of_images)
 

@@ -64,7 +64,7 @@ namespace SenseCamBrowser1.Database_Versioning
 
         public static string spCreate_new_event_and_return_its_ID(int user_id, DateTime day_of_source_event)
         {
-            string end_string = "INSERT INTO All_Events(user_id,day,utc_day,start_time,end_time,keyframe_path,number_times_viewed) VALUES (" + user_id + ", " + convert_datetime_to_sql_string(day_of_source_event) + ", " + convert_datetime_to_sql_string(day_of_source_event) + ", " + convert_datetime_to_sql_string(day_of_source_event) + ", " + convert_datetime_to_sql_string(day_of_source_event) + ", '', 0);";
+            string end_string = "INSERT INTO All_Events(user_id,day,start_time,end_time,keyframe_path,number_times_viewed) VALUES (" + user_id + ", " + convert_datetime_to_sql_string(day_of_source_event) + ", " + convert_datetime_to_sql_string(day_of_source_event) + ", " + convert_datetime_to_sql_string(day_of_source_event) + ", '', 0);";
             end_string += "\n" + "SELECT MAX(Event_ID) FROM All_Events WHERE [user_id]=" + user_id + ";";
             return end_string;
         } //close method spCreate_new_event_and_return_its_ID()...

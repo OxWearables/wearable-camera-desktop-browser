@@ -23,14 +23,11 @@ using System.Data;
 using System.Diagnostics;
 using System.Data.SQLite;
 using System.Data.Common;
-using System.Configuration;
 
 namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 {
     class Upload_and_Segment_Images_Thread
     {
-        public static int HOUR_OFFSET_OF_UPLOADED_DATA = int.Parse(ConfigurationSettings.AppSettings["hour_offset_of_uploaded_data"].ToString());
-
         ///////////////////////////// THREAD CALLBACK PROPERTIES /////////////////////////////////////////////
         ///////////////////////////// THREAD CALLBACK PROPERTIES /////////////////////////////////////////////
         ///////////////////////////// THREAD CALLBACK PROPERTIES /////////////////////////////////////////////
@@ -155,7 +152,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
             if (first_line_in_sensor_file.Substring(0, 8).Equals("#Version"))
                 return DeviceType.Autographer;
-            else if (Upload_Manipulated_Sensor_Data.get_datetime_from_Vicon_Revue_ACC_line(first_line_in_sensor_file, get_local_hours_ahead_of_utc_time()).Year >= 2000)
+            else if (Upload_Manipulated_Sensor_Data.get_datetime_from_Vicon_Revue_ACC_line(first_line_in_sensor_file).Year >= 2000)
                 return DeviceType.Revue; ////so see if we can read a Vicon revue timestamp from the first line to see if it's a valid time (i.e. say like something since 2000, then it's meant we could read it successfully
             else return DeviceType.SenseCam; //else we couldn't read a valid time, hence we're probably dealing with a SenseCam...
 
@@ -183,7 +180,6 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                     {
 
                         //1. we write the TIME.CSV file to the SenseCam "SYSTEM" directory, and this helps keep it on time
-                        //we'll actually write the UTC time, which makes time synchronisation with GPS much easier in the long run...
                         if (device_type == DeviceType.Autographer)
                         {
                             //todo Autographer, do I need to write a Time.CSV file?
@@ -273,12 +269,12 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
         {
             try
             {
-                DateTime utc_now = DateTime.UtcNow;
+                DateTime now = DateTime.Now;
                 TextWriter time_csv_file = new StreamWriter(SenseCam_data_directory.Replace("DATA", "SYSTEM") + "TIME.CSV");
                 //TIM,09,02,12 (hour,minute,second)
                 //DAT,09,06,12 (year,month,day)
-                time_csv_file.WriteLine("TIM," + utc_now.Hour + "," + utc_now.Minute + "," + utc_now.Second);
-                time_csv_file.WriteLine("DAT," + utc_now.Year + "," + utc_now.Month + "," + utc_now.Day);
+                time_csv_file.WriteLine("TIM," + now.Hour + "," + now.Minute + "," + now.Second);
+                time_csv_file.WriteLine("DAT," + now.Year + "," + now.Month + "," + now.Day);
                 time_csv_file.Close(); //and finally let's close the file writer object...
             }
             catch (Exception excep)
@@ -293,11 +289,11 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
         {
             try
             {
-                DateTime utc_now = DateTime.UtcNow;
+                DateTime now = DateTime.Now;
                 TextWriter time_csv_file = new StreamWriter(SenseCam_data_directory.Replace("DATA", "SYSTEM") + "TIME.CSV");
-                time_csv_file.WriteLine("tim " + utc_now.Hour + " " + utc_now.Minute + " " + utc_now.Second);
+                time_csv_file.WriteLine("tim " + now.Hour + " " + now.Minute + " " + now.Second);
                 time_csv_file.WriteLine();
-                time_csv_file.WriteLine("dat " + utc_now.Year + " " + utc_now.Month + " " + utc_now.Day);
+                time_csv_file.WriteLine("dat " + now.Year + " " + now.Month + " " + now.Day);
                 time_csv_file.WriteLine();
                 time_csv_file.Close(); //and finally let's close the file writer object...
             }
@@ -336,7 +332,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
         {
             try
             {
-                DateTime utc_now = DateTime.UtcNow;
+                DateTime now = DateTime.Now;
                 TextWriter autographer_auto_ini_file = new StreamWriter(SenseCam_data_directory.Replace(@"\DATA", "") + "auto.ini");
                 autographer_auto_ini_file.WriteLine("#");
                 autographer_auto_ini_file.WriteLine("#    auto.ini file V10a");
@@ -345,7 +341,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                 autographer_auto_ini_file.WriteLine("[Settings]");
                 autographer_auto_ini_file.WriteLine("");
                 autographer_auto_ini_file.WriteLine("#DateTime=2013/06/11 16:20:00"); //todo when writing the time, where can I indicate whether it is UTC time, or local time +0x:00 hrs (matching sensor.csv)??
-                autographer_auto_ini_file.WriteLine("DateTime=" + utc_now.Year + "/" + format_number(utc_now.Month) + "/" + format_number(utc_now.Day) + " " + format_number(utc_now.Hour) + ":" + format_number(utc_now.Minute) + ":" + format_number(utc_now.Second));
+                autographer_auto_ini_file.WriteLine("DateTime=" + now.Year + "/" + format_number(now.Month) + "/" + format_number(now.Day) + " " + format_number(now.Hour) + ":" + format_number(now.Minute) + ":" + format_number(now.Second));
                 autographer_auto_ini_file.WriteLine("SaveRaw=0");
                 autographer_auto_ini_file.WriteLine("");
                 autographer_auto_ini_file.WriteLine("ExposureThld=1");
@@ -676,7 +672,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
             Segmentation_Image_Rep[] manipulated_images;
             bool sensor_file_exists = File.Exists(selected_folder + "sensor.csv") || File.Exists(selected_folder+"image_table.txt");
             if (sensor_file_exists)
-                manipulated_images = Upload_Manipulated_Sensor_Data.process_csv_file(selected_folder, user_id, get_local_hours_ahead_of_utc_time(), device_type);
+                manipulated_images = Upload_Manipulated_Sensor_Data.process_csv_file(selected_folder, user_id, device_type);
             else manipulated_images = Upload_Manipulated_Sensor_Data.process_folder_with_no_csv_information(selected_folder);
 
             if (manipulated_images.Length != 0)
@@ -699,12 +695,12 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                 if (list_of_calculated_events != null)
                 {
                     //3. AND WRITE OUT THE LIST OF IMAGES AND EVENTS TO THE DATABASE!			
-                    upload_all_data_to_database(manipulated_images, list_of_calculated_events, selected_folder, user_id, get_local_hours_ahead_of_utc_time());
+                    upload_all_data_to_database(manipulated_images, list_of_calculated_events, selected_folder, user_id);
 
                     //4. FINALLY UPDATE THE IMAGE.DAT FILE SO AS TO REFLECT THE NEW BOUNDARIES AS BOOKMARKS!
                     //the reason I leave this step to last is that there may be a problem in updating the database ... if there is, I don't want to update the image.dat file as that would then mean that if I try to redo this process it'll think that it's already successfully completed (going by the image.dat file being updated) ... now this will not happen as image.dat isn't updated unto after the database updating
                     //write_output("start update image.dat => " + DateTime.Now.ToString());                    
-                    Update_Image_Dat_File.update_image_dat(selected_folder, manipulated_images, list_of_calculated_events, get_local_hours_ahead_of_utc_time());
+                    Update_Image_Dat_File.update_image_dat(selected_folder, manipulated_images, list_of_calculated_events);
 
                     write_output(selected_folder + " -> Images segmented into distinct events/activities!");
                 } //end if (list_of_calculated_events != null)
@@ -730,7 +726,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
             Segmentation_Image_Rep[] manipulated_images;
             bool sensor_file_exists = File.Exists(selected_folder + "sensor.csv");
             if (sensor_file_exists)
-                manipulated_images = Upload_Manipulated_Sensor_Data.process_csv_file(selected_folder, user_id, get_local_hours_ahead_of_utc_time(), device_type);
+                manipulated_images = Upload_Manipulated_Sensor_Data.process_csv_file(selected_folder, user_id, device_type);
             else manipulated_images = Upload_Manipulated_Sensor_Data.process_folder_with_no_csv_information(selected_folder);
 
             if (manipulated_images.Length != 0)
@@ -754,12 +750,12 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                 if (list_of_calculated_events != null)
                 {
                     //3. AND WRITE OUT THE LIST OF IMAGES AND EVENTS TO THE DATABASE!			
-                    upload_all_data_to_database(manipulated_images, list_of_calculated_events, selected_folder, user_id, get_local_hours_ahead_of_utc_time());
+                    upload_all_data_to_database(manipulated_images, list_of_calculated_events, selected_folder, user_id);
 
                     //4. FINALLY UPDATE THE IMAGE.DAT FILE SO AS TO REFLECT THE NEW BOUNDARIES AS BOOKMARKS!
                     //the reason I leave this step to last is that there may be a problem in updating the database ... if there is, I don't want to update the image.dat file as that would then mean that if I try to redo this process it'll think that it's already successfully completed (going by the image.dat file being updated) ... now this will not happen as image.dat isn't updated unto after the database updating
                     //write_output("start update image.dat => " + DateTime.Now.ToString());                    
-                    Update_Image_Dat_File.update_image_dat(selected_folder, manipulated_images, list_of_calculated_events, get_local_hours_ahead_of_utc_time());
+                    Update_Image_Dat_File.update_image_dat(selected_folder, manipulated_images, list_of_calculated_events);
 
                     write_output(selected_folder + " -> Images segmented into distinct events/activities!");
                 } //end if (list_of_calculated_events != null)
@@ -776,15 +772,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
 
 
-        private int get_local_hours_ahead_of_utc_time()
-        {
-            TimeSpan time_diff = DateTime.Now - DateTime.UtcNow;
-            return time_diff.Hours + HOUR_OFFSET_OF_UPLOADED_DATA -1;
-        } //close method get_utc_hours_ahead_of_local_time()...
-
-
-        
-        private void upload_all_data_to_database(Segmentation_Image_Rep[] all_images, Segmentation_Event_Rep[] all_events, string images_folder, int user_id, int local_hours_ahead_of_utc_time)
+        private void upload_all_data_to_database(Segmentation_Image_Rep[] all_images, Segmentation_Event_Rep[] all_events, string images_folder, int user_id)
         {
             //write_output("start upload_all_images => " + DateTime.Now.ToString());
             //1 upload all the images to the database
@@ -792,7 +780,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
             
             //write_output("start upload_new_events => " + DateTime.Now.ToString());
             //2 upload all the events to the database
-            upload_new_events(all_events, images_folder, user_id, local_hours_ahead_of_utc_time);
+            upload_new_events(all_events, images_folder, user_id);
 
             //write_output("start update_image_event_ids => " + DateTime.Now.ToString());
             //3 call a database stored procedure to update the event_id field in the all_Images table
@@ -833,10 +821,10 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
             } //close using (DbTransaction dbTrans = con.BeginTransaction())...
             con.Close();
         } //end method uplodat_images_to_database()
-        
 
 
-        private void upload_new_events(Segmentation_Event_Rep[] event_list, string images_folder, int user_id, int local_hours_ahead_of_utc_time)
+
+        private void upload_new_events(Segmentation_Event_Rep[] event_list, string images_folder, int user_id)
         {
             // http://sqlite.phxsoftware.com/forums/t/134.aspx
             DbConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
@@ -846,18 +834,16 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                 using (DbCommand cmd = con.CreateCommand())
                 {
                     //cmd.CommandText = "INSERT INTO TestCase(MyValue) VALUES(?)";
-                    cmd.CommandText = "INSERT INTO All_Events(user_id,day,utc_day,start_time,end_time,keyframe_path,number_times_viewed) VALUES(?,?,?,?,?,?,?)";
-                    DbParameter user_id_field, day_field, utc_day_field, start_time_field, end_time_field,keyframe_path_field,number_times_viewed_field;
+                    cmd.CommandText = "INSERT INTO All_Events(user_id,day,start_time,end_time,keyframe_path,number_times_viewed) VALUES(?,?,?,?,?,?)";
+                    DbParameter user_id_field, day_field, start_time_field, end_time_field,keyframe_path_field,number_times_viewed_field;
                     user_id_field = cmd.CreateParameter();
                     day_field = cmd.CreateParameter();
-                    utc_day_field = cmd.CreateParameter();
                     start_time_field = cmd.CreateParameter();
                     end_time_field = cmd.CreateParameter();
                     keyframe_path_field = cmd.CreateParameter();
                     number_times_viewed_field = cmd.CreateParameter();
                     cmd.Parameters.Add(user_id_field);
                     cmd.Parameters.Add(day_field);
-                    cmd.Parameters.Add(utc_day_field);
                     cmd.Parameters.Add(start_time_field);
                     cmd.Parameters.Add(end_time_field);
                     cmd.Parameters.Add(keyframe_path_field);
@@ -866,7 +852,6 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                     {
                         user_id_field.Value = user_id;
                         day_field.Value = event_list[row_counter].get_day(); //local time day
-                        utc_day_field.Value = event_list[row_counter].get_day().AddHours(-local_hours_ahead_of_utc_time); //utc_day              
                         start_time_field.Value = event_list[row_counter].get_start_time(); //local time start time
                         end_time_field.Value = event_list[row_counter].get_end_time(); //local time end time
                         keyframe_path_field.Value = images_folder + event_list[row_counter].get_keyframe_image_name();
