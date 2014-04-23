@@ -128,26 +128,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Content Include="Click_Sound.wav">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Mailbox_Sound.wav">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Resource Include="SC_icon.ICO" />
-    <Content Include="SlowClick_Sound.wav">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Resource Include="adding photos.bmp" />
-    <Resource Include="image01.png" />
-    <Resource Include="image02.png" />
-    <Resource Include="image03.png" />
-    <Resource Include="image04.png" />
-    <Resource Include="image05.png" />
-    <Resource Include="image06.png" />
-    <Resource Include="image07.png" />
-    <Resource Include="image08.png" />
-    <Resource Include="image09.png" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -156,19 +138,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <None Include="SenseCamBrowser1_TemporaryKey.pfx" />
-    <None Include="testwindow">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>
-      </SubType>
-    </None>
     <Page Include="CalendarView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Help_Section.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <Generator>MSBuild:Compile</Generator>
@@ -223,9 +193,6 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FolderSelecter.Designer.cs">
-    </Compile>
-    <Compile Include="Help_Section.xaml.cs">
-      <DependentUpon>Help_Section.xaml</DependentUpon>
     </Compile>
     <Compile Include="Interface Code\calendar_control.cs" />
     <Compile Include="ImgViewer.xaml.cs">

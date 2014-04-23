@@ -336,10 +336,7 @@ how to find where my SenseCam images are stored?
             private void CalendarView_Click(object sender, RoutedEventArgs e)
             {
                 //let's log this interaction
-                play_sound();
                 Record_User_Interactions.log_interaction_to_database("Window1_calendar_click", current_day_on_display.ToString());
-                
-
                 calSenseCamDay.Visibility = Visibility.Visible;                
             } //close method CalendarView_Click()...
 
@@ -361,7 +358,6 @@ how to find where my SenseCam images are stored?
                     Event_Rep event_rep = (Event_Rep)LstDisplayEvents.SelectedItem;
 
                     //let's log this interaction
-                    play_sound();
                     Record_User_Interactions.log_interaction_to_database("Window1_eventdetail_click", event_rep.event_id.ToString());
                     
 
@@ -385,10 +381,7 @@ how to find where my SenseCam images are stored?
             private void btnUpload_New_Images_Click(object sender, RoutedEventArgs e)
             {
                 //let's log this interaction
-                play_sound();
                 Record_User_Interactions.log_interaction_to_database("Window1_btnupload_new_images_click");
-                
-
                 ucUploadNewImages.update_user_control_with_drive_information(User_Object.OVERALL_USER_ID, User_Object.OVERALL_USER_NAME, All_Images_Deleted_from_SenseCam);
                 ucUploadNewImages.Visibility = Visibility.Visible;                                
             } //close btnUpload_New_Images_Click()...
@@ -404,9 +397,7 @@ how to find where my SenseCam images are stored?
             private void btnClose_App_Click(object sender, RoutedEventArgs e)
             {
                 //let's log this interaction
-                play_sound();
                 Record_User_Interactions.log_interaction_to_database("Window1_appclose", current_day_on_display.ToString());
-
 
                 //and now's let's close the application
                 if (!ucUploadNewImages.Is_Deletion_Process_Currently_Running())
@@ -427,18 +418,16 @@ how to find where my SenseCam images are stored?
 
 
             /// <summary>
-            /// this method is called whenever the user wants to view the help section...
+            /// this method is called whenever the user wants to export annotations...
             /// </summary>
             /// <param name="sender"></param>
             /// <param name="e"></param>
-            private void btnHelp_Click(object sender, RoutedEventArgs e)
+            private void btnExport_Click(object sender, RoutedEventArgs e)
             {
+                //todo add in ability to export annotations for user to CSV file...
                 //let's log this interaction
-                play_sound();
-                Record_User_Interactions.log_interaction_to_database("Window1_btnHelp_Click", current_day_on_display.ToString());
-
-                sc_help.Visibility = Visibility.Visible;
-            } //close method btnHelp_Click()...
+                Record_User_Interactions.log_interaction_to_database("Window1_btnExport_Click", current_day_on_display.ToString());
+            } //close method btnExport_Click()...
 
 
 
@@ -552,51 +541,6 @@ how to find where my SenseCam images are stored?
             } //close method large_rectangle_icon_MouseLeftButtonDown()...
 
         #endregion interface control methods...
-
-
-
-
-
-
-
-
-        #region methods to support interface controls...
-
-            /// <summary>
-            /// when this method is called, a sound will be played
-            /// </summary>
-            private void play_sound()
-            {
-                //optionally play a sound when user clicks on certain things (more suited towards touchscreens...)
-                //sound_Click_Sound.Stop();
-                //sound_Click_Sound.Play();
-            }//close method play_sound()...
-
-
-
-        /*
-            /// <summary>
-            /// this method shuts down the PC!!! Can be helpful on touchscreen devices, which startup with SenseCam browser...
-            /// </summary>
-            private void shut_down_pc()
-            {
-                //http://www.geekpedia.com/code36_Shut-down-system-using-Csharp.html
-                //add System.Management reference to any project that needs this code...
-                ManagementBaseObject mboShutdown = null;
-                ManagementClass mcWin32 = new ManagementClass("Win32_OperatingSystem");
-                mcWin32.Get();
-                // You can't shutdown without security privileges
-                mcWin32.Scope.Options.EnablePrivileges = true;
-                ManagementBaseObject mboShutdownParams = mcWin32.GetMethodParameters("Win32Shutdown");
-                // Flag 1 means we want to shut down the system
-                mboShutdownParams["Flags"] = "1";
-                mboShutdownParams["Reserved"] = "0";
-                foreach (ManagementObject manObj in mcWin32.GetInstances())
-                    mboShutdown = manObj.InvokeMethod("Win32Shutdown", mboShutdownParams, null);                             
-            }//close method shut_down_pc()...                  
-        */
-        #endregion methods to support interface controls...
-
 
 
 

@@ -380,7 +380,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
                                     </LinearGradientBrush>
                                 </Path.Fill>
                             </Path>
-                            <TextBlock Margin="5,11,5,6" FontSize="18" TextAlignment="Center" TextWrapping="Wrap" x:Name="textBlock" Width="90" Text="Add Photos" d:LayoutOverrides="VerticalAlignment"/>
+                            <TextBlock Margin="5,11,5,6" FontSize="18" TextAlignment="Center" TextWrapping="Wrap" x:Name="textBlock" Width="90" Text="Add Photos" Foreground="Black" d:LayoutOverrides="VerticalAlignment"/>
                         </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
@@ -451,7 +451,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
                                     </LinearGradientBrush>
                                 </Path.Fill>
                             </Path>
-                            <TextBlock Margin="5,10.468,5,6.532" FontSize="18" TextAlignment="Center" TextWrapping="Wrap" x:Name="textBlock" Width="90" Text="Help" d:LayoutOverrides="VerticalAlignment"/>
+                            <TextBlock Margin="5,10.468,5,6.532" FontSize="18" TextAlignment="Center" TextWrapping="Wrap" x:Name="textBlock" Width="90" Text="Export" Foreground="Black"  d:LayoutOverrides="VerticalAlignment"/>
                         </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
@@ -473,14 +473,6 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
             </DoubleAnimationUsingKeyFrames>
             <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000" Storyboard.TargetName="btnUpload_New_Images" Storyboard.TargetProperty="(UIElement.BitmapEffect).(DropShadowBitmapEffect.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="00:00:00" Value="0.495"/>
-            </DoubleAnimationUsingKeyFrames>
-        </Storyboard>
-        <Storyboard x:Key="help_action">
-            <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="btnHelp" Storyboard.TargetProperty="(UIElement.BitmapEffect).(DropShadowBitmapEffect.ShadowDepth)" Duration="00:00:00.0010000">
-                <SplineDoubleKeyFrame KeyTime="00:00:00" Value="0"/>
-            </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000" Storyboard.TargetName="btnHelp" Storyboard.TargetProperty="(UIElement.BitmapEffect).(DropShadowBitmapEffect.Opacity)">
-                <SplineDoubleKeyFrame KeyTime="00:00:00" Value="0.505"/>
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
         <Style x:Key="ListBoxStyle1" TargetType="{x:Type ListBox}">
@@ -1620,7 +1612,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
                     <DropShadowBitmapEffect ShadowDepth="2" Direction="315" Softness="0.25"/>
                 </Button.BitmapEffect>
             </Button>
-            <Button Margin="104.3,0,42.647,40.4" VerticalAlignment="Bottom" Height="40.8" Content="Button" x:Name="btnHelp" Style="{DynamicResource ButtonStyle7}" Click="btnHelp_Click">
+            <Button Margin="104.3,0,42.647,40.4" VerticalAlignment="Bottom" Height="40.8" Content="Button" x:Name="btnExport" Style="{DynamicResource ButtonStyle7}" Click="btnExport_Click">
                 <Button.BitmapEffect>
                     <DropShadowBitmapEffect ShadowDepth="2" Direction="315" Softness="0.25"/>
                 </Button.BitmapEffect>
@@ -1633,7 +1625,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
                 <ColumnDefinition Width="0.904*"/>
             </Grid.ColumnDefinitions>
             <Ellipse Fill="#FFF5EFDC" Stroke="{x:Null}" HorizontalAlignment="Left" Margin="-445.7,0,0,-374.4" VerticalAlignment="Bottom" Width="202" Height="238.5" />
-            <TextBlock Margin="0,11.003,0,-20.303" TextWrapping="Wrap" FontSize="16" x:Name="txt_hint1"  Visibility="Visible" Opacity="0.99" Foreground="#FF505102" Grid.ColumnSpan="2" HorizontalAlignment="Left"><Run Text="You can touch one of the events below to view the photos within it." Language="en-ie"/></TextBlock>
+            <TextBlock Margin="0,11.003,0,-20.303" TextWrapping="Wrap" FontSize="16" x:Name="txt_hint1"  Visibility="Visible" Opacity="0.99" Foreground="#FF505102" Grid.ColumnSpan="2" HorizontalAlignment="Left"><Run Text="You can click one of the events below to view the photos within it." Language="en-ie"/></TextBlock>
             <Rectangle Fill="#FFCAD4DD" Margin="0,0,-0.802,0" RadiusX="1" RadiusY="1" Stroke="#FFB3B3B1" x:Name="event_detail_background_Copy"  HorizontalAlignment="Right" Width="88.429" Height="39.532" d:LayoutOverrides="HorizontalAlignment" Grid.Column="1" Visibility="Hidden" >
                 <Rectangle.BitmapEffect>
                     <DropShadowBitmapEffect Opacity="0.4" ShadowDepth="1" Softness="0.245"/>
@@ -1650,7 +1642,6 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
         <SCImgViewer:CalendarView x:Name="calSenseCamDay" Grid.RowSpan="2" Visibility="Collapsed" Cursor="Arrow" />
         <SCImgViewer:ImgViewer x:Name="sc_img_viewer" Grid.RowSpan="2" Visibility="Collapsed" Cursor="Arrow" />
         <SCImgViewer:Upload_New_Images x:Name="ucUploadNewImages" Grid.RowSpan="2" Visibility="Collapsed" Cursor="Arrow" />
-        <SCImgViewer:Help_Section x:Name="sc_help" Grid.RowSpan="2" Visibility="Collapsed" Cursor="Arrow" />
 
     </Grid>
 
