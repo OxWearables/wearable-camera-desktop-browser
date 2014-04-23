@@ -52,7 +52,7 @@ namespace SenseCamBrowser1
             //this method calls the relevant database stored procedure to retrieve a list of events
 
             List<User_Object> list_of_users = new List<User_Object>();
-            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
             SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spGet_List_Of_Users(), con);            
             con.Open();            
             SQLiteDataReader read_events = selectCmd.ExecuteReader();
@@ -86,7 +86,7 @@ namespace SenseCamBrowser1
             int new_user_id = -1, new_event_id = -1;
 
             //this method calls the relevant database stored procedure to insert a new user and then return the ID of this newly added user...
-            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
             SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spInsert_New_User_Into_Database_and_Return_ID(usr_name), con);
             con.Open();
 

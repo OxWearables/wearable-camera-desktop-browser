@@ -37,7 +37,7 @@ namespace SenseCamBrowser1
         {
             //this method calls the relevant database stored procedure to retrieve a list of annotation classes...
             List<string> list_of_annotation_classes = new List<string>();
-            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
             SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spGet_list_of_annotation_types(), con);
             
             int annotation_id;
@@ -76,7 +76,7 @@ namespace SenseCamBrowser1
         {
             //this method calls the relevant database stored procedure to retrieve a list of annotations already associated with this event...
             List<string> list_of_annotations = new List<string>();
-            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
             SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spGet_event_annotations(user_id,event_id),con);
             
             string annotation_type;
@@ -100,7 +100,7 @@ namespace SenseCamBrowser1
 
         public static void add_event_annotation_to_database(int user_id, int event_id, string annotation_name)
         {
-            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
             SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spAdd_event_annotation(user_id, event_id, annotation_name), con);
             con.Open();
             selectCmd.ExecuteNonQuery();
@@ -110,7 +110,7 @@ namespace SenseCamBrowser1
 
         public static void clear_event_annotations_from_database(int user_id, int event_id)
         {
-            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
             SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spClear_event_annotations(user_id, event_id), con);
             con.Open();
             selectCmd.ExecuteNonQuery();
@@ -119,7 +119,7 @@ namespace SenseCamBrowser1
 
         public static void clear_event_annotations_from_database(int user_id, int event_id, string individual_annotation_text)
         {
-            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
             SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spClear_event_annotations(user_id, event_id, individual_annotation_text), con);
             con.Open();
             selectCmd.ExecuteNonQuery();
@@ -133,7 +133,7 @@ namespace SenseCamBrowser1
 
         public static void add_annotation_type_to_database(string annotation_type_name)
         {
-            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
             SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spAdd_annotation_type(annotation_type_name), con);
             con.Open();
             selectCmd.ExecuteNonQuery();
@@ -144,7 +144,7 @@ namespace SenseCamBrowser1
 
         public static void clear_annotation_type_from_database(string annotation_type_name)
         {
-            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
             SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spRemove_annotation_type(annotation_type_name), con);
             con.Open();
             selectCmd.ExecuteNonQuery();
@@ -154,7 +154,7 @@ namespace SenseCamBrowser1
 
         public static void clear_all_annotation_types_from_database()
         {
-            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
             SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spRemove_all_annotation_types(), con);
             con.Open();
             selectCmd.ExecuteNonQuery();

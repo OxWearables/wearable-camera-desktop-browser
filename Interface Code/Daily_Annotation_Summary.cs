@@ -53,7 +53,7 @@ namespace SenseCamBrowser1
         {
             //this method calls the relevant database stored procedure to retrieve a list of annotations already associated with this event...
             List<Daily_Annotation_Summary> list_of_annotations = new List<Daily_Annotation_Summary>();
-            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
             SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spGet_daily_activity_summary_from_annotations(user_id, day), con);
             
             string annotation_type;
@@ -88,7 +88,7 @@ namespace SenseCamBrowser1
         {
             //this method calls the relevant database stored procedure to retrieve a list of annotations already associated with this event...
             List<int> list_of_event_ids = new List<int>();
-            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
             SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spGet_event_ids_in_day_for_specific_activity(user_id, day, annotation_type), con);
             
             //then open the db connection, connect to the stored procedure and return the list of results...

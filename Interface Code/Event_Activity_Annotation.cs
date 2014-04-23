@@ -41,7 +41,7 @@ namespace SenseCamBrowser1.Interface_Code
             //this method calls the relevant database stored procedure to retrieve a list of annotationed events for this day...
             List<Event_Activity_Annotation> list_of_annotated_events = new List<Event_Activity_Annotation>();
 
-            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
             SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spGet_annotated_events_in_day(user_id,day), con);
             
             int event_index_counter = 1;

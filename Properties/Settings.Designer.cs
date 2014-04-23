@@ -27,9 +27,9 @@ namespace SenseCamBrowser1.Properties {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
         [global::System.Configuration.DefaultSettingValueAttribute("Data Source=doherty_sensecam.db;Pooling=true;FailIfMissing=false;Version=3")]
-        public string DCU_SenseCamConnectionString {
+        public string DBConnectionString {
             get {
-                return ((string)(this["DCU_SenseCamConnectionString"]));
+                return ((string)(this["DBConnectionString"]));
             }
         }
     }

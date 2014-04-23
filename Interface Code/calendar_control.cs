@@ -51,7 +51,7 @@ namespace SenseCamBrowser1
             List<string> list_of_days = new List<string>();
 
             //spGet_Event_Image_Paths
-            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
             SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spGet_List_Of_All_Days_For_User(user_id), con);
             con.Open();
             SQLiteDataReader day_reader = selectCmd.ExecuteReader();

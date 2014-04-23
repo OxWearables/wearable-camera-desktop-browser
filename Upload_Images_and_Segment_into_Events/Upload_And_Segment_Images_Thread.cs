@@ -794,7 +794,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
         private void upload_new_images(Segmentation_Image_Rep[] image_list, string images_folder, int user_id)
         {
             // http://sqlite.phxsoftware.com/forums/t/134.aspx
-            DbConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+            DbConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
             con.Open();
             using (DbTransaction dbTrans = con.BeginTransaction())
             {
@@ -827,7 +827,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
         private void upload_new_events(Segmentation_Event_Rep[] event_list, string images_folder, int user_id)
         {
             // http://sqlite.phxsoftware.com/forums/t/134.aspx
-            DbConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+            DbConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
             con.Open();
             using (DbTransaction dbTrans = con.BeginTransaction())
             {
@@ -868,7 +868,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
         private void update_event_id_field_of_all_images_table(int user_id)
         {
-            SQLiteConnection cnn = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+            SQLiteConnection cnn = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
             SQLiteCommand command = new SQLiteCommand(cnn);
             cnn.Open();
 

@@ -28,7 +28,7 @@ namespace SenseCamBrowser1
 
     public class Event_Rep
     {
-        public static string DEFAULT_IMAGE_CAPTION_TEXT = "     Free text area"; //this property is used to display default text if there is no comment associated with the event
+        public static string DEFAULT_IMAGE_CAPTION_TEXT = "     Free text annotation"; //this property is used to display default text if there is no comment associated with the event
         public static string DEFAULT_EVENT_KEYFRAME_BORDER_COLOUR = "#24000000"; //this property is used to display the default border colour for event keyframes on the main screen...
 
 
@@ -131,7 +131,7 @@ namespace SenseCamBrowser1
                 //this method calls the relevant database stored procedure to retrieve a list of events
                 List<Event_Rep> list_of_events = new List<Event_Rep>();
 
-                SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+                SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
                 SQLiteCommand command = new SQLiteCommand(con);
                 con.Open();
                 command.CommandText = Database_Versioning.text_for_stored_procedures.spGet_All_Events_In_Day(user_id, day);
@@ -169,7 +169,7 @@ namespace SenseCamBrowser1
             public static void update_event_comment(int user_id, int event_id, string comment)
             {
                 //THIS METHOD IS RESPONSIBLE FOR UPDATING AN EVENT'S COMMENT FIELD
-                SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+                SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
                 SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spUpdateEventComment(user_id, event_id, comment), con);
                 con.Open();
                 selectCmd.ExecuteNonQuery();
@@ -188,7 +188,7 @@ namespace SenseCamBrowser1
             public static void update_event_as_being_viewed_another_time(int user_id, int event_id)
             {
                 //THIS METHOD IS RESPONSIBLE FOR UPDATING AN EVENT'S COMMENT FIELD
-                SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+                SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
                 SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spUpdateEvent_Number_Times_Viewed(user_id, event_id), con);
                 con.Open();
                 selectCmd.ExecuteNonQuery();
@@ -207,7 +207,7 @@ namespace SenseCamBrowser1
             public static void update_event_keyframe_path(int user_id, int event_id, string new_keyframe_path)
             {
                 //this method calls a database stored procedure to update the keyframe path of the event in question
-                SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+                SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
                 SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spUpdate_Event_Keyframe_Path(user_id,event_id,new_keyframe_path), con);
                 con.Open();
                 selectCmd.ExecuteNonQuery();
@@ -225,7 +225,7 @@ namespace SenseCamBrowser1
             public static void delete_event_from_database(int user_id, int event_id)
             {
                 //this method calls a database stored procedure to delete this event from the database
-                SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+                SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
                 SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spDelete_Event(user_id,event_id), con);
                 con.Open();
                 selectCmd.ExecuteNonQuery();
@@ -243,7 +243,7 @@ namespace SenseCamBrowser1
             /// <param name="time_of_end_image"></param>
             public static void send_images_to_previous_event(int user_id, int event_id_of_source_images, DateTime time_of_end_image)
             {
-                SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+                SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
                 SQLiteCommand command = new SQLiteCommand(con);
                 con.Open();
 
@@ -286,7 +286,7 @@ namespace SenseCamBrowser1
             /// <param name="time_of_start_image"></param>
             public static void send_images_to_next_event(int user_id, int event_id_of_source_images, DateTime time_of_start_image)
             {
-                SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+                SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
                 SQLiteCommand command = new SQLiteCommand(con);
                 con.Open();
 
@@ -330,7 +330,7 @@ namespace SenseCamBrowser1
             /// <param name="time_of_start_image"></param>
             public static int split_event_into_two(int user_id, int event_id_of_source_images, DateTime time_of_start_image)
             {                
-                SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+                SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
                 SQLiteCommand command = new SQLiteCommand(con);
                 con.Open();
 
@@ -361,7 +361,7 @@ namespace SenseCamBrowser1
             {
                 //update the event information (start time, end time, keyframe path) of any event (presuming the images/sensors tables have just been updated for some reason)...
 
-                SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+                SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
                 SQLiteCommand command = new SQLiteCommand(con);
                 con.Open();
 

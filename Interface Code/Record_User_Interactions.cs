@@ -40,7 +40,7 @@ namespace SenseCamBrowser1
             if (optional_parameters.Length > max_length)
                 optional_parameters = optional_parameters.Substring(optional_parameters.Length - max_length - 1, max_length);
 
-            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
             SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spLog_User_Interaction(Window1.OVERALL_USER_ID,DateTime.Now,uixaml_element,optional_parameters), con);
             con.Open();
             selectCmd.ExecuteNonQuery();

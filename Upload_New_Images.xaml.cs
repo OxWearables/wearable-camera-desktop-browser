@@ -230,7 +230,7 @@ namespace SenseCamBrowser1
         {
             string last_keyframe_path = "";
             //this method calls a database stored procedure to return the number of images in an event
-            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
             SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spGet_Last_Keyframe_Path(user_id), con);
             con.Open();
             try
@@ -269,7 +269,7 @@ namespace SenseCamBrowser1
         private string get_likely_PC_destination_root_based_on_another_user(int user_id_of_first_time_user, string user_name)
         {
             int user_id_of_user_with_most_recent_data = -1;
-            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
             SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spGet_UserID_of_Most_Recent_Data_Upload(), con);
             con.Open();
             try

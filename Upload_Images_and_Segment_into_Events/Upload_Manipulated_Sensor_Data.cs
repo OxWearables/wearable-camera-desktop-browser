@@ -997,7 +997,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
         private static void upload_sensor_readings_to_db(Sensor_Reading[] sensor_readings, int user_id, Upload_and_Segment_Images_Thread.DeviceType device_type)
         {
             // http://sqlite.phxsoftware.com/forums/t/134.aspx
-            DbConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+            DbConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
             con.Open();
             using (DbTransaction dbTrans = con.BeginTransaction())
             {

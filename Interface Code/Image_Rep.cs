@@ -151,7 +151,7 @@ namespace SenseCamBrowser1
             int num_images_in_day = 0;
 
             //this method calls a database stored procedure and returns the paths of all the images in this event
-            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
             SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spGet_Num_Images_In_Day(user_id,day_in_question), con);
             con.Open();
             try
@@ -177,7 +177,7 @@ namespace SenseCamBrowser1
         {
 
             //this method calls a database stored procedure and returns the paths of all the images in this event
-            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
             SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spGet_Paths_Of_All_Images_In_Event(user_id, event_id), con);
             con.Open();
             SQLiteDataReader read_events = selectCmd.ExecuteReader();
@@ -209,7 +209,7 @@ namespace SenseCamBrowser1
         {
             int num_images = 0;
             //this method calls a database stored procedure to return the number of images in an event
-            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
             SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spGet_Num_Images_In_Event(user_id, event_id), con);
             con.Open();
             try
@@ -238,7 +238,7 @@ namespace SenseCamBrowser1
         public static void get_start_and_end_time_of_images_in_day(int user_id, DateTime day_in_question, ref DateTime day_start_time, ref DateTime day_end_time)
         {
             //this method calls the relevant database stored procedure to retrieve a list of events
-            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
             SQLiteCommand command = new SQLiteCommand(con);
             con.Open();
             command.CommandText = Database_Versioning.text_for_stored_procedures.spGet_Day_Start_and_End_Times(user_id, day_in_question);
@@ -268,7 +268,7 @@ namespace SenseCamBrowser1
         public static void delete_image_from_event(int user_id, int event_id, DateTime image_time, string image_path)
         {
             //this method calls a database stored procedure and deletes the given image reference in the database
-            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DCU_SenseCamConnectionString);
+            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
             SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spDelete_Image_From_Event(user_id, event_id, image_time), con);
             con.Open();
             selectCmd.ExecuteNonQuery();
