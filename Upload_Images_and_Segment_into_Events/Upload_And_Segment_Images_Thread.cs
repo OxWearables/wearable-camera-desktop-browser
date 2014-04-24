@@ -206,7 +206,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                         //3. copy the sensor.csv file and all the image files from the "data" folder in the SenseCam device, to the new folder we created on the local desktop machine
                         write_output(DateTime.Now.ToLongTimeString() + " copying files across...");
                         //todo image uploader status needs to be updated for Autographer!
-                        copy_SenseCam_files_to_local_machine(SenseCam_data_directory, local_machine_folder_path_for_new_images, false);
+                        copy_SenseCam_files_to_local_machine(SenseCam_data_directory, local_machine_folder_path_for_new_images, false, device_type);
                         write_output(DateTime.Now.ToLongTimeString() + " files copied across...");
 
                         //4. delete the files from the SenseCam - this is a seperate process, so we may as well kick start it as early as possible, i.e. just after uploading the images
@@ -387,7 +387,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
         int upload_transer_num_images_to_copy_in_total = 0;
         int upload_transfer_num_images_copied_so_far = 0;
 
-        private void copy_SenseCam_files_to_local_machine(string SenseCam_folder, string local_machine_directory, bool sensor_csv_found)
+        private void copy_SenseCam_files_to_local_machine(string SenseCam_folder, string local_machine_directory, bool sensor_csv_found, DeviceType type_of_device)
         {
             //firstly let's check for the Sensor.csv file, if it hasn't already been found yet...
             //if (type_of_device == DeviceType.Revue || type_of_device == DeviceType.SenseCam)
@@ -404,11 +404,20 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                 } //close foreach (FileInfo csv_file in sensor_csv)...
 
             } //close if (!sensor_csv_found)...
-
+            
             //if there are images here, we'll copy them all over to the local desktop directory
-            //foreach (FileInfo image_file in new DirectoryInfo(SenseCam_folder).GetFiles("*.JPG"))
-            foreach (FileInfo image_file in attempt_to_retrieve_files_from_directory(SenseCam_folder, "*.JPG"))// new DirectoryInfo(SenseCam_folder).GetFiles("*.JPG"))
-                attempt_to_copy_image_file(SenseCam_folder, local_machine_directory, image_file);
+            //todo test this code...
+            //todo I'm not happy that this code assumes autographer will always write .RES files (it will also write .JPG files too!)
+            if (type_of_device == DeviceType.Autographer)
+            {
+                foreach (FileInfo image_file in attempt_to_retrieve_files_from_directory(SenseCam_folder, "*.RES"))
+                    attempt_to_copy_image_file(SenseCam_folder, local_machine_directory, image_file, type_of_device);
+            } //close if (type_of_device == DeviceType.Autographer)
+            else //i.e. SenseCam or ViconRevue
+            {
+                foreach (FileInfo image_file in attempt_to_retrieve_files_from_directory(SenseCam_folder, "*.JPG"))
+                    attempt_to_copy_image_file(SenseCam_folder, local_machine_directory, image_file, type_of_device);
+            } //close else ... if (type_of_device == DeviceType.Autographer)
 
             //let's inform the user on how we're getting on
             send_image_transfer_progress_update_to_user(0, 50); //for copying we'll update progress between 0 and 50 percent
@@ -417,7 +426,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
             foreach (string subfolder in attempt_to_retrieve_subdirectories_from_directory(SenseCam_folder))
             {
                 if(!(subfolder.EndsWith("256_192") || subfolder.EndsWith("640_480"))) //for the Autographer, a break clause is needed to not look at folders "256_192" and "640_480" (they're just low resolution versions of images already copied across)
-                    copy_SenseCam_files_to_local_machine(subfolder + @"\", local_machine_directory, sensor_csv_found); //NOTE THAT I NEED THE @"\" AT THE END SO AS TO BE ABLE TO READ FILES WITHIN THE DIRECTORY
+                    copy_SenseCam_files_to_local_machine(subfolder + @"\", local_machine_directory, sensor_csv_found, type_of_device); //NOTE THAT I NEED THE @"\" AT THE END SO AS TO BE ABLE TO READ FILES WITHIN THE DIRECTORY
             }
 
         } //end method copy_SenseCam_files_to_local_machine()
@@ -470,13 +479,15 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
         /// </summary>
         /// <param name="source_file"></param>
         /// <param name="destination_file"></param>
-        private void attempt_to_copy_image_file(string SenseCam_folder, string local_machine_directory, FileInfo image_file)
+        private void attempt_to_copy_image_file(string SenseCam_folder, string local_machine_directory, FileInfo image_file, DeviceType type_of_device)
         {
             try
             {
                 if ((image_file.Length > MINIMUM_FILE_SIZE) && (image_file.Length < MAXIMUM_FILE_SIZE) && image_file.Exists)
                 {
-                    File.Copy(SenseCam_folder + @"\" + image_file.Name, local_machine_directory + @"\" + image_file.Name);
+                    if(type_of_device == DeviceType.Autographer)
+                        File.Copy(SenseCam_folder + @"\" + image_file.Name, local_machine_directory + @"\" + image_file.Name.Replace(".RES",".JPG"));
+                    else File.Copy(SenseCam_folder + @"\" + image_file.Name, local_machine_directory + @"\" + image_file.Name);
                     upload_transfer_num_images_copied_so_far++;
                 } //close if (image_file.Length > MINIMUM_FILE_SIZE & image_file.Exists)...
             } //close try
