@@ -181,14 +181,14 @@ namespace SenseCamBrowser1
                 foreach (Image_Rep image_for_deletion in list_of_images_to_delete)
                 {
                     //and we now delete this image from the database...
-                    Image_Rep.delete_image_from_event(Window1.OVERALL_USER_ID, current_event.event_id, image_for_deletion.image_time, image_for_deletion.image_path);
+                    Image_Rep.DeleteEventImage(Window1.OVERALL_USER_ID, current_event.event_id, image_for_deletion.image_time, image_for_deletion.image_path);
 
                     //but just in case this image was the keyframe image ...
                     if (image_for_deletion.image_path.Equals(current_event.str_keyframe_path)) //we'll update the event keyframe image ...
                     {
                         Event_Rep.UpdateKeyframe(Window1.OVERALL_USER_ID, current_event.event_id, list_of_event_images[list_of_event_images.Count / 2].image_path); //... to now be the middle image from the new set of images in this event (minus the deleted ones)
                         current_event.str_keyframe_path = list_of_event_images[list_of_event_images.Count / 2].image_path;
-                        current_event.keyframe_path = Image_Rep.get_image_source(current_event.str_keyframe_path, true);
+                        current_event.keyframe_path = Image_Rep.GetImgBitmap(current_event.str_keyframe_path, true);
                         //and let's give a callback to the main UI, so it can now also reflect the new keyframe for this event...                        
                         current_event_updated_callback();
                     } //close if (image_for_deletion.image_path.Equals(current_event.str_keyframe_path)) //we'll update the event keyframe image ...
@@ -257,7 +257,7 @@ namespace SenseCamBrowser1
         {
             
             //firstly we update the list of images belonging to this class (it's ok to do this, since we don't need to interfere with the UI thread)
-            list_of_event_images = Image_Rep.list_of_images_for_viewer_to_show;
+            list_of_event_images = Image_Rep.ImageList;
             
             //next we'll want to update the UI, so we invoke a delegate
             this.Dispatcher.BeginInvoke(new update_UI_based_on_newly_loaded_images_Delegate(update_UI_based_on_newly_loaded_images)); //invoke the delegate which calls the method to allow the user exit the application again...
@@ -484,7 +484,7 @@ namespace SenseCamBrowser1
         private void close_viewer_control()
         {
             lst_display_images.ItemsSource = null;            
-            Image_Rep.release_imagesource_resources_from_all_Simple_Image_Rep_items(list_of_event_images);
+            Image_Rep.ReleaseImgBitmaps(list_of_event_images);
 
             Visibility = Visibility.Collapsed; //and let's close/collapse this user control                        
         } //close method close_viewer_control()...
@@ -675,9 +675,9 @@ namespace SenseCamBrowser1
                 if (PlayBtn.IsEnabled)
                 {
                     stop_playback(); //in case we're playing through the images, let's stop the player                
-                    Clipboard.SetImage(Image_Rep.get_image_source(list_of_event_images[array_position_of_current_image].image_path, false));
+                    Clipboard.SetImage(Image_Rep.GetImgBitmap(list_of_event_images[array_position_of_current_image].image_path, false));
                 }
-                else Clipboard.SetImage(Image_Rep.get_image_source(list_of_event_images[lst_display_images.SelectedIndex].image_path, false));
+                else Clipboard.SetImage(Image_Rep.GetImgBitmap(list_of_event_images[lst_display_images.SelectedIndex].image_path, false));
 
                 //let's log this interaction
                 play_sound();
@@ -761,7 +761,7 @@ namespace SenseCamBrowser1
                 int current_event_id = current_event.event_id;
 
                 List<Image_Rep> selected_images_for_splitting = lst_display_images.SelectedItems.Cast<Image_Rep>().ToList();
-                Image_Rep.sort_list_of_images_by_id(selected_images_for_splitting);
+                Image_Rep.sortImagesByID(selected_images_for_splitting);
 
                 foreach (Image_Rep selected_image_to_start_new_event in selected_images_for_splitting)
                 {    

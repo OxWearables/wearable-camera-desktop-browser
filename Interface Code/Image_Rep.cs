@@ -26,297 +26,212 @@ namespace SenseCamBrowser1
 {
     public class Image_Rep
     {
-        public static List<Image_Rep> list_of_images_for_viewer_to_show;
+        public static List<Image_Rep> ImageList;
+        private static string BackupImage = "Image-Unavailable.gif";
+        private static int ScaledImagePixelWidth = 120;
+        private static string DbString = global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString;
 
-
-        #region properties which are associated with each and every image retrieved from the database
-
+        //Image properties.
         public DateTime image_time { get; set; }
         public string short_image_time { get; set; }
         public string image_path { get; set; }
         public ImageSource scaled_image_src { get; set; }
         public int array_position_in_event { get; set; }
 
-        #endregion properties which are associated with each and every image retrieved from the database
-
-
-
-
-        public Image_Rep(DateTime img_time, string image_path, int array_position_in_event)
+        public Image_Rep(DateTime imgTime, string path, int position)
         {
-            this.image_time = img_time;
-            this.image_path = image_path;
-            this.array_position_in_event = array_position_in_event;
-            this.scaled_image_src = Image_Rep.get_image_source(image_path, true);
-
+            this.image_time = imgTime;
+            this.image_path = path;
+            this.array_position_in_event = position;
+            this.scaled_image_src = Image_Rep.GetImgBitmap(path, true);
             this.short_image_time = image_time.ToLongTimeString();
-        } //close method Simple_Image_Rep()...
+        }
 
 
-        public Image_Rep(DateTime img_time, ImageSource image_src, int array_position_in_event)
+        public Image_Rep(DateTime imgTime, ImageSource imgSource, int position)
         {
-            this.image_time = img_time;
-            this.array_position_in_event = array_position_in_event;
-            this.scaled_image_src = image_src;            
-        } //close method Simple_Image_Rep()...
+            this.image_time = imgTime;
+            this.array_position_in_event = position;
+            this.scaled_image_src = imgSource;
+        }
 
 
-
-        #region bitmap image properties
-
-        /// <summary>
-        /// this method is used to the unscaled image source, i.e. the full image will be loaded to memory
-        /// </summary>
-        /// <returns></returns>
-        public ImageSource image_source()
+        public static BitmapImage GetImgBitmap(string imgPath, bool scaled)
         {
-            return get_image_source(image_path, false);
-        } //close image_source()...
-
-
-
-
-        /// <summary>
-        /// this method is used to load a bitmap image
-        /// </summary>
-        /// <param name="image_path"></param>
-        /// <param name="scaled">if we want to load a smaller image in memory, we set this parameter to true</param>
-        /// <returns></returns>
-        public static BitmapImage get_image_source(string image_path, bool scaled)
-        {
-            BitmapImage tmp_bitmap = new BitmapImage();
+            //If we want to load a smaller image in memory, set scaled=True.
+            BitmapImage tmpBitmap = new BitmapImage();
             try
             {
-                tmp_bitmap.BeginInit();
-
+                tmpBitmap.BeginInit();
                 if (scaled)
-                    tmp_bitmap.DecodePixelWidth = 120;
-                //else tmp_bitmap.DecodePixelWidth = 480; //else I'll make a "full size" image, to 75% size (i.e. 480 pixels wide as opposed to 640)
+                    tmpBitmap.DecodePixelWidth = ScaledImagePixelWidth;
 
-                tmp_bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                tmp_bitmap.UriSource = new Uri(image_path, UriKind.RelativeOrAbsolute);
-                
-                tmp_bitmap.EndInit();
-                tmp_bitmap.Freeze();
+                tmpBitmap.CacheOption = BitmapCacheOption.OnLoad;
+                tmpBitmap.UriSource = new Uri(imgPath, UriKind.RelativeOrAbsolute);                
+                tmpBitmap.EndInit();
+                tmpBitmap.Freeze();
             }
             catch (Exception excep)
             {
-                //if there's some error with this image, we'll just show another default image instead...
-                tmp_bitmap = new BitmapImage(new Uri("Image-Unavailable.gif", UriKind.RelativeOrAbsolute));                
-            } //end try ... catch
-            tmp_bitmap.Freeze(); //this allows images to be loaded in a background thread, and then passed on to the UI thread ... important to give an interactive feel ...
-                        
-            return tmp_bitmap;
-        } //close method get_image_source()...
+                //If we can't load the image, display a backup image instead.
+                tmpBitmap = new BitmapImage(
+                    new Uri(BackupImage, UriKind.RelativeOrAbsolute));                
+            }
+
+            //Allow image to be loaded in a background thread.
+            tmpBitmap.Freeze();
+            return tmpBitmap;
+        }
 
 
-
-
-        /// <summary>
-        /// here we ATTEMPT to release the images from memory
-        /// </summary>
-        /// <param name="list_of_images"></param>
-        public static void release_imagesource_resources_from_all_Simple_Image_Rep_items(List<Image_Rep> list_of_images)
+        public static void ReleaseImgBitmaps(List<Image_Rep> imageList)
         {
-            //todo we're not releasing memory of the bitmap image correctly so this part of the application isn't working right
-            //todo gotta design a Virtualizing Wrap Panel to display the images properly ... see C:\software development\Code Directory\Little Apps\image scroller\virtuallist1
+            //This method releases all image bitmaps from memory.
+            //todo we're not releasing memory of the bitmap image correctly
+            //todo perhaps use a Virtualizing Wrap Panel to display the images
+            //properly ...
+            //see C:\software development\Code Directory\Little Apps\image scroller\virtuallist1
             
-            //firstly make sure the image source is released ok...
-            foreach (Image_Rep individual_image in list_of_images)
-                individual_image.scaled_image_src = null; //and hopefully this will release the system resources...
-            
-            
-            //and now clear all the items...
-            list_of_images.Clear();
-        } //close method release_imagesource_resources_from_all_Simple_Image_Rep_items()...
-
-        #endregion bitmap image properties
+            //Release bitmap/image-source from memory for every image.
+            foreach (Image_Rep img in imageList)
+            {
+                img.scaled_image_src = null;
+            }
+            imageList.Clear();
+        }
 
 
-
-
-
-
-
-        #region get information on the images in an event/day from the database
-
-        /// <summary>
-        /// here we get the number of images in a given day...
-        /// </summary>
-        /// <param name="user_id"></param>
-        /// <param name="day_in_question"></param>
-        /// <returns></returns>
-        public static int get_number_of_images_in_day(int user_id, DateTime day_in_question)
+        public static int GetNumImagesInDay(int userID, DateTime day)
         {
-            int num_images_in_day = 0;
-
-            //this method calls a database stored procedure and returns the paths of all the images in this event
-            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
-            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spGet_Num_Images_In_Day(user_id,day_in_question), con);
+            int numImages = 0;
+            string query = Database_Versioning.text_for_stored_procedures.spGet_Num_Images_In_Day(
+                userID,
+                day);
+            SQLiteConnection con = new SQLiteConnection(DbString);
+            SQLiteCommand selectCmd = new SQLiteCommand(query, con);
             con.Open();
             try
             {
-                num_images_in_day = int.Parse(selectCmd.ExecuteScalar().ToString());
+                numImages = int.Parse(selectCmd.ExecuteScalar().ToString());
             }
             catch (Exception excep) { }
             con.Close();
-
-            return num_images_in_day;
-        } //end method get_number_of_images_in_day()  
-
-
-
-
-        /// <summary>
-        /// this method retrieves all the images in an event (from the DB)
-        /// </summary>
-        /// <param name="user_id"></param>
-        /// <param name="event_id"></param>
-        /// <returns></returns>
-        public static List<Image_Rep> get_all_images_in_event(int user_id, int event_id)
+            return numImages;
+        }
+        
+        
+        public static List<Image_Rep> GetEventImages(int userID, int eventID)
         {
+            List<Image_Rep> imageList = new List<Image_Rep>();
 
-            //this method calls a database stored procedure and returns the paths of all the images in this event
-            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
-            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spGet_Paths_Of_All_Images_In_Event(user_id, event_id), con);
-            con.Open();
-            SQLiteDataReader read_events = selectCmd.ExecuteReader();
-
-            List<Image_Rep> list_of_images = new List<Image_Rep>();
+            //Image properties.
             int counter = 0;
-            while (read_events.Read())
-            {
-                //if (counter % 5 == 0)
-                list_of_images.Add(new Image_Rep((DateTime)read_events[1], read_events[0].ToString(), counter));
+            DateTime imgTime;
+            String imgPath;
 
+            //Get images from database for event.
+            string query = Database_Versioning.text_for_stored_procedures.spGet_Paths_Of_All_Images_In_Event(
+                userID,
+                eventID);
+            SQLiteConnection con = new SQLiteConnection(DbString);
+            SQLiteCommand selectCmd = new SQLiteCommand(query, con);
+            con.Open();
+            SQLiteDataReader read_images = selectCmd.ExecuteReader();
+            while (read_images.Read())
+            {
+                imgTime = DateTime.Parse(read_images[0].ToString());
+                imgPath = read_images[1].ToString();
+                imageList.Add(new Image_Rep(imgTime, imgPath, counter));
                 counter++;
-            } //end while (read_chunk_ids.Read())		
-            con.Close();
-
-            return list_of_images;
-        } //end method get_paths_of_all_images_in_event()
-
-
-
-
-        /// <summary>
-        /// this method gets the number of images in an event...
-        /// </summary>
-        /// <param name="user_id"></param>
-        /// <param name="event_id"></param>
-        /// <returns></returns>
-        private static int get_number_of_images_in_event(int user_id, int event_id)
-        {
-            int num_images = 0;
-            //this method calls a database stored procedure to return the number of images in an event
-            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
-            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spGet_Num_Images_In_Event(user_id, event_id), con);
-            con.Open();
-            try
-            {
-                num_images = int.Parse(selectCmd.ExecuteScalar().ToString());
-            }
-            catch (Exception excep)
-            {
-                num_images = 2;
             }
             con.Close();
-
-            return num_images;
-        } //end method get_number_of_images_in_event()
-
-
-
-
-        /// <summary>
-        /// this method gets the start and end times of images captured in any given day, note it's a void method and updates two parameters by reference
-        /// </summary>
-        /// <param name="user_id"></param>
-        /// <param name="day_in_question"></param>
-        /// <param name="day_start_time">updated by reference</param>
-        /// <param name="day_end_time">updated by reference</param>
-        public static void get_start_and_end_time_of_images_in_day(int user_id, DateTime day_in_question, ref DateTime day_start_time, ref DateTime day_end_time)
+            return imageList;
+        }
+        
+        
+        public static void GetDayStartEndTime(
+            int userID,
+            DateTime day,
+            ref DateTime startTime,
+            ref DateTime endTime)
         {
-            //this method calls the relevant database stored procedure to retrieve a list of events
-            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
-            SQLiteCommand command = new SQLiteCommand(con);
+            //Get the start and end times of images captured in a given day.
+            //This method returns void and updates two parameters by reference.
+            string query = Database_Versioning.text_for_stored_procedures.spGet_Day_Start_and_End_Times(
+                userID,
+                day);
+            SQLiteConnection con = new SQLiteConnection(DbString);
+            SQLiteCommand command = new SQLiteCommand(query, con);
             con.Open();
-            command.CommandText = Database_Versioning.text_for_stored_procedures.spGet_Day_Start_and_End_Times(user_id, day_in_question);
-            SQLiteDataReader read_start_and_end_time_row = command.ExecuteReader();
-            read_start_and_end_time_row.Read();
-
-            //and here we update the parameters passed in by reference, meaning they'll be updated in the interface class (if called by that class), which means we don't need to pass out any values (hence it's a void method, rather than a DateTime method)
+            SQLiteDataReader readTimes = command.ExecuteReader();
+            readTimes.Read();
             try
             {
-                day_start_time = DateTime.Parse(read_start_and_end_time_row[0].ToString());
-                day_end_time = DateTime.Parse(read_start_and_end_time_row[1].ToString());
+                startTime = DateTime.Parse(readTimes[0].ToString());
+                endTime = DateTime.Parse(readTimes[1].ToString());
             }
             catch (Exception excep) { }
+            con.Close();
+        }
+        
 
-            con.Close(); //and close our connection
-        } //end method get_number_of_images_in_day()  
-
-
-
-
-        /// <summary>
-        /// this method deletes a given image from a given event
-        /// </summary>
-        /// <param name="user_id"></param>
-        /// <param name="event_id"></param>
-        /// <param name="image_time"></param>
-        public static void delete_image_from_event(int user_id, int event_id, DateTime image_time, string image_path)
+        public static void DeleteEventImage(
+            int userID,
+            int eventID,
+            DateTime imgTime,
+            string imgPath)
         {
-            //this method calls a database stored procedure and deletes the given image reference in the database
-            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
-            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spDelete_Image_From_Event(user_id, event_id, image_time), con);
+            //This method deletes an image from the database and from the PC.
+            string query = Database_Versioning.text_for_stored_procedures.spDelete_Image_From_Event(
+                userID,
+                eventID,
+                imgTime);
+            SQLiteConnection con = new SQLiteConnection(DbString);
+            SQLiteCommand selectCmd = new SQLiteCommand(query, con);
             con.Open();
             selectCmd.ExecuteNonQuery();
             con.Close();
 
-            //now we also delete the actual image
-            System.IO.File.Delete(image_path);
-        } //end method delete_image_from_event()
-
-        #endregion get information on the images in an event
-
-
-
-
-        public static void sort_list_of_images_by_id(List<Image_Rep> image_list)
+            //Also delete the actual image file too
+            System.IO.File.Delete(imgPath);
+        }
+        
+        
+        public static void sortImagesByID(List<Image_Rep> imageList)
         {
+            //This method uses the BubbleSort algorithm to sort images by ID
             int i;
             int j;
             Image_Rep temp = new Image_Rep(DateTime.Now,"",-99);
 
-            for (i = (image_list.Count - 1); i >= 0; i--)
+            for (i = (imageList.Count - 1); i >= 0; i--)
             {
                 for (j = 1; j <= i; j++)
                 {
-                    if (image_list[j - 1].array_position_in_event > image_list[j].array_position_in_event)
+                    if (imageList[j - 1].array_position_in_event > imageList[j].array_position_in_event)
                     {
-                        temp.array_position_in_event = image_list[j - 1].array_position_in_event;
-                        temp.image_path = image_list[j - 1].image_path;
-                        temp.image_time = image_list[j - 1].image_time;
-                        temp.scaled_image_src = image_list[j - 1].scaled_image_src;
-                        temp.short_image_time = image_list[j - 1].short_image_time;
+                        //swap the 2 images if they are in the wrong order
+                        temp.array_position_in_event = imageList[j - 1].array_position_in_event;
+                        temp.image_path = imageList[j - 1].image_path;
+                        temp.image_time = imageList[j - 1].image_time;
+                        temp.scaled_image_src = imageList[j - 1].scaled_image_src;
+                        temp.short_image_time = imageList[j - 1].short_image_time;
 
-                        image_list[j - 1].array_position_in_event = image_list[j].array_position_in_event;
-                        image_list[j - 1].image_path = image_list[j].image_path;
-                        image_list[j - 1].image_time = image_list[j].image_time;
-                        image_list[j - 1].scaled_image_src = image_list[j].scaled_image_src;
-                        image_list[j - 1].short_image_time = image_list[j].short_image_time;
+                        imageList[j - 1].array_position_in_event = imageList[j].array_position_in_event;
+                        imageList[j - 1].image_path = imageList[j].image_path;
+                        imageList[j - 1].image_time = imageList[j].image_time;
+                        imageList[j - 1].scaled_image_src = imageList[j].scaled_image_src;
+                        imageList[j - 1].short_image_time = imageList[j].short_image_time;
 
-                        image_list[j].array_position_in_event = temp.array_position_in_event;
-                        image_list[j].image_path = temp.image_path;
-                        image_list[j].image_time = temp.image_time;
-                        image_list[j].scaled_image_src = temp.scaled_image_src;
-                        image_list[j].short_image_time = temp.short_image_time;
-                    } //end if (value_list[j - 1].array_position_in_event > value_list[j].array_position_in_event)
-                } //end for (j = 1; j <= i; j++)
-            } //end for (i = (value_list.Length - 1); i >= 0; i--)
-        } //close method sort_list_of_images_by_id()...
-
-
-    } //end class...
-} //end namespace...
+                        imageList[j].array_position_in_event = temp.array_position_in_event;
+                        imageList[j].image_path = temp.image_path;
+                        imageList[j].image_time = temp.image_time;
+                        imageList[j].scaled_image_src = temp.scaled_image_src;
+                        imageList[j].short_image_time = temp.short_image_time;
+                    }
+                }
+            }
+        }
+        
+    }
+}

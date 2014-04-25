@@ -29,7 +29,7 @@ namespace SenseCamBrowser1
         public static string DefaultKeyframeBorderColour = "#24000000";
         private static string DbString = global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString;
 
-        //Properties associated with every event retrieved from database.
+        //Event properties.
         public int event_id{ get; set; }
         public DateTime start_time { get; set; }
         public DateTime end_time { get; set; }
@@ -56,7 +56,7 @@ namespace SenseCamBrowser1
             this.comment = comment;
             this.short_comment = GetStringStart(comment, 15);            
             this.str_keyframe_path = keyframePath;
-            this.keyframe_path = Image_Rep.get_image_source(keyframePath, true);
+            this.keyframe_path = Image_Rep.GetImgBitmap(keyframePath, true);
             this.border_colour = DefaultKeyframeBorderColour;
            
             //format time string for UI

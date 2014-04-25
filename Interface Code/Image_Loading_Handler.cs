@@ -60,7 +60,7 @@ namespace SenseCamBrowser1
         /// </summary>
         public void load_all_event_images_into_memory()
         {
-            Image_Rep.list_of_images_for_viewer_to_show = Image_Rep.get_all_images_in_event(user_id, event_id); ; //get all the images in the event
+            Image_Rep.ImageList = Image_Rep.GetEventImages(user_id, event_id); ; //get all the images in the event
 
             //and we return our callback (to the UI)
             all_images_loaded_callback();

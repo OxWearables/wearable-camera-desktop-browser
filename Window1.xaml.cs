@@ -185,7 +185,7 @@ how to find where my SenseCam images are stored?
                 //now display the time span of the events of this day
                 DateTime day_start_time = new DateTime();
                 DateTime day_end_time = day_start_time;
-                Image_Rep.get_start_and_end_time_of_images_in_day(Window1.OVERALL_USER_ID, day_to_display, ref day_start_time, ref day_end_time); //firstly we get start/end time data directly from the database
+                Image_Rep.GetDayStartEndTime(Window1.OVERALL_USER_ID, day_to_display, ref day_start_time, ref day_end_time); //firstly we get start/end time data directly from the database
 
                 if (day_start_time != day_end_time) //if the start time isn't equal to the end time, it means that we've successfully retrieved information from the database...
                 {
@@ -195,7 +195,7 @@ how to find where my SenseCam images are stored?
                 else txtTimeFrame.Text = " - "; //if no data has been retrieved, well then we've no information to show...
                 
                 //and also let's display the number of images associated with this day...
-                txtImageNumber.Text = Image_Rep.get_number_of_images_in_day(Window1.OVERALL_USER_ID, day_to_display).ToString() + " Photos";
+                txtImageNumber.Text = Image_Rep.GetNumImagesInDay(Window1.OVERALL_USER_ID, day_to_display).ToString() + " Photos";
 
 
                 //finally give a breakdown of the amount of time spent on various activities...

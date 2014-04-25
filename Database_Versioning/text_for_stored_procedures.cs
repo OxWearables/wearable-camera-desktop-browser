@@ -285,7 +285,7 @@ namespace SenseCamBrowser1.Database_Versioning
 
         public static string spGet_Paths_Of_All_Images_In_Event(int user_id, int event_id)
         {
-            string end_string = "SELECT image_path, image_time";
+            string end_string = "SELECT image_time, image_path";
             end_string += "\n" + "FROM All_Images";
             end_string += "\n" + "WHERE [user_id] = " + user_id;
             end_string += "\n" + "AND [event_id] = " + event_id;
