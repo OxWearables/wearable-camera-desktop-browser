@@ -121,7 +121,7 @@ namespace SenseCamBrowser1
                 
                 //thereafter we'll update the caption text
                 if (current_event.comment.Equals(""))
-                    txtCaption.Text = Event_Rep.DEFAULT_IMAGE_CAPTION_TEXT;
+                    txtCaption.Text = Event_Rep.DefaultImageCaption;
                 else txtCaption.Text = current_event.comment;
                 original_uploaded_comment = txtCaption.Text; //let's store this locally too, and it'll let us know if we should update the database when the user closes the event viewer (i.e. we check to see if they changed the caption)
                 
@@ -161,12 +161,12 @@ namespace SenseCamBrowser1
             {                
                 //firstly let's update the database reflecting that this event has been viewed another time...
                 if (list_of_event_images.Count > 1)
-                    Event_Rep.update_event_as_being_viewed_another_time(Window1.OVERALL_USER_ID, current_event.event_id);
+                    Event_Rep.UpdateTimesViewed(Window1.OVERALL_USER_ID, current_event.event_id);
 
-                if (!txtCaption.Text.Equals("") && !txtCaption.Text.Equals(Event_Rep.DEFAULT_IMAGE_CAPTION_TEXT) && !txtCaption.Text.Equals(original_uploaded_comment))
+                if (!txtCaption.Text.Equals("") && !txtCaption.Text.Equals(Event_Rep.DefaultImageCaption) && !txtCaption.Text.Equals(original_uploaded_comment))
                 {
                     //and now we update the database with the comment
-                    Event_Rep.update_event_comment(current_user_id, current_event.event_id, txtCaption.Text);
+                    Event_Rep.UpdateComment(current_user_id, current_event.event_id, txtCaption.Text);
 
                     //and let's update the caption text...
                     current_event.comment = txtCaption.Text;
@@ -186,7 +186,7 @@ namespace SenseCamBrowser1
                     //but just in case this image was the keyframe image ...
                     if (image_for_deletion.image_path.Equals(current_event.str_keyframe_path)) //we'll update the event keyframe image ...
                     {
-                        Event_Rep.update_event_keyframe_path(Window1.OVERALL_USER_ID, current_event.event_id, list_of_event_images[list_of_event_images.Count / 2].image_path); //... to now be the middle image from the new set of images in this event (minus the deleted ones)
+                        Event_Rep.UpdateKeyframe(Window1.OVERALL_USER_ID, current_event.event_id, list_of_event_images[list_of_event_images.Count / 2].image_path); //... to now be the middle image from the new set of images in this event (minus the deleted ones)
                         current_event.str_keyframe_path = list_of_event_images[list_of_event_images.Count / 2].image_path;
                         current_event.keyframe_path = Image_Rep.get_image_source(current_event.str_keyframe_path, true);
                         //and let's give a callback to the main UI, so it can now also reflect the new keyframe for this event...                        
@@ -557,10 +557,10 @@ namespace SenseCamBrowser1
 
             stop_playback(); //let's disable the timer, so there's no "leaked threads" running
 
-            if (txtCaption.Text.Equals(Event_Rep.DEFAULT_IMAGE_CAPTION_TEXT))
+            if (txtCaption.Text.Equals(Event_Rep.DefaultImageCaption))
                 txtCaption.Text = current_event.comment;
             else
-                txtCaption.Text = Event_Rep.DEFAULT_IMAGE_CAPTION_TEXT;
+                txtCaption.Text = Event_Rep.DefaultImageCaption;
         } //close method txtCaption_Click()...
 
 
@@ -654,7 +654,7 @@ namespace SenseCamBrowser1
                 Record_User_Interactions.log_interaction_to_database("scImgViewer_btnDelete_click_last_image_in_event_deleted", current_event.event_id.ToString());
 
                 //else ... if there's no images left in this event after it being deleted, we'll delete this event from the database and close the image viewer for this event (since the event has now been deleted)
-                Event_Rep.delete_event_from_database(Window1.OVERALL_USER_ID, current_event.event_id);
+                Event_Rep.DeleteEvent(Window1.OVERALL_USER_ID, current_event.event_id);
                 current_event_deleted_callback(current_event);
                 Visibility = Visibility.Collapsed; //and let's close/collapse this user control                                        
             } //end if... else... for checking if there's any images left in the event
@@ -703,7 +703,7 @@ namespace SenseCamBrowser1
 
                 //the database stored procedure also considers special cases where *all* the images in the event are merged with the previous event... it just simply deletes this source event
                 //call this method to execute the database stored procedure to handle rearranging of images into different events
-                Event_Rep.send_images_to_previous_event(Window1.OVERALL_USER_ID, current_event.event_id, selected_photo_in_event.image_time);
+                Event_Rep.MoveImagesToPreviousEvent(Window1.OVERALL_USER_ID, current_event.event_id, selected_photo_in_event.image_time);
 
                 //now what I'll need to do is close the current window, and then reload the day (to reflect the new images/events situation after clicking on this button)
                 current_event_merged_callback();
@@ -732,7 +732,7 @@ namespace SenseCamBrowser1
 
                 //the database stored procedure also considers special cases where *all* the images in the event are merged with the next event... if just simply deletes this source event
                 //call this method to execute the database stored procedure to handle rearranging of images into different events
-                Event_Rep.send_images_to_next_event(Window1.OVERALL_USER_ID, current_event.event_id, selected_photo_in_event.image_time);
+                Event_Rep.MoveImagesToNextEvent(Window1.OVERALL_USER_ID, current_event.event_id, selected_photo_in_event.image_time);
 
                 //now what I'll need to do is close the current window, and then reload the day (to reflect the new images/events situation after clicking on this button)
                 current_event_merged_callback();
@@ -768,7 +768,7 @@ namespace SenseCamBrowser1
                     if (selected_image_to_start_new_event.array_position_in_event > 0 && selected_image_to_start_new_event.array_position_in_event < lst_display_images.Items.Count - 1)
                     {
                         //call this method to execute the database stored procedure to handle splitting the event into two
-                        current_event_id = Event_Rep.split_event_into_two(Window1.OVERALL_USER_ID, current_event_id, selected_image_to_start_new_event.image_time); //current event id will be updated to be the new split event... (i.e. so next pass of loop treats it like we're now in this new event and trying to split the first image in it...)
+                        current_event_id = Event_Rep.SplitEvent(Window1.OVERALL_USER_ID, current_event_id, selected_image_to_start_new_event.image_time); //current event id will be updated to be the new split event... (i.e. so next pass of loop treats it like we're now in this new event and trying to split the first image in it...)
 
                         //let's log this interaction
                         Record_User_Interactions.log_interaction_to_database("scImgViewer_btnSplit_Event_Click_splitting_multiple", current_event.event_id + "," + selected_image_to_start_new_event.image_time);
@@ -788,7 +788,7 @@ namespace SenseCamBrowser1
                 Image_Rep selected_photo_in_event = (Image_Rep)lst_display_images.SelectedItem;
 
                 //call this method to execute the database stored procedure to handle splitting the event into two
-                Event_Rep.split_event_into_two(Window1.OVERALL_USER_ID, current_event.event_id, selected_photo_in_event.image_time);
+                Event_Rep.SplitEvent(Window1.OVERALL_USER_ID, current_event.event_id, selected_photo_in_event.image_time);
 
                 //now what I'll need to do is close the current window, and then reload the day (to reflect the new images/events situation after clicking on this button)
                 current_event_merged_callback();

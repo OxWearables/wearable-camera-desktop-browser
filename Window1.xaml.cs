@@ -150,7 +150,7 @@ how to find where my SenseCam images are stored?
             private void update_display_page_events(DateTime day_to_display)
             {
                 //an array to store the total list of events to be displayed...
-                List<Event_Rep> all_events_to_display_in_time_period = Event_Rep.get_list_of_day_events(Window1.OVERALL_USER_ID, day_to_display);
+                List<Event_Rep> all_events_to_display_in_time_period = Event_Rep.GetDayEvents(Window1.OVERALL_USER_ID, day_to_display);
                 
                 //and let's update the UI ... 
                 
@@ -449,7 +449,7 @@ how to find where my SenseCam images are stored?
                     foreach (Event_Rep displayed_event in LstDisplayEvents.Items)
                     {
                         //by defaut reset the border colour for this event...
-                        displayed_event.border_colour = Event_Rep.DEFAULT_EVENT_KEYFRAME_BORDER_COLOUR;
+                        displayed_event.border_colour = Event_Rep.DefaultKeyframeBorderColour;
 
                         //then we try to see if this event is in our list of target event ids to highlight
                         foreach (int target_id in event_ids_to_highlight)
@@ -488,7 +488,7 @@ how to find where my SenseCam images are stored?
                     foreach (Event_Rep displayed_event in LstDisplayEvents.Items)
                     {
                         //by defaut reset the border colour for this event...
-                        displayed_event.border_colour = Event_Rep.DEFAULT_EVENT_KEYFRAME_BORDER_COLOUR;
+                        displayed_event.border_colour = Event_Rep.DefaultKeyframeBorderColour;
 
                         //then let's see if this is the event we want to highlight...
                         if (displayed_event.event_id == event_id_to_highlight)
