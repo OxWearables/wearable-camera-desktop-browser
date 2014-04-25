@@ -97,14 +97,16 @@ namespace SenseCamBrowser1
 
         public static List<Event_Rep> GetDayEvents(int userID, DateTime day)
         {
-            //Variables to store database values before converting to Event_Rep object.
+            //Variables to Event_Rep attributes.
             int eventID;
             DateTime startTime, endTime;
             string keyframePath, comment;
             List<Event_Rep> eventList = new List<Event_Rep>();      
 
             //Connect to database and retrieve all events in day.
-            string query = Database_Versioning.text_for_stored_procedures.spGet_All_Events_In_Day(userID, day);
+            string query = Database_Versioning.text_for_stored_procedures.spGet_All_Events_In_Day(
+                userID,
+                day);
             SQLiteConnection con = new SQLiteConnection(DbString);
             SQLiteCommand command = new SQLiteCommand(query,con);
             con.Open();      
@@ -137,7 +139,10 @@ namespace SenseCamBrowser1
 
         public static void UpdateComment(int userID, int eventID, string comment)
         {
-            string query = Database_Versioning.text_for_stored_procedures.spUpdateEventComment(userID, eventID, comment);
+            string query = Database_Versioning.text_for_stored_procedures.spUpdateEventComment(
+                userID,
+                eventID,
+                comment);
             SQLiteConnection con = new SQLiteConnection(DbString);
             SQLiteCommand selectCmd = new SQLiteCommand(query, con);
             con.Open();
@@ -150,8 +155,10 @@ namespace SenseCamBrowser1
         {
             //Update DB with how many times this particular event has been viewed.
             //This may be helpful for memory researchers interested in visual exposure.
-            string query = Database_Versioning.text_for_stored_procedures.spUpdateEvent_Number_Times_Viewed(userID, eventID);
-            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
+            string query = Database_Versioning.text_for_stored_procedures.spUpdateEvent_Number_Times_Viewed(
+                userID,
+                eventID);
+            SQLiteConnection con = new SQLiteConnection(DbString);
             SQLiteCommand selectCmd = new SQLiteCommand(query, con);
             con.Open();
             selectCmd.ExecuteNonQuery();
@@ -159,9 +166,15 @@ namespace SenseCamBrowser1
         }
 
 
-        public static void UpdateKeyframe(int userID, int eventID, string keyframePath)
+        public static void UpdateKeyframe(
+            int userID,
+            int eventID,
+            string keyframePath)
         {
-            string query = Database_Versioning.text_for_stored_procedures.spUpdate_Event_Keyframe_Path(userID, eventID, keyframePath);
+            string query = Database_Versioning.text_for_stored_procedures.spUpdate_Event_Keyframe_Path(
+                userID,
+                eventID,
+                keyframePath);
             SQLiteConnection con = new SQLiteConnection(DbString);
             SQLiteCommand selectCmd = new SQLiteCommand(query, con);
             con.Open();
@@ -172,7 +185,9 @@ namespace SenseCamBrowser1
 
         public static void DeleteEvent(int userID, int eventID)
         {
-            string query = Database_Versioning.text_for_stored_procedures.spDelete_Event(userID,eventID);
+            string query = Database_Versioning.text_for_stored_procedures.spDelete_Event(
+                userID,
+                eventID);
             SQLiteConnection con = new SQLiteConnection(DbString);
             SQLiteCommand selectCmd = new SQLiteCommand(query, con);
             con.Open();
