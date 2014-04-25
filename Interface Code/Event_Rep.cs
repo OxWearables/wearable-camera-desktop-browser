@@ -33,6 +33,7 @@ namespace SenseCamBrowser1
         public int event_id{ get; set; }
         public DateTime start_time { get; set; }
         public DateTime end_time { get; set; }
+        public TimeSpan eventDuration { get; set; }
         public string comment { get; set; }
         public string str_time { get; set; }
         public string str_keyframe_path { get; set; }            
@@ -51,8 +52,9 @@ namespace SenseCamBrowser1
             this.event_id = eventID;
             this.start_time = startTime;
             this.end_time = endTime;
+            this.eventDuration = endTime - startTime;
             this.comment = comment;
-            update_event_short_comment(); //todo
+            this.short_comment = GetStringStart(comment, 15);            
             this.str_keyframe_path = keyframePath;
             this.keyframe_path = Image_Rep.get_image_source(keyframePath, true);
             this.border_colour = DefaultKeyframeBorderColour;
@@ -66,37 +68,32 @@ namespace SenseCamBrowser1
             {
                 this.str_time = start_time.ToShortTimeString() + " pm";
             }
-            TimeSpan ts_duration = endTime - startTime;
-            this.event_length = Daily_Annotation_Summary.format_total_seconds_to_mins_and_seconds((int)ts_duration.TotalSeconds);
+            this.event_length = Daily_Annotation_Summary.format_total_seconds_to_mins_and_seconds((int)eventDuration.TotalSeconds);
         }
 
 
-        /// <summary>
-        /// this method formats the comment string for proper display on the interface, where the interface calls the "short_comment" string...
-        /// </summary>
-        public void update_event_short_comment()
+        public static string GetStringStart(string example, int maxLength)
         {
-            //below we format the comment string for proper display on the interface...
-            if (!comment.Equals(""))
+            //todo should this method be placed here?
+            //This method returns the first n chars from a string. Unlike the
+            //inbuild SubString method, it still works if length is <n chars.
+            if (!example.Equals(""))
             {
-            if (comment.Length < 15)
-            {
-                this.short_comment = comment + "...";
+                if (example.Length < maxLength)
+                {
+                    return example;
+                }
+                else
+                {
+                    return example.Substring(0, maxLength);
+                }
             }
             else
             {
-                this.short_comment = comment.Substring(0, 15) + "...";
+                return example;
             }
-            } //close if (!comment.Equals(""))...
-            else this.short_comment = "";
-        } //close method update_event_short_comment()...
-
-        //todo
-        public TimeSpan get_event_duration()
-        {
-            return end_time - start_time;
         }
-        
+
 
         public static List<Event_Rep> GetDayEvents(int userID, DateTime day)
         {

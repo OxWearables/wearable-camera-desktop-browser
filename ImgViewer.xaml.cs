@@ -108,7 +108,7 @@ namespace SenseCamBrowser1
                 current_event_deleted_callback = param_event_deleted_callback;
                 current_event_merged_callback = param_event_merged_callback;
                 txt_img_date.Text = param_event.start_time.ToLongDateString();
-                TimeSpan event_duration = param_event.get_event_duration();
+                TimeSpan event_duration = param_event.eventDuration;
                 txt_event_length.Text = event_duration.Hours + "h " + event_duration.Minutes + "m " + event_duration.Seconds + "s";
 
                 //next, we'll update a list of any images for deletion (after being selected by the user)
@@ -170,7 +170,7 @@ namespace SenseCamBrowser1
 
                     //and let's update the caption text...
                     current_event.comment = txtCaption.Text;
-                    current_event.update_event_short_comment();
+                    current_event.short_comment = Event_Rep.GetStringStart(current_event.comment, 15);
 
                     //and let's give a callback to the main UI, so it can now also reflect this comment being viewed on it
                     current_event_updated_callback();
