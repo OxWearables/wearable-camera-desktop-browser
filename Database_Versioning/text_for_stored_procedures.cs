@@ -344,7 +344,7 @@ namespace SenseCamBrowser1.Database_Versioning
             end_string += "\n" + "AND start_time > " + convert_datetime_to_sql_string(target_start_time);
             end_string += "\n" + "AND start_time <= " + convert_datetime_to_sql_string(target_start_time.AddHours(6));
             end_string += "\n" + "AND [day] = " + convert_datetime_to_sql_string(source_day);
-            end_string += "\n" + "ORDER BY start_time DESC";
+            end_string += "\n" + "ORDER BY start_time";
             end_string += "\n" + "LIMIT 1 ;";
             return end_string;
         } //close method spGet_id_of_event_after_ID_and_time()...
