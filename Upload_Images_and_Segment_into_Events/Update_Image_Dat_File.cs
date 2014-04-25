@@ -103,11 +103,11 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                 {
                     //go through all the images
                     //and then compare each one to see if it matches the time of the next boundary that we're expecting ... we look at the boundary end time so that the first image is not marked as a boundary
-                    if ((image_list[image_counter].get_image_time() == list_of_events[boundary_counter].get_end_time()) && (boundary_counter != list_of_events.Length - 1))
+                    if ((image_list[image_counter].get_image_time() == list_of_events[boundary_counter].get_endTime()) && (boundary_counter != list_of_events.Length - 1))
                     {
                         //and we incrament the boundary_counter
                         boundary_counter++;
-                    } //end if (image_list[image_counter].get_image_time() == list_of_events[boundary_counter].get_end_time())
+                    } //end if (image_list[image_counter].get_image_time() == list_of_events[boundary_counter].get_endTime())
 
                     image_list[image_counter].set_event_boundary(boundary_counter);
 

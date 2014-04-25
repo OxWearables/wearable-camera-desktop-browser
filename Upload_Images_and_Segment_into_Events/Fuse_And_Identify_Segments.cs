@@ -104,7 +104,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
             else if (list_of_user_defined_boundary_times.Count >= 1)
             {
                 for (int counter = 0; counter < list_of_user_defined_boundary_times.Count; counter++)
-                    all_events.Add(new Segmentation_Event_Rep(list_of_user_defined_boundary_times[counter].get_day(), list_of_user_defined_boundary_times[counter].get_start_time(), list_of_user_defined_boundary_times[counter].get_end_time(), list_of_user_defined_boundary_times[counter].get_keyframe_image_name()));
+                    all_events.Add(new Segmentation_Event_Rep(list_of_user_defined_boundary_times[counter].get_day(), list_of_user_defined_boundary_times[counter].get_startTime(), list_of_user_defined_boundary_times[counter].get_endTime(), list_of_user_defined_boundary_times[counter].get_keyframe_image_name()));
 
             } //close else if (list_of_boundary_times.Count >= 1)...
             
@@ -145,7 +145,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
             //THIS METHOD IS RESPOINSIBLE FOR DETERMING THE DAY, START, AND END TIME VALUES OF ALL THE NEW EVENTS, GIVEN THE BOUNDARY IMAGES IN A CHUNK
             //METHOD APPENDS NEW EVENTS TO ARRAYLIST PASSED IN
 
-            //so I treat the individual images from final_boundary_images as the start_time image of each event!!!
+            //so I treat the individual images from final_boundary_images as the startTime image of each event!!!
 
             //a. mark event between start of chunk and first detected boundary...
             list_of_events.Add(new Segmentation_Event_Rep(all_images_in_chunk,

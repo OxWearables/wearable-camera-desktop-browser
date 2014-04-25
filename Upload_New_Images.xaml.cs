@@ -56,7 +56,7 @@ namespace SenseCamBrowser1
         ///////////////////////////// THREAD CALLBACK PROPERTIES /////////////////////////////////////////////
         ///////////////////////////// THREAD CALLBACK PROPERTIES /////////////////////////////////////////////
         ///////////////////////////// THREAD CALLBACK PROPERTIES /////////////////////////////////////////////
-        private int object_user_id;
+        private int object_userID;
         private string object_user_name;
         private bool uploading_from_flash_drive = true;
 
@@ -73,15 +73,15 @@ namespace SenseCamBrowser1
         /// <summary>
         /// called before the user control is displayed, which updates the likely image/event paths...
         /// </summary>
-        /// <param name="user_id"></param>
-        public void update_user_control_with_drive_information(int user_id, string user_name, Processing_Finished_Callback param_all_images_deleted_callback)
+        /// <param name="userID"></param>
+        public void update_user_control_with_drive_information(int userID, string user_name, Processing_Finished_Callback param_all_images_deleted_callback)
         {
             //firstly let's check that we're not currently deleting SenseCam images (i.e. make sure user hasn't opened this again due to impatience!)
             if (!Is_Deletion_Process_Currently_Running())
             {
                 txtSCPath.Text = detect_Autographer_USB_data_directory();
-                txtPCPath.Text = get_likely_PC_destination_root(user_id, user_name);
-                this.object_user_id = user_id;
+                txtPCPath.Text = get_likely_PC_destination_root(userID, user_name);
+                this.object_userID = userID;
                 this.object_user_name = user_name;
 
                 //in case other images were uploaded before, we'll reset this button to be enabled...
@@ -98,7 +98,7 @@ namespace SenseCamBrowser1
                 //now let's give the user feedback that they should be waiting on the deletion process to finish...
                 txtSCPath.Text = "still clearing images from SenseCam...";
                 txtPCPath.Text = "still clearing images from SenseCam...";
-                this.object_user_id = user_id;
+                this.object_userID = userID;
                 this.object_user_name = user_name;
 
                 //in case other images were uploaded before, we'll reset this button to be enabled...
@@ -224,14 +224,14 @@ namespace SenseCamBrowser1
         /// <summary>
         /// this method is used to automatically detect the likely desired destination of the SenseCam images, i.e. where the most recent images have been uploaded to...
         /// </summary>
-        /// <param name="user_id"></param>
+        /// <param name="userID"></param>
         /// <returns></returns>
-        private string get_likely_PC_destination_root(int user_id, string user_name)
+        private string get_likely_PC_destination_root(int userID, string user_name)
         {
             string last_keyframe_path = "";
             //this method calls a database stored procedure to return the number of images in an event
             SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
-            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spGet_Last_Keyframe_Path(user_id), con);
+            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spGet_Last_Keyframe_Path(userID), con);
             con.Open();
             try
             {
@@ -252,7 +252,7 @@ namespace SenseCamBrowser1
 
             //now check to make sure we've got a valid path
             if (last_keyframe_path.Equals(""))
-                last_keyframe_path = get_likely_PC_destination_root_based_on_another_user(user_id, user_name); //else (when it's first time to upload for this user) try getting an estimated path, based on another user...
+                last_keyframe_path = get_likely_PC_destination_root_based_on_another_user(userID, user_name); //else (when it's first time to upload for this user) try getting an estimated path, based on another user...
 
             return last_keyframe_path;
         } //get_likely_PC_destination_root...
@@ -264,24 +264,24 @@ namespace SenseCamBrowser1
         /// this method is used to automatically detect the likely desired destination of the SenseCam images (for a new user uploading images for the 1st time)
         /// i.e. where the most recent images have been uploaded to...
         /// </summary>
-        /// <param name="user_id"></param>
+        /// <param name="userID"></param>
         /// <returns></returns>
-        private string get_likely_PC_destination_root_based_on_another_user(int user_id_of_first_time_user, string user_name)
+        private string get_likely_PC_destination_root_based_on_another_user(int userID_of_first_time_user, string user_name)
         {
-            int user_id_of_user_with_most_recent_data = -1;
+            int userID_of_user_with_most_recent_data = -1;
             SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
-            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spGet_UserID_of_Most_Recent_Data_Upload(), con);
+            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spGet_user_id_of_Most_Recent_Data_Upload(), con);
             con.Open();
             try
             {
-                user_id_of_user_with_most_recent_data = int.Parse(selectCmd.ExecuteScalar().ToString()); //gets the user_id of the user who has the most data (it's likely all other users info will be stored near the same folder location as them)...
+                userID_of_user_with_most_recent_data = int.Parse(selectCmd.ExecuteScalar().ToString()); //gets the userID of the user who has the most data (it's likely all other users info will be stored near the same folder location as them)...
             }
             catch (Exception excep) { }
             con.Close();
 
             string last_keyframe_path = "";
             //this method calls a database stored procedure to return the number of images in an event
-            selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spGet_Last_Keyframe_Path(user_id_of_user_with_most_recent_data), con);
+            selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spGet_Last_Keyframe_Path(userID_of_user_with_most_recent_data), con);
             con.Open();
             try
             {
@@ -341,7 +341,7 @@ namespace SenseCamBrowser1
 
             if (ok_to_process)
             {
-                data_transfer_obj = new Upload_Images_and_Segment_into_Events.Upload_and_Segment_Images_Thread(Data_Transer_New_Info_Received_Callback, Data_Transfer_Processing_Finished_Callback, SenseCam_data_directory, current_root_folder, object_user_id, uploading_direct_from_sensecam, is_multiple_folder_upload, episode_data_csv_file_obj);
+                data_transfer_obj = new Upload_Images_and_Segment_into_Events.Upload_and_Segment_Images_Thread(Data_Transer_New_Info_Received_Callback, Data_Transfer_Processing_Finished_Callback, SenseCam_data_directory, current_root_folder, object_userID, uploading_direct_from_sensecam, is_multiple_folder_upload, episode_data_csv_file_obj);
                 data_transfer_thread = new Thread(new ThreadStart(data_transfer_obj.upload_sc_data));
                 data_transfer_thread.IsBackground = true;
                 data_transfer_thread.Start();
@@ -588,7 +588,7 @@ namespace SenseCamBrowser1
                 btnSCOldImages.Content = "Upload from PC...";
                 txtSCPath.Text = detect_Autographer_USB_data_directory();
                 txtPCPath.IsEnabled = false;
-                txtPCPath.Text = get_likely_PC_destination_root(object_user_id, object_user_name);
+                txtPCPath.Text = get_likely_PC_destination_root(object_userID, object_user_name);
                 btnPCPath.Visibility = Visibility.Visible;
 
                 if (detect_Autographer_USB_data_directory().Equals(""))

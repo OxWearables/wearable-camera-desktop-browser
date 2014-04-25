@@ -29,7 +29,7 @@ namespace SenseCamBrowser1
         /// <summary>
         /// this method is responsible for recording a user interaction in the database any time it's called (automatically logs the user and time information)
         /// </summary>
-        /// <param name="user_id"></param>
+        /// <param name="userID"></param>
         /// <param name="interaction_time"></param>
         /// <param name="uixaml_element"></param>
         /// <param name="optional_parameters"></param>
@@ -41,7 +41,7 @@ namespace SenseCamBrowser1
                 optional_parameters = optional_parameters.Substring(optional_parameters.Length - max_length - 1, max_length);
 
             SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
-            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spLog_User_Interaction(Window1.OVERALL_USER_ID,DateTime.Now,uixaml_element,optional_parameters), con);
+            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spLog_User_Interaction(Window1.OVERALL_userID,DateTime.Now,uixaml_element,optional_parameters), con);
             con.Open();
             selectCmd.ExecuteNonQuery();
             con.Close();

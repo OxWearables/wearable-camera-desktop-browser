@@ -46,17 +46,17 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
         private bool upload_is_direct_from_sensecam, is_multiple_folder_upload_class_variable;
         private string SenseCam_data_directory, current_root_folder, episode_data_csv_file_obj;
-        private int user_id;
+        private int userID;
 
 
 
-        public Upload_and_Segment_Images_Thread(Information_Callback param_feedback_callback, Processing_Finished_Callback param_data_processing_finished, string SC_data_directory, string PC_root_folder, int param_user_id, bool uploading_direct_from_sensecam, bool is_multiple_folder_upload, string episode_data_csv_file_obj)
+        public Upload_and_Segment_Images_Thread(Information_Callback param_feedback_callback, Processing_Finished_Callback param_data_processing_finished, string SC_data_directory, string PC_root_folder, int param_userID, bool uploading_direct_from_sensecam, bool is_multiple_folder_upload, string episode_data_csv_file_obj)
         {
             data_feedback_callback = param_feedback_callback;
             data_processing_finished_callback = param_data_processing_finished;
             SenseCam_data_directory = SC_data_directory;
             current_root_folder = PC_root_folder;
-            this.user_id = param_user_id;
+            this.userID = param_userID;
             this.upload_is_direct_from_sensecam = uploading_direct_from_sensecam;
             this.is_multiple_folder_upload_class_variable = is_multiple_folder_upload;
             this.episode_data_csv_file_obj = episode_data_csv_file_obj;
@@ -220,8 +220,8 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                     //5. segment the data into events and upload the database...                                        
                     write_output(DateTime.Now.ToLongTimeString() + " all files have now been copied across, now segmenting data into events...");
                     if(!csv_file_of_associated_episodes.Equals(""))
-                        segment_folder_images_into_events_and_upload_to_db(user_id, local_machine_folder_path_for_new_images, device_type,csv_file_of_associated_episodes);
-                    else segment_folder_images_into_events_and_upload_to_db(user_id, local_machine_folder_path_for_new_images, device_type);
+                        segment_folder_images_into_events_and_upload_to_db(userID, local_machine_folder_path_for_new_images, device_type,csv_file_of_associated_episodes);
+                    else segment_folder_images_into_events_and_upload_to_db(userID, local_machine_folder_path_for_new_images, device_type);
                     write_output(DateTime.Now.ToLongTimeString() + " all images have now been segmented into events and uploaded to the database...");
 
                     //6. as there's a problem with the EXIF header of the SenseCam images, we'll call a method to fix this header, so WPF can display the images we've just copied across...
@@ -674,7 +674,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
 
         
-        private void segment_folder_images_into_events_and_upload_to_db(int user_id, string selected_folder, DeviceType device_type)
+        private void segment_folder_images_into_events_and_upload_to_db(int userID, string selected_folder, DeviceType device_type)
         {
             selected_folder += @"\";
             //1. READ SENSOR.CSV INFORMATION IN FOLDER
@@ -683,7 +683,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
             Segmentation_Image_Rep[] manipulated_images;
             bool sensor_file_exists = File.Exists(selected_folder + "sensor.csv") || File.Exists(selected_folder+"image_table.txt");
             if (sensor_file_exists)
-                manipulated_images = Upload_Manipulated_Sensor_Data.process_csv_file(selected_folder, user_id, device_type);
+                manipulated_images = Upload_Manipulated_Sensor_Data.process_csv_file(selected_folder, userID, device_type);
             else manipulated_images = Upload_Manipulated_Sensor_Data.process_folder_with_no_csv_information(selected_folder);
 
             if (manipulated_images.Length != 0)
@@ -706,7 +706,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                 if (list_of_calculated_events != null)
                 {
                     //3. AND WRITE OUT THE LIST OF IMAGES AND EVENTS TO THE DATABASE!			
-                    upload_all_data_to_database(manipulated_images, list_of_calculated_events, selected_folder, user_id);
+                    upload_all_data_to_database(manipulated_images, list_of_calculated_events, selected_folder, userID);
 
                     //4. FINALLY UPDATE THE IMAGE.DAT FILE SO AS TO REFLECT THE NEW BOUNDARIES AS BOOKMARKS!
                     //the reason I leave this step to last is that there may be a problem in updating the database ... if there is, I don't want to update the image.dat file as that would then mean that if I try to redo this process it'll think that it's already successfully completed (going by the image.dat file being updated) ... now this will not happen as image.dat isn't updated unto after the database updating
@@ -728,7 +728,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
 
 
-        private void segment_folder_images_into_events_and_upload_to_db(int user_id, string selected_folder, DeviceType device_type, string external_episode_definition_csv_file)
+        private void segment_folder_images_into_events_and_upload_to_db(int userID, string selected_folder, DeviceType device_type, string external_episode_definition_csv_file)
         {
             selected_folder += @"\";
             //1. READ SENSOR.CSV INFORMATION IN FOLDER
@@ -737,7 +737,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
             Segmentation_Image_Rep[] manipulated_images;
             bool sensor_file_exists = File.Exists(selected_folder + "sensor.csv");
             if (sensor_file_exists)
-                manipulated_images = Upload_Manipulated_Sensor_Data.process_csv_file(selected_folder, user_id, device_type);
+                manipulated_images = Upload_Manipulated_Sensor_Data.process_csv_file(selected_folder, userID, device_type);
             else manipulated_images = Upload_Manipulated_Sensor_Data.process_folder_with_no_csv_information(selected_folder);
 
             if (manipulated_images.Length != 0)
@@ -753,7 +753,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                 //write_output("start list of calculated events => " + DateTime.Now.ToString());
                 Segmentation_Event_Rep[] list_of_calculated_events;
 
-                //todo create example CSV file to show correct format for: start_time, end_time, description
+                //todo create example CSV file to show correct format for: startTime, endTime, description
                 List<Segmentation_Event_Rep> user_defined_episodes = new List<Segmentation_Event_Rep>();
                 user_defined_episodes = Segmentation_Event_Rep.read_in_list_of_user_defined_episodes_from_file(external_episode_definition_csv_file, selected_folder);
                 list_of_calculated_events = Fuse_And_Identify_Segments.SET_boundary_times_for_all_images(manipulated_images, user_defined_episodes);                
@@ -761,7 +761,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                 if (list_of_calculated_events != null)
                 {
                     //3. AND WRITE OUT THE LIST OF IMAGES AND EVENTS TO THE DATABASE!			
-                    upload_all_data_to_database(manipulated_images, list_of_calculated_events, selected_folder, user_id);
+                    upload_all_data_to_database(manipulated_images, list_of_calculated_events, selected_folder, userID);
 
                     //4. FINALLY UPDATE THE IMAGE.DAT FILE SO AS TO REFLECT THE NEW BOUNDARIES AS BOOKMARKS!
                     //the reason I leave this step to last is that there may be a problem in updating the database ... if there is, I don't want to update the image.dat file as that would then mean that if I try to redo this process it'll think that it's already successfully completed (going by the image.dat file being updated) ... now this will not happen as image.dat isn't updated unto after the database updating
@@ -783,26 +783,26 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
 
 
-        private void upload_all_data_to_database(Segmentation_Image_Rep[] all_images, Segmentation_Event_Rep[] all_events, string images_folder, int user_id)
+        private void upload_all_data_to_database(Segmentation_Image_Rep[] all_images, Segmentation_Event_Rep[] all_events, string images_folder, int userID)
         {
             //write_output("start upload_all_images => " + DateTime.Now.ToString());
             //1 upload all the images to the database
-            upload_new_images(all_images, images_folder, user_id);
+            upload_new_images(all_images, images_folder, userID);
             
             //write_output("start upload_new_events => " + DateTime.Now.ToString());
             //2 upload all the events to the database
-            upload_new_events(all_events, images_folder, user_id);
+            upload_new_events(all_events, images_folder, userID);
 
-            //write_output("start update_image_event_ids => " + DateTime.Now.ToString());
-            //3 call a database stored procedure to update the event_id field in the all_Images table
-            update_event_id_field_of_all_images_table(user_id);
-            //write_output("end update_image_event_ids => " + DateTime.Now.ToString());
+            //write_output("start update_image_eventIDs => " + DateTime.Now.ToString());
+            //3 call a database stored procedure to update the eventID field in the all_Images table
+            update_eventID_field_of_all_images_table(userID);
+            //write_output("end update_image_eventIDs => " + DateTime.Now.ToString());
         } //end method upload_all_data_to_database()
 
 
 
 
-        private void upload_new_images(Segmentation_Image_Rep[] image_list, string images_folder, int user_id)
+        private void upload_new_images(Segmentation_Image_Rep[] image_list, string images_folder, int userID)
         {
             // http://sqlite.phxsoftware.com/forums/t/134.aspx
             DbConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
@@ -812,17 +812,17 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                 using (DbCommand cmd = con.CreateCommand())
                 {
                     //cmd.CommandText = "INSERT INTO TestCase(MyValue) VALUES(?)";
-                    cmd.CommandText = "INSERT INTO All_Images(user_id,image_path,image_time) VALUES(?,?,?)";
-                    DbParameter user_id_field, image_path_field, image_time_field;
-                    user_id_field = cmd.CreateParameter();
+                    cmd.CommandText = "INSERT INTO All_Images(userID,image_path,image_time) VALUES(?,?,?)";
+                    DbParameter userID_field, image_path_field, image_time_field;
+                    userID_field = cmd.CreateParameter();
                     image_path_field = cmd.CreateParameter();
                     image_time_field = cmd.CreateParameter();
-                    cmd.Parameters.Add(user_id_field);
+                    cmd.Parameters.Add(userID_field);
                     cmd.Parameters.Add(image_path_field);
                     cmd.Parameters.Add(image_time_field);
                     for (int n = 0; n < image_list.Length; n++)
                     {
-                        user_id_field.Value = user_id;
+                        userID_field.Value = userID;
                         image_path_field.Value = images_folder + image_list[n].get_image_name();
                         image_time_field.Value = image_list[n].get_image_time();
                         cmd.ExecuteNonQuery();
@@ -835,7 +835,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
 
 
-        private void upload_new_events(Segmentation_Event_Rep[] event_list, string images_folder, int user_id)
+        private void upload_new_events(Segmentation_Event_Rep[] event_list, string images_folder, int userID)
         {
             // http://sqlite.phxsoftware.com/forums/t/134.aspx
             DbConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
@@ -845,26 +845,26 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                 using (DbCommand cmd = con.CreateCommand())
                 {
                     //cmd.CommandText = "INSERT INTO TestCase(MyValue) VALUES(?)";
-                    cmd.CommandText = "INSERT INTO All_Events(user_id,day,start_time,end_time,keyframe_path,number_times_viewed) VALUES(?,?,?,?,?,?)";
-                    DbParameter user_id_field, day_field, start_time_field, end_time_field,keyframe_path_field,number_times_viewed_field;
-                    user_id_field = cmd.CreateParameter();
+                    cmd.CommandText = "INSERT INTO All_Events(userID,day,startTime,endTime,keyframe_path,number_times_viewed) VALUES(?,?,?,?,?,?)";
+                    DbParameter userID_field, day_field, startTime_field, endTime_field,keyframe_path_field,number_times_viewed_field;
+                    userID_field = cmd.CreateParameter();
                     day_field = cmd.CreateParameter();
-                    start_time_field = cmd.CreateParameter();
-                    end_time_field = cmd.CreateParameter();
+                    startTime_field = cmd.CreateParameter();
+                    endTime_field = cmd.CreateParameter();
                     keyframe_path_field = cmd.CreateParameter();
                     number_times_viewed_field = cmd.CreateParameter();
-                    cmd.Parameters.Add(user_id_field);
+                    cmd.Parameters.Add(userID_field);
                     cmd.Parameters.Add(day_field);
-                    cmd.Parameters.Add(start_time_field);
-                    cmd.Parameters.Add(end_time_field);
+                    cmd.Parameters.Add(startTime_field);
+                    cmd.Parameters.Add(endTime_field);
                     cmd.Parameters.Add(keyframe_path_field);
                     cmd.Parameters.Add(number_times_viewed_field);
                     for (int row_counter = 0; row_counter < event_list.Length; row_counter++)
                     {
-                        user_id_field.Value = user_id;
+                        userID_field.Value = userID;
                         day_field.Value = event_list[row_counter].get_day(); //local time day
-                        start_time_field.Value = event_list[row_counter].get_start_time(); //local time start time
-                        end_time_field.Value = event_list[row_counter].get_end_time(); //local time end time
+                        startTime_field.Value = event_list[row_counter].get_startTime(); //local time start time
+                        endTime_field.Value = event_list[row_counter].get_endTime(); //local time end time
                         keyframe_path_field.Value = images_folder + event_list[row_counter].get_keyframe_image_name();
                         number_times_viewed_field.Value = 0;
                         cmd.ExecuteNonQuery();
@@ -877,26 +877,26 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
 
 
-        private void update_event_id_field_of_all_images_table(int user_id)
+        private void update_eventID_field_of_all_images_table(int userID)
         {
             SQLiteConnection cnn = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
             SQLiteCommand command = new SQLiteCommand(cnn);
             cnn.Open();
 
             //firstly get the most recent event not updated...
-            command.CommandText = Database_Versioning.text_for_stored_procedures.spGet_most_recent_event_id_for_user(user_id);
-            int most_recent_event_id = int.Parse(command.ExecuteScalar().ToString());
+            command.CommandText = Database_Versioning.text_for_stored_procedures.spGet_most_recent_event_id_for_user(userID);
+            int most_recent_eventID = int.Parse(command.ExecuteScalar().ToString());
             
             //then update images and sensor_readings table with relevant event id values
-            command.CommandText = Database_Versioning.text_for_stored_procedures.spUpdate_newly_uploaded_images_and_sensor_readings_with_relevant_event_id(user_id, most_recent_event_id);
+            command.CommandText = Database_Versioning.text_for_stored_procedures.spUpdate_newly_uploaded_images_and_sensor_readings_with_relevant_event_id(userID, most_recent_eventID);
             command.ExecuteNonQuery();
 
             //finally tidy up spurious events from database...
-            command.CommandText = Database_Versioning.text_for_stored_procedures.spUpdate_newly_uploaded_images_tidy_up_spurious_events(user_id);
+            command.CommandText = Database_Versioning.text_for_stored_procedures.spUpdate_newly_uploaded_images_tidy_up_spurious_events(userID);
             command.ExecuteNonQuery();
 
             cnn.Close();
-        } //end method update_event_id_field_of_all_images_table
+        } //end method update_eventID_field_of_all_images_table
 
 
 

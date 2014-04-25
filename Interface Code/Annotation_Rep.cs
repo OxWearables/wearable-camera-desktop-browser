@@ -13,20 +13,17 @@ namespace SenseCamBrowser1
     public class Annotation_Rep
     {
 
-        public int annotation_id { get; set; }
-        public string annotation_type { get; set; }
-        public string annotation_description { get; set; }
+        public int annID { get; set; }
+        public string annType { get; set; }
+        public string annDesc { get; set; } //description
 
 
-        public Annotation_Rep(int annotation_id, string annotation_type, string annotation_description)
+        public Annotation_Rep(int annID, string annType, string annDesc)
         {
-            this.annotation_id = annotation_id;
-            this.annotation_type = annotation_type;
-            this.annotation_description = annotation_description;
-        } //close constructor...
-
-
-
+            this.annID = annID;
+            this.annType = annType;
+            this.annDesc = annDesc;
+        }
 
         /// <summary>
         /// this method get the types of annotations available
@@ -40,19 +37,19 @@ namespace SenseCamBrowser1
             SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
             SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spGet_list_of_annotation_types(), con);
             
-            int annotation_id;
-            string annotation_type, annotation_description;
+            int annID;
+            string annType, annDesc;
 
             //then open the db connection, connect to the stored procedure and return the list of results...
             con.Open();
             SQLiteDataReader read_events = selectCmd.ExecuteReader();
             while (read_events.Read())
             {
-                annotation_id = int.Parse(read_events[0].ToString());
-                annotation_type = read_events[1].ToString();
-                annotation_description = read_events[2].ToString();
+                annID = int.Parse(read_events[0].ToString());
+                annType = read_events[1].ToString();
+                annDesc = read_events[2].ToString();
 
-                list_of_annotation_classes.Add(annotation_type);// (new Annotation_Rep(annotation_id, annotation_type, annotation_description));
+                list_of_annotation_classes.Add(annType);// (new Annotation_Rep(annotation_id, annotation_type, annotation_description));
             } //end while (read_chunk_ids.Read())...
             con.Close();
 
@@ -69,15 +66,15 @@ namespace SenseCamBrowser1
         /// This method gets the prior annotations associated with an event...
         /// </summary>
         /// <param name="class_type"></param>
-        /// <param name="user_id"></param>
-        /// <param name="event_id"></param>
+        /// <param name="userID"></param>
+        /// <param name="eventID"></param>
         /// <returns></returns>
-        public static List<string> get_event_prior_annotations(int user_id, int event_id)
+        public static List<string> get_event_prior_annotations(int userID, int eventID)
         {
             //this method calls the relevant database stored procedure to retrieve a list of annotations already associated with this event...
             List<string> list_of_annotations = new List<string>();
             SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
-            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spGet_event_annotations(user_id,event_id),con);
+            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spGet_event_annotations(userID,eventID),con);
             
             string annotation_type;
 
@@ -98,29 +95,29 @@ namespace SenseCamBrowser1
 
 
 
-        public static void add_event_annotation_to_database(int user_id, int event_id, string annotation_name)
+        public static void add_event_annotation_to_database(int userID, int eventID, string annotation_name)
         {
             SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
-            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spAdd_event_annotation(user_id, event_id, annotation_name), con);
+            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spAdd_event_annotation(userID, eventID, annotation_name), con);
             con.Open();
             selectCmd.ExecuteNonQuery();
             con.Close();            
         } //close method add_event_annotation_to_database()...
 
 
-        public static void clear_event_annotations_from_database(int user_id, int event_id)
+        public static void clear_event_annotations_from_database(int userID, int eventID)
         {
             SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
-            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spClear_event_annotations(user_id, event_id), con);
+            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spClear_event_annotations(userID, eventID), con);
             con.Open();
             selectCmd.ExecuteNonQuery();
             con.Close();
         } //close method clear_event_annotations_from_database()...
 
-        public static void clear_event_annotations_from_database(int user_id, int event_id, string individual_annotation_text)
+        public static void clear_event_annotations_from_database(int userID, int eventID, string individual_annotation_text)
         {
             SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
-            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spClear_event_annotations(user_id, event_id, individual_annotation_text), con);
+            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spClear_event_annotations(userID, eventID, individual_annotation_text), con);
             con.Open();
             selectCmd.ExecuteNonQuery();
             con.Close();

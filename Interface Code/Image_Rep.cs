@@ -32,27 +32,27 @@ namespace SenseCamBrowser1
         private static string DbString = global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString;
 
         //Image properties.
-        public DateTime image_time { get; set; }
-        public string short_image_time { get; set; }
-        public string image_path { get; set; }
-        public ImageSource scaled_image_src { get; set; }
-        public int array_position_in_event { get; set; }
+        public DateTime imgTime { get; set; }
+        public string shortImgTime { get; set; }
+        public string imgPath { get; set; }
+        public ImageSource scaledImgSource { get; set; }
+        public int position { get; set; }
 
         public Image_Rep(DateTime imgTime, string path, int position)
         {
-            this.image_time = imgTime;
-            this.image_path = path;
-            this.array_position_in_event = position;
-            this.scaled_image_src = Image_Rep.GetImgBitmap(path, true);
-            this.short_image_time = image_time.ToLongTimeString();
+            this.imgTime = imgTime;
+            this.imgPath = path;
+            this.position = position; //array/sequence position
+            this.scaledImgSource = Image_Rep.GetImgBitmap(path, true);
+            this.shortImgTime = imgTime.ToLongTimeString();
         }
 
 
         public Image_Rep(DateTime imgTime, ImageSource imgSource, int position)
         {
-            this.image_time = imgTime;
-            this.array_position_in_event = position;
-            this.scaled_image_src = imgSource;
+            this.imgTime = imgTime;
+            this.position = position;
+            this.scaledImgSource = imgSource;
         }
 
 
@@ -95,7 +95,7 @@ namespace SenseCamBrowser1
             //Release bitmap/image-source from memory for every image.
             foreach (Image_Rep img in imageList)
             {
-                img.scaled_image_src = null;
+                img.scaledImgSource = null;
             }
             imageList.Clear();
         }
@@ -157,7 +157,7 @@ namespace SenseCamBrowser1
         {
             //Get the start and end times of images captured in a given day.
             //This method returns void and updates two parameters by reference.
-            string query = Database_Versioning.text_for_stored_procedures.spGet_Day_Start_and_End_Times(
+            string query = Database_Versioning.text_for_stored_procedures.spGet_Day_Start_and_end_times(
                 userID,
                 day);
             SQLiteConnection con = new SQLiteConnection(DbString);
@@ -208,26 +208,26 @@ namespace SenseCamBrowser1
             {
                 for (j = 1; j <= i; j++)
                 {
-                    if (imageList[j - 1].array_position_in_event > imageList[j].array_position_in_event)
+                    if (imageList[j - 1].position > imageList[j].position)
                     {
                         //swap the 2 images if they are in the wrong order
-                        temp.array_position_in_event = imageList[j - 1].array_position_in_event;
-                        temp.image_path = imageList[j - 1].image_path;
-                        temp.image_time = imageList[j - 1].image_time;
-                        temp.scaled_image_src = imageList[j - 1].scaled_image_src;
-                        temp.short_image_time = imageList[j - 1].short_image_time;
+                        temp.position = imageList[j - 1].position;
+                        temp.imgPath = imageList[j - 1].imgPath;
+                        temp.imgTime = imageList[j - 1].imgTime;
+                        temp.scaledImgSource = imageList[j - 1].scaledImgSource;
+                        temp.shortImgTime = imageList[j - 1].shortImgTime;
 
-                        imageList[j - 1].array_position_in_event = imageList[j].array_position_in_event;
-                        imageList[j - 1].image_path = imageList[j].image_path;
-                        imageList[j - 1].image_time = imageList[j].image_time;
-                        imageList[j - 1].scaled_image_src = imageList[j].scaled_image_src;
-                        imageList[j - 1].short_image_time = imageList[j].short_image_time;
+                        imageList[j - 1].position = imageList[j].position;
+                        imageList[j - 1].imgPath = imageList[j].imgPath;
+                        imageList[j - 1].imgTime = imageList[j].imgTime;
+                        imageList[j - 1].scaledImgSource = imageList[j].scaledImgSource;
+                        imageList[j - 1].shortImgTime = imageList[j].shortImgTime;
 
-                        imageList[j].array_position_in_event = temp.array_position_in_event;
-                        imageList[j].image_path = temp.image_path;
-                        imageList[j].image_time = temp.image_time;
-                        imageList[j].scaled_image_src = temp.scaled_image_src;
-                        imageList[j].short_image_time = temp.short_image_time;
+                        imageList[j].position = temp.position;
+                        imageList[j].imgPath = temp.imgPath;
+                        imageList[j].imgTime = temp.imgTime;
+                        imageList[j].scaledImgSource = temp.scaledImgSource;
+                        imageList[j].shortImgTime = temp.shortImgTime;
                     }
                 }
             }

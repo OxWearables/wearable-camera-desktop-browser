@@ -23,7 +23,7 @@ namespace SenseCamBrowser1
     class Image_Loading_Handler
     {
         
-        private int user_id, event_id; //variables we need to store initially, so we know what event to get the image paths from in the database
+        private int userID, eventID; //variables we need to store initially, so we know what event to get the image paths from in the database
         ///////////////////////////// THREAD CALLBACK PROPERTIES /////////////////////////////////////////////
         ///////////////////////////// THREAD CALLBACK PROPERTIES /////////////////////////////////////////////
         ///////////////////////////// THREAD CALLBACK PROPERTIES /////////////////////////////////////////////
@@ -42,13 +42,13 @@ namespace SenseCamBrowser1
         /// <summary>
         /// constructor to get the necessary variables (user/event id's so we know which images to get from the database, and callback to send the loaded image list)
         /// </summary>
-        /// <param name="param_user_id"></param>
-        /// <param name="param_event_id"></param>
+        /// <param name="param_userID"></param>
+        /// <param name="param_eventID"></param>
         /// <param name="param_images_loaded_callback"></param>
-        public Image_Loading_Handler(int param_user_id, int param_event_id, All_Event_Images_Loaded_Callback param_images_loaded_callback)
+        public Image_Loading_Handler(int param_userID, int param_eventID, All_Event_Images_Loaded_Callback param_images_loaded_callback)
         {
-            this.user_id = param_user_id;
-            this.event_id = param_event_id;
+            this.userID = param_userID;
+            this.eventID = param_eventID;
             this.all_images_loaded_callback = param_images_loaded_callback;
         } //close constructor()...
 
@@ -60,7 +60,7 @@ namespace SenseCamBrowser1
         /// </summary>
         public void load_all_event_images_into_memory()
         {
-            Image_Rep.ImageList = Image_Rep.GetEventImages(user_id, event_id); ; //get all the images in the event
+            Image_Rep.ImageList = Image_Rep.GetEventImages(userID, eventID); ; //get all the images in the event
 
             //and we return our callback (to the UI)
             all_images_loaded_callback();

@@ -20,7 +20,7 @@ namespace SenseCamBrowser1.Database_Versioning
         } //close method spGet_List_Of_Users()...
 
 
-        public static string spGet_UserID_of_Most_Recent_Data_Upload()
+        public static string spGet_user_id_of_Most_Recent_Data_Upload()
         {
             string end_string = "";
             end_string += "\n" + "select [user_id]";
@@ -29,7 +29,7 @@ namespace SenseCamBrowser1.Database_Versioning
             end_string += "\n" + "order by max([day]) desc";
             end_string += "\n" + "LIMIT 1;";
             return end_string;
-        } //close method spGet_UserID_of_Most_Recent_Data_Upload()...
+        } //close method spGet_user_id_of_Most_Recent_Data_Upload()...
 
         public static string spInsert_New_User_Into_Database_and_Return_ID(string new_user_name)
         {
@@ -65,7 +65,7 @@ namespace SenseCamBrowser1.Database_Versioning
         public static string spCreate_new_event_and_return_its_ID(int user_id, DateTime day_of_source_event)
         {
             string end_string = "INSERT INTO All_Events(user_id,day,start_time,end_time,keyframe_path,number_times_viewed) VALUES (" + user_id + ", " + convert_datetime_to_sql_string(day_of_source_event) + ", " + convert_datetime_to_sql_string(day_of_source_event) + ", " + convert_datetime_to_sql_string(day_of_source_event) + ", '', 0);";
-            end_string += "\n" + "SELECT MAX(Event_ID) FROM All_Events WHERE [user_id]=" + user_id + ";";
+            end_string += "\n" + "SELECT MAX(event_id) FROM All_Events WHERE [user_id]=" + user_id + ";";
             return end_string;
         } //close method spCreate_new_event_and_return_its_ID()...
 
@@ -367,7 +367,7 @@ namespace SenseCamBrowser1.Database_Versioning
         } //close method spGet_List_Of_All_Days_For_User()...
 
 
-        public static string spGet_Day_Start_and_End_Times(int user_id, DateTime day)
+        public static string spGet_Day_Start_and_end_times(int user_id, DateTime day)
         {
             string end_string = "SELECT MIN(start_time) AS start_time, MAX(end_time) AS end_time";
             end_string += "\n" + "FROM All_Events";
@@ -377,7 +377,7 @@ namespace SenseCamBrowser1.Database_Versioning
             //end_string += "\n" + "AND DATEPART(YEAR, [day]) = DATEPART(YEAR, " + convert_datetime_to_sql_string(day) + ")";
             //end_string += "\n" + "AND DATEPART(DAYOFYEAR, [day]) = DATEPART(DAYOFYEAR, " + convert_datetime_to_sql_string(day) + ")";
             return end_string;
-        } //close method spGet_Day_Start_and_End_Times()...
+        } //close method spGet_Day_Start_and_end_times()...
 
 
         public static string spGet_Num_Images_In_Day(int user_id, DateTime day)

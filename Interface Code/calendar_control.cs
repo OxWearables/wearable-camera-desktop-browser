@@ -40,9 +40,9 @@ namespace SenseCamBrowser1
         /// <summary>
         /// This method connects to the database and retrieves the list of days that are available to be displayed to the user...
         /// </summary>
-        /// <param name="user_id"></param>
+        /// <param name="userID"></param>
         /// <returns></returns>
-        public static DateTime[] get_list_of_available_days_for_user(int user_id)
+        public static DateTime[] get_list_of_available_days_for_user(int userID)
         {
             //THIS METHOD SHALL RETURN ALL THE DAYS DATA THAT A USER HAS IMAGES IN
             //THIS WILL BE THEN USED IN THE CALENDAR ON THE PAGE TO SHOW THE USER WHAT
@@ -52,7 +52,7 @@ namespace SenseCamBrowser1
 
             //spGet_Event_Image_Paths
             SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
-            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spGet_List_Of_All_Days_For_User(user_id), con);
+            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spGet_List_Of_All_Days_For_User(userID), con);
             con.Open();
             SQLiteDataReader day_reader = selectCmd.ExecuteReader();
 
@@ -83,7 +83,7 @@ namespace SenseCamBrowser1
         public calendar_control() { }
         static calendar_control()
         {
-            DateTime[] tmp = get_list_of_available_days_for_user(Window1.OVERALL_USER_ID);
+            DateTime[] tmp = get_list_of_available_days_for_user(Window1.OVERALL_userID);
             foreach (DateTime dtime in tmp)
                 dict.Add(new DateTime(dtime.Year, dtime.Month, dtime.Day), "");            
         } //close static constructor method calendar_control()...
@@ -99,7 +99,7 @@ namespace SenseCamBrowser1
             dict.Clear(); //clear out the old dictionary firstly            
 
             //then get the available days of data for this user...
-            DateTime[] tmp = get_list_of_available_days_for_user(Window1.OVERALL_USER_ID);
+            DateTime[] tmp = get_list_of_available_days_for_user(Window1.OVERALL_userID);
 
             //and finally update the dictionary with new information on the available days to click...
             foreach (DateTime dtime in tmp)

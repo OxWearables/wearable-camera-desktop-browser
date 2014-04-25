@@ -70,8 +70,8 @@ namespace SenseCamBrowser1
 
         private void btnShowBrowser_Click(object sender, RoutedEventArgs e)
         {
-            int USER_ID_NOT_VALID = -1;
-            int selected_user_id = USER_ID_NOT_VALID;
+            int userID_NOT_VALID = -1;
+            int selected_userID = userID_NOT_VALID;
             string selected_username = "";
 
             //firstly let's get the user id and check it's valid
@@ -94,7 +94,7 @@ namespace SenseCamBrowser1
                     if (!name_already_exists)
                     {
                         //then let's insert it into the database, and also get it's id...
-                        selected_user_id = User_Object.insert_new_user_into_database_and_get_id(newly_entered_username);
+                        selected_userID = User_Object.insert_new_user_into_database_and_get_id(newly_entered_username);
                         selected_username = newly_entered_username;
                     } //close if (!name_already_exists)....
                     else MessageBox.Show("User '" + newly_entered_username + "' already exists. Please enter a unique name."); //else this isn't a valid username...
@@ -102,7 +102,7 @@ namespace SenseCamBrowser1
                 } //close if (selected_user.name.Equals(TEXT_FOR_NEW_USER_NAME))...
                 else //i.e. it's an existing user we want to see...
                 {
-                    selected_user_id = selected_user.user_id;
+                    selected_userID = selected_user.userID;
                     selected_username = selected_user.username;
                 } //close else ... if (selected_user.name.Equals(TEXT_FOR_NEW_USER_NAME))
 
@@ -111,8 +111,8 @@ namespace SenseCamBrowser1
 
 
             //finally if we've selected a valid user id, let's start the browsing session!
-            if (selected_user_id != USER_ID_NOT_VALID)
-                set_overall_user_id_and_start_browsing_session(selected_user_id, selected_username);
+            if (selected_userID != userID_NOT_VALID)
+                set_overall_userID_and_start_browsing_session(selected_userID, selected_username);
 
         } //close method btnShowBrowser_Click()...
 
@@ -122,17 +122,17 @@ namespace SenseCamBrowser1
         /// <summary>
         /// this method is responsible for starting the browsing session, and closing this current form!
         /// </summary>
-        /// <param name="user_id"></param>
-        private void set_overall_user_id_and_start_browsing_session(int user_id, string user_name)
+        /// <param name="userID"></param>
+        private void set_overall_userID_and_start_browsing_session(int userID, string user_name)
         {
             //IMPORTANT, now set the overall user id for this session login...
-            User_Object.OVERALL_USER_ID = user_id;
+            User_Object.OVERALL_userID = userID;
             User_Object.OVERALL_USER_NAME = user_name;
 
             this.Hide();
             Window1 win1 = new Window1();
             win1.Show();
-        } //close method set_overall_user_id_and_start_browsing_session()...
+        } //close method set_overall_userID_and_start_browsing_session()...
 
 
 

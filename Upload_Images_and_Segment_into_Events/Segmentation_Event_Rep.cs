@@ -24,7 +24,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 {
     class Segmentation_Event_Rep
     {
-        private DateTime start_time, end_time, day;        
+        private DateTime startTime, endTime, day;        
 		private string keyframe_time;
 
 
@@ -32,32 +32,32 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
 		public Segmentation_Event_Rep(Segmentation_Image_Rep[] image_list, int start_position, int end_position)
 		{
-			//calculate day, start_time and end_time
+			//calculate day, startTime and endTime
 			day = image_list[0].get_image_day(); //i.e. get the start time of the very first image in the chunk
-			start_time = image_list[start_position].get_image_time();
-			end_time = image_list[end_position].get_image_time();
+			startTime = image_list[start_position].get_image_time();
+			endTime = image_list[end_position].get_image_time();
 
 			keyframe_time = image_list[start_position + ((end_position-start_position)/2)].get_image_name();
 		} //end constructor
 
 
-        public Segmentation_Event_Rep(DateTime day, DateTime start_time, DateTime end_time,string description)
+        public Segmentation_Event_Rep(DateTime day, DateTime startTime, DateTime endTime,string description)
         {
-            //calculate day, start_time and end_time
+            //calculate day, startTime and endTime
             this.day = day; //i.e. get the start time of the very first image in the chunk
-            this.start_time = start_time;
-            this.end_time = end_time;
+            this.startTime = startTime;
+            this.endTime = endTime;
 
             keyframe_time = description;
         } //end constructor
 
 
-        public Segmentation_Event_Rep( DateTime start_time, DateTime end_time, string description, string folder_path_of_images)
+        public Segmentation_Event_Rep( DateTime startTime, DateTime endTime, string description, string folder_path_of_images)
         {
-            //calculate day, start_time and end_time
-            this.day = new DateTime(start_time.Year, start_time.Month, start_time.Day); //i.e. get the start time of the very first image in the chunk
-            this.start_time = start_time;
-            this.end_time = end_time;
+            //calculate day, startTime and endTime
+            this.day = new DateTime(startTime.Year, startTime.Month, startTime.Day); //i.e. get the start time of the very first image in the chunk
+            this.startTime = startTime;
+            this.endTime = endTime;
 
             string image_extension = ".jpg";
             keyframe_time = description+image_extension;
@@ -112,18 +112,18 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 		
 
 
-		public DateTime get_start_time()
+		public DateTime get_startTime()
 		{
-			return start_time;
-		} //end method get_start_time()
+			return startTime;
+		} //end method get_startTime()
 
 
 
 
-		public DateTime get_end_time()
+		public DateTime get_endTime()
 		{
-			return end_time;
-		} //end method get_end_time
+			return endTime;
+		} //end method get_endTime
 
 
 
@@ -147,7 +147,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
         public static List<Segmentation_Event_Rep> read_in_list_of_user_defined_episodes_from_file(string episode_file_name, string folder_path_of_sensecam_images)
         {
-            //the overall aim of this method is to read in a list of events from a CSV file in the format of: start_time, end_time, episode_description
+            //the overall aim of this method is to read in a list of events from a CSV file in the format of: startTime, endTime, episode_description
             //the CSV file has a list of user-defined event for this user (generally taken from either accelerometer, GPS, Heart-rate, etc. data) ... the user will have created this file
             
             List<Segmentation_Event_Rep> list_of_all_sensor_values = new List<Segmentation_Event_Rep>(); //the list of user defined episodes
@@ -155,19 +155,19 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
             TextReader episode_reader = new StreamReader(episode_file_name);
             string line_input;
             string[] elements;
-            DateTime start_time = new DateTime();
-            DateTime end_time = new DateTime();            
+            DateTime startTime = new DateTime();
+            DateTime endTime = new DateTime();            
             string episode_description = null;
             
             while ((line_input = episode_reader.ReadLine()) != null)
             {
                 elements = line_input.Split(',');
 
-                start_time = DateTime.Parse(elements[0]);
-                end_time = DateTime.Parse(elements[1]);
+                startTime = DateTime.Parse(elements[0]);
+                endTime = DateTime.Parse(elements[1]);
                 episode_description = elements[2];
 
-                list_of_all_sensor_values.Add(new Segmentation_Event_Rep(start_time,end_time, episode_description, folder_path_of_sensecam_images));
+                list_of_all_sensor_values.Add(new Segmentation_Event_Rep(startTime,endTime, episode_description, folder_path_of_sensecam_images));
             } //end method while (sensor_reader.Read())
             episode_reader.Close(); //closing the stream
             

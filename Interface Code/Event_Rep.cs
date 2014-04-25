@@ -30,17 +30,17 @@ namespace SenseCamBrowser1
         private static string DbString = global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString;
 
         //Event properties.
-        public int event_id{ get; set; }
-        public DateTime start_time { get; set; }
-        public DateTime end_time { get; set; }
+        public int eventID{ get; set; }
+        public DateTime startTime { get; set; }
+        public DateTime endTime { get; set; }
         public TimeSpan eventDuration { get; set; }
         public string comment { get; set; }
-        public string str_time { get; set; }
-        public string str_keyframe_path { get; set; }            
-        public ImageSource keyframe_path { get; set; }
-        public string short_comment { get; set; }
-        public string border_colour { get; set; }
-        public string event_length { get; set; }
+        public string strTime { get; set; }
+        public string keyframePath { get; set; }            
+        public ImageSource keyframeSource { get; set; }
+        public string shortComment { get; set; }
+        public string borderColour { get; set; }
+        public string eventLength { get; set; }
         
         public Event_Rep(
             int eventID,
@@ -49,26 +49,26 @@ namespace SenseCamBrowser1
             string keyframePath,
             string comment)
         {
-            this.event_id = eventID;
-            this.start_time = startTime;
-            this.end_time = endTime;
+            this.eventID = eventID;
+            this.startTime = startTime;
+            this.endTime = endTime;
             this.eventDuration = endTime - startTime;
             this.comment = comment;
-            this.short_comment = GetStringStart(comment, 15);            
-            this.str_keyframe_path = keyframePath;
-            this.keyframe_path = Image_Rep.GetImgBitmap(keyframePath, true);
-            this.border_colour = DefaultKeyframeBorderColour;
+            this.shortComment = GetStringStart(comment, 15);            
+            this.keyframePath = keyframePath;
+            this.keyframeSource = Image_Rep.GetImgBitmap(keyframePath, true);
+            this.borderColour = DefaultKeyframeBorderColour;
            
             //format time string for UI
-            if (start_time.Hour < 12)
+            if (startTime.Hour < 12)
             {
-                this.str_time = start_time.ToShortTimeString() + " am";
+                this.strTime = startTime.ToShortTimeString() + " am";
             }
             else
             {
-                this.str_time = start_time.ToShortTimeString() + " pm";
+                this.strTime = startTime.ToShortTimeString() + " pm";
             }
-            this.event_length = Daily_Annotation_Summary.format_total_seconds_to_mins_and_seconds((int)eventDuration.TotalSeconds);
+            this.eventLength = Daily_Annotation_Summary.format_total_seconds_to_mins_and_seconds((int)eventDuration.TotalSeconds);
         }
 
 

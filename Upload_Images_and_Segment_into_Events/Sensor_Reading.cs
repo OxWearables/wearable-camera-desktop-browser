@@ -24,7 +24,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
     {
 
 
-        private int chunk_id, white_val, battery, pir; //I'm not going to bother storing user_id, as it will be the same for all these records and only will tax system resources
+        private int chunk_id, white_val, battery, pir; //I'm not going to bother storing userID, as it will be the same for all these records and only will tax system resources
         public double mag_x { get; set; }
         public double mag_y { get; set; }
         public double mag_z { get; set; }

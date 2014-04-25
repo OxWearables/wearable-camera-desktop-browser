@@ -64,7 +64,7 @@ namespace SenseCamBrowser1
         {
             InitializeComponent();
             //and let's get all the available days for the user...
-            list_of_available_days = calendar_control.get_list_of_available_days_for_user(Window1.OVERALL_USER_ID);            
+            list_of_available_days = calendar_control.get_list_of_available_days_for_user(Window1.OVERALL_userID);            
         } //close constructor CalendarView()...
 
         
@@ -79,7 +79,7 @@ namespace SenseCamBrowser1
         {            
             this.date_selected_callback = param_callback;
             //and we'll also set the display date to the most recent day of data
-            calSenseCamDay.DisplayDate = calendar_control.get_list_of_available_days_for_user(Window1.OVERALL_USER_ID)[0];
+            calSenseCamDay.DisplayDate = calendar_control.get_list_of_available_days_for_user(Window1.OVERALL_userID)[0];
         } //close method initialise_calendar_popup_datecallback()...
         
         #endregion startup methods that should be called before the calendar is displayed to the user

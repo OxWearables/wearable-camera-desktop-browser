@@ -88,7 +88,7 @@ how to find where my SenseCam images are stored?
 
         #region properties to store the user id and the list of days data available for this user and also the list of events for the morning, afternoon, and evening
 
-            public static int OVERALL_USER_ID = User_Object.OVERALL_USER_ID; //originally was like this -> int.Parse(ConfigurationSettings.AppSettings["user_id"].ToString());
+            public static int OVERALL_userID = User_Object.OVERALL_userID; //originally was like this -> int.Parse(ConfigurationSettings.AppSettings["userID"].ToString());
             private DateTime current_day_on_display = new DateTime();
         
         #endregion properties to store the user id and the list of days data available for this user and also the list of events for the morning, afternoon, and evening
@@ -150,7 +150,7 @@ how to find where my SenseCam images are stored?
             private void update_display_page_events(DateTime day_to_display)
             {
                 //an array to store the total list of events to be displayed...
-                List<Event_Rep> all_events_to_display_in_time_period = Event_Rep.GetDayEvents(Window1.OVERALL_USER_ID, day_to_display);
+                List<Event_Rep> all_events_to_display_in_time_period = Event_Rep.GetDayEvents(Window1.OVERALL_userID, day_to_display);
                 
                 //and let's update the UI ... 
                 
@@ -183,26 +183,26 @@ how to find where my SenseCam images are stored?
 
 
                 //now display the time span of the events of this day
-                DateTime day_start_time = new DateTime();
-                DateTime day_end_time = day_start_time;
-                Image_Rep.GetDayStartEndTime(Window1.OVERALL_USER_ID, day_to_display, ref day_start_time, ref day_end_time); //firstly we get start/end time data directly from the database
+                DateTime day_startTime = new DateTime();
+                DateTime day_endTime = day_startTime;
+                Image_Rep.GetDayStartEndTime(Window1.OVERALL_userID, day_to_display, ref day_startTime, ref day_endTime); //firstly we get start/end time data directly from the database
 
-                if (day_start_time != day_end_time) //if the start time isn't equal to the end time, it means that we've successfully retrieved information from the database...
+                if (day_startTime != day_endTime) //if the start time isn't equal to the end time, it means that we've successfully retrieved information from the database...
                 {
-                    txtTimeFrame.Text ="(" + day_start_time.ToString ("HH:mm tt") + " - ";
-                    txtTimeFrame.Text += day_end_time.ToString("HH:mm tt") + ")";
-                } //close if(day_start_time != day_end_time)...
+                    txtTimeFrame.Text ="(" + day_startTime.ToString ("HH:mm tt") + " - ";
+                    txtTimeFrame.Text += day_endTime.ToString("HH:mm tt") + ")";
+                } //close if(day_startTime != day_endTime)...
                 else txtTimeFrame.Text = " - "; //if no data has been retrieved, well then we've no information to show...
                 
                 //and also let's display the number of images associated with this day...
-                txtImageNumber.Text = Image_Rep.GetNumImagesInDay(Window1.OVERALL_USER_ID, day_to_display).ToString() + " Photos";
+                txtImageNumber.Text = Image_Rep.GetNumImagesInDay(Window1.OVERALL_userID, day_to_display).ToString() + " Photos";
 
 
                 //finally give a breakdown of the amount of time spent on various activities...
-                lstDailyActivitySummary.ItemsSource = Daily_Annotation_Summary.get_daily_activity_summary_from_annotations(Window1.OVERALL_USER_ID, day_to_display);
+                lstDailyActivitySummary.ItemsSource = Daily_Annotation_Summary.get_daily_activity_summary_from_annotations(Window1.OVERALL_userID, day_to_display);
 
                 //and also a breakdown of the individual annotated events...
-                lstIndividual_Journeys.ItemsSource = Interface_Code.Event_Activity_Annotation.get_list_of_annotated_events_in_day(Window1.OVERALL_USER_ID, day_to_display);
+                lstIndividual_Journeys.ItemsSource = Interface_Code.Event_Activity_Annotation.get_list_of_annotated_events_in_day(Window1.OVERALL_userID, day_to_display);
             } //end method display_days_events_on_interface()
 
 
@@ -307,7 +307,7 @@ how to find where my SenseCam images are stored?
 
             private void refresh_calendar_to_reflect_updated_list_of_available_days()
             {
-                calSenseCamDay.list_of_available_days = calendar_control.get_list_of_available_days_for_user(Window1.OVERALL_USER_ID); //refresh the list of available days
+                calSenseCamDay.list_of_available_days = calendar_control.get_list_of_available_days_for_user(Window1.OVERALL_userID); //refresh the list of available days
 
                 //and then call the calendar_control method which updates the internal dictionary that the calendar display mechanism relys on
                 calendar_control.update_days_on_calendar();
@@ -358,10 +358,10 @@ how to find where my SenseCam images are stored?
                     Event_Rep event_rep = (Event_Rep)LstDisplayEvents.SelectedItem;
 
                     //let's log this interaction
-                    Record_User_Interactions.log_interaction_to_database("Window1_eventdetail_click", event_rep.event_id.ToString());
+                    Record_User_Interactions.log_interaction_to_database("Window1_eventdetail_click", event_rep.eventID.ToString());
                     
 
-                    sc_img_viewer.update_event_on_display(Window1.OVERALL_USER_ID, event_rep, New_Event_Comment_Callback, Event_Deleted_Callback, Images_Moved_Between_Events_Callback);
+                    sc_img_viewer.update_event_on_display(Window1.OVERALL_userID, event_rep, New_Event_Comment_Callback, Event_Deleted_Callback, Images_Moved_Between_Events_Callback);
                     sc_img_viewer.Visibility = Visibility.Visible;
                     
                 } //close if (LstDisplayEvents.SelectedIndex >= 0)
@@ -382,7 +382,7 @@ how to find where my SenseCam images are stored?
             {
                 //let's log this interaction
                 Record_User_Interactions.log_interaction_to_database("Window1_btnupload_new_images_click");
-                ucUploadNewImages.update_user_control_with_drive_information(User_Object.OVERALL_USER_ID, User_Object.OVERALL_USER_NAME, All_Images_Deleted_from_SenseCam);
+                ucUploadNewImages.update_user_control_with_drive_information(User_Object.OVERALL_userID, User_Object.OVERALL_USER_NAME, All_Images_Deleted_from_SenseCam);
                 ucUploadNewImages.Visibility = Visibility.Visible;                                
             } //close btnUpload_New_Images_Click()...
 
@@ -444,26 +444,26 @@ how to find where my SenseCam images are stored?
                     //firstly get the type of activity we want to highlight...
                     Daily_Annotation_Summary selected_activity = (Daily_Annotation_Summary)lstDailyActivitySummary.SelectedItem;
                     //then find the event ids displayed today which are part of the given activity type
-                    List<int> event_ids_to_highlight = Daily_Annotation_Summary.get_list_of_event_ids_to_highlight_for_annotation_type(Window1.OVERALL_USER_ID, current_day_on_display, selected_activity.annotation_type);
+                    List<int> eventIDs_to_highlight = Daily_Annotation_Summary.get_list_of_eventIDs_to_highlight_for_annotation_type(Window1.OVERALL_userID, current_day_on_display, selected_activity.annType);
 
                     foreach (Event_Rep displayed_event in LstDisplayEvents.Items)
                     {
                         //by defaut reset the border colour for this event...
-                        displayed_event.border_colour = Event_Rep.DefaultKeyframeBorderColour;
+                        displayed_event.borderColour = Event_Rep.DefaultKeyframeBorderColour;
 
                         //then we try to see if this event is in our list of target event ids to highlight
-                        foreach (int target_id in event_ids_to_highlight)
+                        foreach (int target_id in eventIDs_to_highlight)
                         {
-                            if (displayed_event.event_id == target_id)
-                                displayed_event.border_colour = "red"; //if this is the target event, let's highlight it's border colour...
-                        } //close foreach(int target_id in event_ids_to_highlight)...
+                            if (displayed_event.eventID == target_id)
+                                displayed_event.borderColour = "red"; //if this is the target event, let's highlight it's border colour...
+                        } //close foreach(int target_id in eventIDs_to_highlight)...
                     } //close foreach (Event_Rep displayed_event in LstDisplayEvents.Items)...
 
                     //finally refresh the list of events on display to highlight the target events...
                     LstDisplayEvents.Items.Refresh();
 
                     //let's record this user interaction for later analysis...
-                    Record_User_Interactions.log_interaction_to_database("Window1_lstDailyActivitySummary_SelectionChanged", selected_activity.annotation_type);
+                    Record_User_Interactions.log_interaction_to_database("Window1_lstDailyActivitySummary_SelectionChanged", selected_activity.annType);
 
                 } //close if (lstDailyActivitySummary.SelectedItem != null) //firstly check whether a valid item has been selected...
             } //close method lstDailyActivitySummary_SelectionChanged()...
@@ -483,16 +483,16 @@ how to find where my SenseCam images are stored?
                     //firstly get the event we to highlight...
                     Interface_Code.Event_Activity_Annotation selected_event = (Interface_Code.Event_Activity_Annotation)lstIndividual_Journeys.SelectedItem;
                     //then store the event id that we'll want to highlight...
-                    int event_id_to_highlight = selected_event.event_id;
+                    int eventID_to_highlight = selected_event.eventID;
 
                     foreach (Event_Rep displayed_event in LstDisplayEvents.Items)
                     {
                         //by defaut reset the border colour for this event...
-                        displayed_event.border_colour = Event_Rep.DefaultKeyframeBorderColour;
+                        displayed_event.borderColour = Event_Rep.DefaultKeyframeBorderColour;
 
                         //then let's see if this is the event we want to highlight...
-                        if (displayed_event.event_id == event_id_to_highlight)
-                                displayed_event.border_colour = "red"; //if this is the target event, let's highlight it's border colour...
+                        if (displayed_event.eventID == eventID_to_highlight)
+                                displayed_event.borderColour = "red"; //if this is the target event, let's highlight it's border colour...
                         
                     } //close foreach (Event_Rep displayed_event in LstDisplayEvents.Items)...
 
@@ -500,7 +500,7 @@ how to find where my SenseCam images are stored?
                     LstDisplayEvents.Items.Refresh();
 
                     //let's record this user interaction for later analysis...
-                    Record_User_Interactions.log_interaction_to_database("Window1_lstIndividual_Journeys_PreviewMouseLeftButtonUp", selected_event.event_id+","+selected_event.annotation);
+                    Record_User_Interactions.log_interaction_to_database("Window1_lstIndividual_Journeys_PreviewMouseLeftButtonUp", selected_event.eventID+","+selected_event.annotation);
                 } //if (lstIndividual_Journeys.SelectedItem != null) //firstly check whether a valid item has been selected...
             } //close method lstIndividual_Journeys_PreviewMouseLeftButtonUp()...
 

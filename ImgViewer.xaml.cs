@@ -42,7 +42,7 @@ namespace SenseCamBrowser1
 
         #region properties and initially setting up this user control (includes speed of image playback)
 
-            private int current_user_id; //stores the current user id
+            private int current_userID; //stores the current user id
             private Event_Rep current_event; //stores the current event
             private List<Image_Rep> list_of_event_images; //stores all the images in this event
             private int array_position_of_current_image; //the position in the list of images for this event that we're currently showing
@@ -97,17 +97,17 @@ namespace SenseCamBrowser1
             /// <summary>
             /// this method is called by the main screen just before showing this user control, so as to update this control with information on the relevant event
             /// </summary>
-            /// <param name="param_user_id"></param>
+            /// <param name="param_userID"></param>
             /// <param name="param_event"></param>
-            public void update_event_on_display(int param_user_id, Event_Rep param_event, Event_Updated_Callback param_comment_callback, Event_Deleted_Callback param_event_deleted_callback, Images_Moved_Between_Events_Callback param_event_merged_callback)
+            public void update_event_on_display(int param_userID, Event_Rep param_event, Event_Updated_Callback param_comment_callback, Event_Deleted_Callback param_event_deleted_callback, Images_Moved_Between_Events_Callback param_event_merged_callback)
             {
                 //firstly update the image viewer properties for this event...
-                current_user_id = param_user_id;
+                current_userID = param_userID;
                 current_event = param_event;
                 current_event_updated_callback = param_comment_callback;
                 current_event_deleted_callback = param_event_deleted_callback;
                 current_event_merged_callback = param_event_merged_callback;
-                txt_img_date.Text = param_event.start_time.ToLongDateString();
+                txt_img_date.Text = param_event.startTime.ToLongDateString();
                 TimeSpan event_duration = param_event.eventDuration;
                 txt_event_length.Text = event_duration.Hours + "h " + event_duration.Minutes + "m " + event_duration.Seconds + "s";
 
@@ -116,7 +116,7 @@ namespace SenseCamBrowser1
                 btnUndo_Delete.Visibility = Visibility.Hidden;
 
                 //update the UI to show the list of annotations associated with this event...
-                update_UI_with_list_of_annotations(param_user_id, param_event.event_id);
+                update_UI_with_list_of_annotations(param_userID, param_event.eventID);
                 
                 
                 //thereafter we'll update the caption text
@@ -127,7 +127,7 @@ namespace SenseCamBrowser1
                 
 
                 //it usually take a while to load all the images in an event, so we'll initially just show the keyframe image and a loading message...
-                list_of_event_images = new List<Image_Rep>() { new Image_Rep(current_event.start_time, current_event.keyframe_path, 0) }; //the keyframe image...
+                list_of_event_images = new List<Image_Rep>() { new Image_Rep(current_event.startTime, current_event.keyframePath, 0) }; //the keyframe image...
                 update_UI_based_on_newly_loaded_images();
                 
 
@@ -139,14 +139,14 @@ namespace SenseCamBrowser1
             /// <summary>
             /// this method updates the UI with the list of annotations associated with this event in the main DB...
             /// </summary>
-            /// <param name="user_id"></param>
-            /// <param name="event_id"></param>
-            private void update_UI_with_list_of_annotations(int user_id, int event_id)
+            /// <param name="userID"></param>
+            /// <param name="eventID"></param>
+            private void update_UI_with_list_of_annotations(int userID, int eventID)
             {
-                lst_episode_codings_in_database.ItemsSource = Annotation_Rep.get_event_prior_annotations(user_id, event_id);
+                lst_episode_codings_in_database.ItemsSource = Annotation_Rep.get_event_prior_annotations(userID, eventID);
                 /*
                 txt_priorAnnotations.Text = "";
-                List<Annotation_Rep> prior_annotations = Annotation_Rep.get_event_prior_annotations(user_id, event_id);
+                List<Annotation_Rep> prior_annotations = Annotation_Rep.get_event_prior_annotations(userID, eventID);
                 foreach (Annotation_Rep individual_annotation in prior_annotations)
                     txt_priorAnnotations.Text += individual_annotation.annotation_type + ", ";
                  */ 
@@ -161,16 +161,16 @@ namespace SenseCamBrowser1
             {                
                 //firstly let's update the database reflecting that this event has been viewed another time...
                 if (list_of_event_images.Count > 1)
-                    Event_Rep.UpdateTimesViewed(Window1.OVERALL_USER_ID, current_event.event_id);
+                    Event_Rep.UpdateTimesViewed(Window1.OVERALL_userID, current_event.eventID);
 
                 if (!txtCaption.Text.Equals("") && !txtCaption.Text.Equals(Event_Rep.DefaultImageCaption) && !txtCaption.Text.Equals(original_uploaded_comment))
                 {
                     //and now we update the database with the comment
-                    Event_Rep.UpdateComment(current_user_id, current_event.event_id, txtCaption.Text);
+                    Event_Rep.UpdateComment(current_userID, current_event.eventID, txtCaption.Text);
 
                     //and let's update the caption text...
                     current_event.comment = txtCaption.Text;
-                    current_event.short_comment = Event_Rep.GetStringStart(current_event.comment, 15);
+                    current_event.shortComment = Event_Rep.GetStringStart(current_event.comment, 15);
 
                     //and let's give a callback to the main UI, so it can now also reflect this comment being viewed on it
                     current_event_updated_callback();
@@ -181,14 +181,14 @@ namespace SenseCamBrowser1
                 foreach (Image_Rep image_for_deletion in list_of_images_to_delete)
                 {
                     //and we now delete this image from the database...
-                    Image_Rep.DeleteEventImage(Window1.OVERALL_USER_ID, current_event.event_id, image_for_deletion.image_time, image_for_deletion.image_path);
+                    Image_Rep.DeleteEventImage(Window1.OVERALL_userID, current_event.eventID, image_for_deletion.imgTime, image_for_deletion.imgPath);
 
                     //but just in case this image was the keyframe image ...
-                    if (image_for_deletion.image_path.Equals(current_event.str_keyframe_path)) //we'll update the event keyframe image ...
+                    if (image_for_deletion.imgPath.Equals(current_event.keyframePath)) //we'll update the event keyframe image ...
                     {
-                        Event_Rep.UpdateKeyframe(Window1.OVERALL_USER_ID, current_event.event_id, list_of_event_images[list_of_event_images.Count / 2].image_path); //... to now be the middle image from the new set of images in this event (minus the deleted ones)
-                        current_event.str_keyframe_path = list_of_event_images[list_of_event_images.Count / 2].image_path;
-                        current_event.keyframe_path = Image_Rep.GetImgBitmap(current_event.str_keyframe_path, true);
+                        Event_Rep.UpdateKeyframe(Window1.OVERALL_userID, current_event.eventID, list_of_event_images[list_of_event_images.Count / 2].imgPath); //... to now be the middle image from the new set of images in this event (minus the deleted ones)
+                        current_event.keyframePath = list_of_event_images[list_of_event_images.Count / 2].imgPath;
+                        current_event.keyframeSource = Image_Rep.GetImgBitmap(current_event.keyframePath, true);
                         //and let's give a callback to the main UI, so it can now also reflect the new keyframe for this event...                        
                         current_event_updated_callback();
                     } //close if (image_for_deletion.image_path.Equals(current_event.str_keyframe_path)) //we'll update the event keyframe image ...
@@ -230,7 +230,7 @@ namespace SenseCamBrowser1
         /// </summary>
         private void Start_Loading_Event_Images()
         {
-            image_loading_handler_obj = new Image_Loading_Handler(Window1.OVERALL_USER_ID, current_event.event_id, Event_Images_Loaded_Callback);
+            image_loading_handler_obj = new Image_Loading_Handler(Window1.OVERALL_userID, current_event.eventID, Event_Images_Loaded_Callback);
             image_loading_thread = new Thread(new ThreadStart(image_loading_handler_obj.load_all_event_images_into_memory));
             image_loading_thread.IsBackground = true;
             image_loading_thread.Start();
@@ -473,7 +473,7 @@ namespace SenseCamBrowser1
 
             //let's log this interaction
             play_sound();
-            Record_User_Interactions.log_interaction_to_database("scImgViewer_Close1_Click", current_event.event_id.ToString());
+            Record_User_Interactions.log_interaction_to_database("scImgViewer_Close1_Click", current_event.eventID.ToString());
             
             save_current_event_information(); //let's save event information
             close_viewer_control();
@@ -503,7 +503,7 @@ namespace SenseCamBrowser1
 
             //let's log this interaction
             play_sound();
-            Record_User_Interactions.log_interaction_to_database("scImgViewer_PreviousBtn_Click", current_event.event_id.ToString() + "," + array_position_of_current_image);
+            Record_User_Interactions.log_interaction_to_database("scImgViewer_PreviousBtn_Click", current_event.eventID.ToString() + "," + array_position_of_current_image);
                        
 
             //then let's move back 1 image
@@ -528,7 +528,7 @@ namespace SenseCamBrowser1
 
             //let's log this interaction
             play_sound();
-            Record_User_Interactions.log_interaction_to_database("scImgViewer_NextBtn_Click", current_event.event_id.ToString() + "," + list_of_event_images[array_position_of_current_image].image_path);
+            Record_User_Interactions.log_interaction_to_database("scImgViewer_NextBtn_Click", current_event.eventID.ToString() + "," + list_of_event_images[array_position_of_current_image].imgPath);
                        
 
             //then let's move forward 1 image
@@ -553,7 +553,7 @@ namespace SenseCamBrowser1
         {
             //let's log this interaction
             play_sound();
-            Record_User_Interactions.log_interaction_to_database("scImgViewer_txtCaption_Click", current_event.event_id.ToString() + "," + list_of_event_images[array_position_of_current_image].image_path + "," + txtCaption.Text);
+            Record_User_Interactions.log_interaction_to_database("scImgViewer_txtCaption_Click", current_event.eventID.ToString() + "," + list_of_event_images[array_position_of_current_image].imgPath + "," + txtCaption.Text);
 
             stop_playback(); //let's disable the timer, so there's no "leaked threads" running
 
@@ -575,7 +575,7 @@ namespace SenseCamBrowser1
         {
             //let's log this interaction
             play_sound();
-            Record_User_Interactions.log_interaction_to_database("scImgViewer_PlayBtn_Click", current_event.event_id.ToString() + "," + list_of_event_images[array_position_of_current_image].image_path);
+            Record_User_Interactions.log_interaction_to_database("scImgViewer_PlayBtn_Click", current_event.eventID.ToString() + "," + list_of_event_images[array_position_of_current_image].imgPath);
 
             //here we toggle the playback timer...
             if (update_image_timer.IsEnabled)
@@ -595,13 +595,13 @@ namespace SenseCamBrowser1
         {
             //let's log this interaction
             play_sound();
-            Record_User_Interactions.log_interaction_to_database("scImgViewer_btnUndoDelete_Click", current_event.event_id.ToString() + "," + list_of_event_images[array_position_of_current_image].image_path);
+            Record_User_Interactions.log_interaction_to_database("scImgViewer_btnUndoDelete_Click", current_event.eventID.ToString() + "," + list_of_event_images[array_position_of_current_image].imgPath);
 
             //firstly let's restore the deleted images into their
             foreach (Image_Rep restore_image in list_of_images_to_delete)
             {
-                if (restore_image.array_position_in_event < list_of_event_images.Count)
-                    list_of_event_images.Insert(restore_image.array_position_in_event, restore_image); //we can insert it into any position except the final one...
+                if (restore_image.position < list_of_event_images.Count)
+                    list_of_event_images.Insert(restore_image.position, restore_image); //we can insert it into any position except the final one...
                 else list_of_event_images.Add(restore_image); //here we just insert into the end of the list...
             } //close foreach (Image_Rep restore_image in list_of_images_to_delete)...
             
@@ -629,7 +629,7 @@ namespace SenseCamBrowser1
 
             //let's log this interaction
             play_sound();
-            Record_User_Interactions.log_interaction_to_database("scImgViewer_btnDelete_click", current_event.event_id + "," + list_of_event_images[array_position_of_current_image].image_path);
+            Record_User_Interactions.log_interaction_to_database("scImgViewer_btnDelete_click", current_event.eventID + "," + list_of_event_images[array_position_of_current_image].imgPath);
 
 
             //firstly let's store this image in a List of images that we'd like to delete... later this will be deleted from the database along with other (selected) images from this event
@@ -651,10 +651,10 @@ namespace SenseCamBrowser1
             {
                 //let's log this interaction
                 play_sound();
-                Record_User_Interactions.log_interaction_to_database("scImgViewer_btnDelete_click_last_image_in_event_deleted", current_event.event_id.ToString());
+                Record_User_Interactions.log_interaction_to_database("scImgViewer_btnDelete_click_last_image_in_event_deleted", current_event.eventID.ToString());
 
                 //else ... if there's no images left in this event after it being deleted, we'll delete this event from the database and close the image viewer for this event (since the event has now been deleted)
-                Event_Rep.DeleteEvent(Window1.OVERALL_USER_ID, current_event.event_id);
+                Event_Rep.DeleteEvent(Window1.OVERALL_userID, current_event.eventID);
                 current_event_deleted_callback(current_event);
                 Visibility = Visibility.Collapsed; //and let's close/collapse this user control                                        
             } //end if... else... for checking if there's any images left in the event
@@ -675,13 +675,13 @@ namespace SenseCamBrowser1
                 if (PlayBtn.IsEnabled)
                 {
                     stop_playback(); //in case we're playing through the images, let's stop the player                
-                    Clipboard.SetImage(Image_Rep.GetImgBitmap(list_of_event_images[array_position_of_current_image].image_path, false));
+                    Clipboard.SetImage(Image_Rep.GetImgBitmap(list_of_event_images[array_position_of_current_image].imgPath, false));
                 }
-                else Clipboard.SetImage(Image_Rep.GetImgBitmap(list_of_event_images[lst_display_images.SelectedIndex].image_path, false));
+                else Clipboard.SetImage(Image_Rep.GetImgBitmap(list_of_event_images[lst_display_images.SelectedIndex].imgPath, false));
 
                 //let's log this interaction
                 play_sound();
-                Record_User_Interactions.log_interaction_to_database("btnCopy_Images_to_Clipboard_Click", current_event.event_id + "," + list_of_event_images[array_position_of_current_image].image_path);
+                Record_User_Interactions.log_interaction_to_database("btnCopy_Images_to_Clipboard_Click", current_event.eventID + "," + list_of_event_images[array_position_of_current_image].imgPath);
 
             } //close if (list_of_event_images.Count > 0)...
             
@@ -703,14 +703,14 @@ namespace SenseCamBrowser1
 
                 //the database stored procedure also considers special cases where *all* the images in the event are merged with the previous event... it just simply deletes this source event
                 //call this method to execute the database stored procedure to handle rearranging of images into different events
-                Event_Rep.MoveImagesToPreviousEvent(Window1.OVERALL_USER_ID, current_event.event_id, selected_photo_in_event.image_time);
+                Event_Rep.MoveImagesToPreviousEvent(Window1.OVERALL_userID, current_event.eventID, selected_photo_in_event.imgTime);
 
                 //now what I'll need to do is close the current window, and then reload the day (to reflect the new images/events situation after clicking on this button)
                 current_event_merged_callback();
                 close_viewer_control(); //and then close the current viewer, to give feedback to user that the change has happened
 
                 //let's log this interaction
-                Record_User_Interactions.log_interaction_to_database("scImgViewer_btnMerge_With_Previous_Click", current_event.event_id + "," + selected_photo_in_event.image_time);
+                Record_User_Interactions.log_interaction_to_database("scImgViewer_btnMerge_With_Previous_Click", current_event.eventID + "," + selected_photo_in_event.imgTime);
             } //close if (lst_display_images.SelectedIndex != -1)                
             else MessageBox.Show("Only available in image wall view. Please select a boundary image to group in with the previous set of images");
 
@@ -732,14 +732,14 @@ namespace SenseCamBrowser1
 
                 //the database stored procedure also considers special cases where *all* the images in the event are merged with the next event... if just simply deletes this source event
                 //call this method to execute the database stored procedure to handle rearranging of images into different events
-                Event_Rep.MoveImagesToNextEvent(Window1.OVERALL_USER_ID, current_event.event_id, selected_photo_in_event.image_time);
+                Event_Rep.MoveImagesToNextEvent(Window1.OVERALL_userID, current_event.eventID, selected_photo_in_event.imgTime);
 
                 //now what I'll need to do is close the current window, and then reload the day (to reflect the new images/events situation after clicking on this button)
                 current_event_merged_callback();
                 close_viewer_control(); //and then close the current viewer, to give feedback to user that the change has happened
 
                 //let's log this interaction
-                Record_User_Interactions.log_interaction_to_database("scImgViewer_btnMerge_With_Next_Click", current_event.event_id + "," + selected_photo_in_event.image_time);
+                Record_User_Interactions.log_interaction_to_database("scImgViewer_btnMerge_With_Next_Click", current_event.eventID + "," + selected_photo_in_event.imgTime);
             } //close if (lst_display_images.SelectedIndex != -1)                
             else MessageBox.Show("Only available in image wall view. Please select a boundary image to group in with the next set of images");
         } //close method btnMerge_With_Next_Click()...
@@ -758,22 +758,22 @@ namespace SenseCamBrowser1
                         
             if (lst_display_images.SelectedItems.Count > 1)
             {
-                int current_event_id = current_event.event_id;
+                int current_eventID = current_event.eventID;
 
                 List<Image_Rep> selected_images_for_splitting = lst_display_images.SelectedItems.Cast<Image_Rep>().ToList();
                 Image_Rep.sortImagesByID(selected_images_for_splitting);
 
                 foreach (Image_Rep selected_image_to_start_new_event in selected_images_for_splitting)
                 {    
-                    if (selected_image_to_start_new_event.array_position_in_event > 0 && selected_image_to_start_new_event.array_position_in_event < lst_display_images.Items.Count - 1)
+                    if (selected_image_to_start_new_event.position > 0 && selected_image_to_start_new_event.position < lst_display_images.Items.Count - 1)
                     {
                         //call this method to execute the database stored procedure to handle splitting the event into two
-                        current_event_id = Event_Rep.SplitEvent(Window1.OVERALL_USER_ID, current_event_id, selected_image_to_start_new_event.image_time); //current event id will be updated to be the new split event... (i.e. so next pass of loop treats it like we're now in this new event and trying to split the first image in it...)
+                        current_eventID = Event_Rep.SplitEvent(Window1.OVERALL_userID, current_eventID, selected_image_to_start_new_event.imgTime); //current event id will be updated to be the new split event... (i.e. so next pass of loop treats it like we're now in this new event and trying to split the first image in it...)
 
                         //let's log this interaction
-                        Record_User_Interactions.log_interaction_to_database("scImgViewer_btnSplit_Event_Click_splitting_multiple", current_event.event_id + "," + selected_image_to_start_new_event.image_time);
+                        Record_User_Interactions.log_interaction_to_database("scImgViewer_btnSplit_Event_Click_splitting_multiple", current_event.eventID + "," + selected_image_to_start_new_event.imgTime);
                     }
-                    else Record_User_Interactions.log_interaction_to_database("scImgViewer_btnSplit_Event_Click_splitting_multiple_first_last_images", current_event.event_id + "," + selected_image_to_start_new_event.image_time);
+                    else Record_User_Interactions.log_interaction_to_database("scImgViewer_btnSplit_Event_Click_splitting_multiple_first_last_images", current_event.eventID + "," + selected_image_to_start_new_event.imgTime);
                 }
 
                 //now what I'll need to do is close the current window, and then reload the day (to reflect the new images/events situation after clicking on this button)
@@ -788,14 +788,14 @@ namespace SenseCamBrowser1
                 Image_Rep selected_photo_in_event = (Image_Rep)lst_display_images.SelectedItem;
 
                 //call this method to execute the database stored procedure to handle splitting the event into two
-                Event_Rep.SplitEvent(Window1.OVERALL_USER_ID, current_event.event_id, selected_photo_in_event.image_time);
+                Event_Rep.SplitEvent(Window1.OVERALL_userID, current_event.eventID, selected_photo_in_event.imgTime);
 
                 //now what I'll need to do is close the current window, and then reload the day (to reflect the new images/events situation after clicking on this button)
                 current_event_merged_callback();
                 close_viewer_control(); //and then close the current viewer, to give feedback to user that the change has happened
 
                 //let's log this interaction
-                Record_User_Interactions.log_interaction_to_database("scImgViewer_btnSplit_Event_Click", current_event.event_id + "," + selected_photo_in_event.image_time);
+                Record_User_Interactions.log_interaction_to_database("scImgViewer_btnSplit_Event_Click", current_event.eventID + "," + selected_photo_in_event.imgTime);
             } //close if (lst_display_images.SelectedIndex != -1)                
             else MessageBox.Show("Only available in image wall view. Please select a boundary image (other than the first) to split this event into two");
         } //close method btnSplit_Event_Click()...
@@ -815,9 +815,9 @@ namespace SenseCamBrowser1
             {
                 Annotation_Rep_Tree_Data_Model annotated_item = (Annotation_Rep_Tree_Data_Model) lst_event_concept_types.SelectedItem;
                 string database_annotation_entry = Annotation_Rep_Tree_Data.convert_tree_node_to_delimited_string(annotated_item);
-                Annotation_Rep.add_event_annotation_to_database(current_user_id, current_event.event_id, database_annotation_entry);
+                Annotation_Rep.add_event_annotation_to_database(current_userID, current_event.eventID, database_annotation_entry);
                 //let's log this interaction
-                Record_User_Interactions.log_interaction_to_database("scImgViewer_lst_event_concept_types_PreviewMouseLeftButtonUp", current_event.event_id + "," + database_annotation_entry);
+                Record_User_Interactions.log_interaction_to_database("scImgViewer_lst_event_concept_types_PreviewMouseLeftButtonUp", current_event.eventID + "," + database_annotation_entry);
                 Thread.Sleep(50); //for some reason I have to introduce this command to allow the annotations be added to the database (2 lines up)
             } //close foreach (string annotated_item in lst_event_concept_types.SelectedItems)...
 
@@ -835,11 +835,11 @@ namespace SenseCamBrowser1
         private void btnCancel_Annotations_Click(object sender, RoutedEventArgs e)
         {
             if (lst_episode_codings_in_database.SelectedIndex == -1)
-                Annotation_Rep.clear_event_annotations_from_database(current_user_id, current_event.event_id); //then delete all prior annotations from database...
+                Annotation_Rep.clear_event_annotations_from_database(current_userID, current_event.eventID); //then delete all prior annotations from database...
             else
             {
                 foreach (string annotation_to_delete in lst_episode_codings_in_database.SelectedItems)
-                    Annotation_Rep.clear_event_annotations_from_database(current_user_id, current_event.event_id, annotation_to_delete);
+                    Annotation_Rep.clear_event_annotations_from_database(current_userID, current_event.eventID, annotation_to_delete);
             } //close if ... else... to delete selected codings from database...
 
             //visually update the listbox to reflect no items will now be selected...
@@ -849,14 +849,14 @@ namespace SenseCamBrowser1
             update_interface_to_reflect_new_annotations();
 
             //let's log this interaction
-            Record_User_Interactions.log_interaction_to_database("scImgViewer_btnCancel_Annotations_Click", current_event.event_id+"");
+            Record_User_Interactions.log_interaction_to_database("scImgViewer_btnCancel_Annotations_Click", current_event.eventID+"");
         } //close method btnCancel_Annotations_Click()...
 
 
         private void update_interface_to_reflect_new_annotations()
         {
             //and update the interface to reflect the daily summary based on the new annotations now...
-            update_UI_with_list_of_annotations(current_user_id, current_event.event_id);
+            update_UI_with_list_of_annotations(current_userID, current_event.eventID);
             current_event_merged_callback();         
         } //close method update_interface_to_reflect_new_annotations()...
 
@@ -885,12 +885,12 @@ namespace SenseCamBrowser1
                 {
 
                     txt_image_number.Text = (array_position_of_current_image + 1).ToString() + " of " + list_of_event_images.Count + " photos";
-                    txt_img_time.Text = list_of_event_images[array_position_of_current_image].image_time.ToString("HH:mm tt");
+                    txt_img_time.Text = list_of_event_images[array_position_of_current_image].imgTime.ToString("HH:mm tt");
 
                     //img_to_show.Source = list_of_event_images[array_position_of_current_image].scaled_image_src; //list_of_event_images[array_position_of_current_image].image_source(); //show full size image...
                     if (PlayBtn.IsEnabled)
                     {
-                        img_to_show.Source = list_of_event_images[array_position_of_current_image].scaled_image_src;
+                        img_to_show.Source = list_of_event_images[array_position_of_current_image].scaledImgSource;
                         //lst_display_images.ItemsSource = null;
                         //lst_display_images.Items.Clear();
                         //lst_display_images.Items.Add(list_of_event_images[array_position_of_current_image]);
@@ -983,7 +983,7 @@ namespace SenseCamBrowser1
 
             ////let's log this interaction
             //play_sound();
-            ////Record_User_Interactions.log_interaction_to_database("scImgViewer_EventPlaySlider_PreviewMouseUp", current_event.event_id.ToString() + "," + list_of_event_images[array_position_of_current_image].image_path + "," + list_of_event_images[(int)EventPlaySlider.Value].image_path);
+            ////Record_User_Interactions.log_interaction_to_database("scImgViewer_EventPlaySlider_PreviewMouseUp", current_event.eventID.ToString() + "," + list_of_event_images[array_position_of_current_image].image_path + "," + list_of_event_images[(int)EventPlaySlider.Value].image_path);
             
             ////array_position_of_current_image = (int)EventPlaySlider.Value;
             //update_display_image();
@@ -1014,7 +1014,7 @@ namespace SenseCamBrowser1
         private void SpeedSlider_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
             update_image_timer.Interval = TimeSpan.FromMilliseconds(SPEED_SLIDER_DEFAULT_VALUE - (SpeedSlider.Value*90) ); //playback speed, with gap between images in milliseconds
-            Record_User_Interactions.log_interaction_to_database("scImgViewer_SpeedSlider_PreviewMouseUp", current_event.event_id.ToString() + "," + update_image_timer.Interval);
+            Record_User_Interactions.log_interaction_to_database("scImgViewer_SpeedSlider_PreviewMouseUp", current_event.eventID.ToString() + "," + update_image_timer.Interval);
         } //close method SpeedSlider_PreviewMouseUp()...
 
 

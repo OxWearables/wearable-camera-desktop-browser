@@ -26,14 +26,14 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
                 </DataTemplate-->
                 <DataTemplate>
                     <Grid Width="{Binding ElementName=EventZoomSlider, Path='Value'}" Height="{Binding ElementName=EventZoomSlider, Path='Value'}" Margin="5,5,5,5">
-                        <Image Margin ="0,0,0,0" Source="{Binding Path=scaled_image_src}" Stretch="Fill">
+                        <Image Margin ="0,0,0,0" Source="{Binding Path=scaledImgSource}" Stretch="Fill">
                             <Image.BitmapEffect>
                                 <DropShadowBitmapEffect Softness="0.25" ShadowDepth="2" Direction="315"/>
                             </Image.BitmapEffect>
                         </Image>
 
                         <StackPanel Margin="0,0,0,0" VerticalAlignment="Bottom" Orientation="Horizontal" Background="#24000000" Opacity="1" >
-                            <TextBlock Text="{Binding Path=short_image_time}" FontSize="16"  Margin="5,0,22,0" Foreground="White"/>                            
+                            <TextBlock Text="{Binding Path=shortImgTime}" FontSize="16"  Margin="5,0,22,0" Foreground="White"/>                            
                         </StackPanel>
                     </Grid>
                 </DataTemplate>
@@ -58,7 +58,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
         <Setter Property="ItemTemplate" >
             <Setter.Value>
                 <DataTemplate>
-                    <Label Content="{Binding Path=annotation_type}" />                                      
+                    <Label Content="{Binding Path=annType}" />                                      
                 </DataTemplate>
             </Setter.Value>
         </Setter>        
@@ -76,8 +76,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
                                 <RowDefinition />
                                 <RowDefinition />
                             </Grid.RowDefinitions>
-                            <Label Grid.Row="0" Content="{Binding Path=annotation_type}" FontFamily="Times New Roman" FontSize="24" HorizontalAlignment="Center" />
-                            <Label Grid.Row="1" Content="{Binding Path=daily_duration_string}" FontFamily="Times New Roman" FontSize="16" HorizontalAlignment="Center" />
+                            <Label Grid.Row="0" Content="{Binding Path=annType}" FontFamily="Times New Roman" FontSize="24" HorizontalAlignment="Center" />
+                            <Label Grid.Row="1" Content="{Binding Path=dayDurationStr}" FontFamily="Times New Roman" FontSize="16" HorizontalAlignment="Center" />
                         </Grid>
                     </StackPanel>                    
                 </DataTemplate>
@@ -128,9 +128,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
                                 <ColumnDefinition />
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
-                            <Label Grid.Column="0" Content="{Binding Path=event_index}" FontFamily="Times New Roman" FontSize="10" HorizontalAlignment="Left" />
+                            <Label Grid.Column="0" Content="{Binding Path=eventIndex}" FontFamily="Times New Roman" FontSize="10" HorizontalAlignment="Left" />
                             <Label Grid.Column="1" Content="{Binding Path=annotation}" FontFamily="Times New Roman" FontSize="10" HorizontalAlignment="Left" />
-                            <Label Grid.Column="2" Content="{Binding Path=duration_string}" FontFamily="Times New Roman" FontSize="10" HorizontalAlignment="Left" />
+                            <Label Grid.Column="2" Content="{Binding Path=durationStr}" FontFamily="Times New Roman" FontSize="10" HorizontalAlignment="Left" />
                         </Grid>
                     </StackPanel>
                 </DataTemplate>
@@ -144,20 +144,20 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
     <DataTemplate x:Key="Event_Keyframe_Template">        
             <Grid Width="{Binding ElementName=ZoomSlider, Path='Value'}" Height="{Binding ElementName=ZoomSlider, Path='Value'}" Margin="5,5,5,5" Background="AliceBlue">
-                <Image Margin ="0,0,0,0" Source="{Binding Path=keyframe_path}" Stretch="Fill" >
+                <Image Margin ="0,0,0,0" Source="{Binding Path=keyframeSource}" Stretch="Fill" >
                 <Image.BitmapEffect>
                     <DropShadowBitmapEffect Softness="0.25" ShadowDepth="2" Direction="315"/>
                 </Image.BitmapEffect>
             </Image>
 
-            <StackPanel Margin="0,0,0,0" VerticalAlignment="Bottom" Orientation="Horizontal" Background="{Binding Path=border_colour}"  Opacity="1" >
+            <StackPanel Margin="0,0,0,0" VerticalAlignment="Bottom" Orientation="Horizontal" Background="{Binding Path=borderColour}"  Opacity="1" >
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition />
                         <RowDefinition />                        
                     </Grid.RowDefinitions>
-                    <TextBlock Grid.Row="0" Text="{Binding Path=str_time}" FontSize="16"  Margin="5,0,22,0" Foreground="White"/>
-                    <TextBlock Grid.Row="1" Text="{Binding Path=event_length}" FontSize="16" Foreground="White" Margin="0,0,5,0"/>
+                    <TextBlock Grid.Row="0" Text="{Binding Path=strTime}" FontSize="16"  Margin="5,0,22,0" Foreground="White"/>
+                    <TextBlock Grid.Row="1" Text="{Binding Path=eventLength}" FontSize="16" Foreground="White" Margin="0,0,5,0"/>
                 </Grid>                
             </StackPanel>
             </Grid>
@@ -169,7 +169,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
         <Setter Property="ItemTemplate">
             <Setter.Value>
                 <DataTemplate>
-                    <Image Source="{Binding Path=keyframe_path}" Width="{Binding ElementName=ZoomSlider, Path='Value'}" Height="{Binding ElementName=ZoomSlider, Path='Value'}" Margin="5,5,5,5" />
+                    <Image Source="{Binding Path=keyframeSource}" Width="{Binding ElementName=ZoomSlider, Path='Value'}" Height="{Binding ElementName=ZoomSlider, Path='Value'}" Margin="5,5,5,5" />
                 </DataTemplate>
             </Setter.Value>
         </Setter>
@@ -230,7 +230,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
     <Setter Property="ItemTemplate" >
       <Setter.Value>
         <DataTemplate>
-          <Image Source="{Binding Path=scaled_image_src}" Width="215" Height="175" />
+          <Image Source="{Binding Path=scaledImgSource}" Width="215" Height="175" />
         </DataTemplate>
       </Setter.Value>
     </Setter>

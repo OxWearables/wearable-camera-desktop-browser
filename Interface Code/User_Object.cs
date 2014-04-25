@@ -27,18 +27,18 @@ namespace SenseCamBrowser1
 {
     class User_Object
     {
-        public static int OVERALL_USER_ID = int.Parse(ConfigurationManager.AppSettings["user_id"].ToString()); //this value is updated by User_Management_Window.xaml
+        public static int OVERALL_userID = int.Parse(ConfigurationManager.AppSettings["userID"].ToString()); //this value is updated by User_Management_Window.xaml
         public static string OVERALL_USER_NAME = "Aiden"; //this value is updated by User_Management_Window.xaml
 
 
-        public int user_id { get; set; }
+        public int userID { get; set; }
         public string username { get; set; }
         public string password { get; set; }
         public string name { get; set; }
 
-        public User_Object(int user_id, string username, string password, string name)
+        public User_Object(int userID, string username, string password, string name)
         {
-            this.user_id = user_id;
+            this.userID = userID;
             this.username = username;
             this.password = password;
             this.name = name;
@@ -57,17 +57,17 @@ namespace SenseCamBrowser1
             con.Open();            
             SQLiteDataReader read_events = selectCmd.ExecuteReader();
 
-            int user_id;
+            int userID;
             string username, password, name; //values that just allow me to store individual database values before storing them in an object of type Event_Rep
 
             while (read_events.Read())
             {
-                user_id = int.Parse(read_events[0].ToString());
+                userID = int.Parse(read_events[0].ToString());
                 username = read_events[1].ToString();
                 password = read_events[2].ToString();
                 name = read_events[3].ToString();
 
-                list_of_users.Add(new User_Object(user_id, username, password, name));
+                list_of_users.Add(new User_Object(userID, username, password, name));
             } //end while (read_chunk_ids.Read())		
             con.Close();
 
@@ -83,30 +83,30 @@ namespace SenseCamBrowser1
         /// <param name="usr_name"></param>
         public static int insert_new_user_into_database_and_get_id(string usr_name)
         {
-            int new_user_id = -1, new_event_id = -1;
+            int new_userID = -1, new_eventID = -1;
 
             //this method calls the relevant database stored procedure to insert a new user and then return the ID of this newly added user...
             SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
             SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spInsert_New_User_Into_Database_and_Return_ID(usr_name), con);
             con.Open();
 
-            //insert into Users table and get user_id
-            try { new_user_id = int.Parse(selectCmd.ExecuteScalar().ToString()); }
+            //insert into Users table and get userID
+            try { new_userID = int.Parse(selectCmd.ExecuteScalar().ToString()); }
             catch (Exception excep) { }
 
             //insert dummy event into All_Events table and get event id
-            selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spCreate_new_event_and_return_its_ID(new_user_id), con);
-            try { new_event_id = int.Parse(selectCmd.ExecuteScalar().ToString()); }
+            selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spCreate_new_event_and_return_its_ID(new_userID), con);
+            try { new_eventID = int.Parse(selectCmd.ExecuteScalar().ToString()); }
             catch (Exception excep) { }
 
             //insert dummy image into All_Images table
-            selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spCreate_dummy_image(new_user_id, new_event_id), con);
+            selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spCreate_dummy_image(new_userID, new_eventID), con);
             try { selectCmd.ExecuteNonQuery(); }
             catch (Exception excep) { }
 
             con.Close();
 
-            return new_user_id;
+            return new_userID;
         } //end method insert_new_user_into_database_and_get_id()
 
 

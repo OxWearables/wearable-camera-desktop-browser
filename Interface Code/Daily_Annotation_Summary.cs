@@ -12,19 +12,16 @@ namespace SenseCamBrowser1
     class Daily_Annotation_Summary
     {
 
-        public string annotation_type { get; set; }
-        public string daily_duration_string { get; set; }
-        public int daily_total_num_seconds { get; set; }
-
-
-
-        public Daily_Annotation_Summary(string annotation_type, int total_num_seconds)
+        public string annType { get; set; }
+        public string dayDurationStr { get; set; }
+        public int dayNumSeconds { get; set; }
+        
+        public Daily_Annotation_Summary(string annType, int numSeconds)
         {
-            this.annotation_type = annotation_type;
-            this.daily_total_num_seconds = total_num_seconds;
-            this.daily_duration_string = format_total_seconds_to_mins_and_seconds(total_num_seconds);
+            this.annType = annType;
+            this.dayNumSeconds = numSeconds;
+            this.dayDurationStr = format_total_seconds_to_mins_and_seconds(numSeconds);
         } //close constructor...
-
 
 
         /// <summary>
@@ -46,15 +43,15 @@ namespace SenseCamBrowser1
         /// <summary>
         /// this method returns a list of all the activities annotated for in the given day, plus their duration...
         /// </summary>
-        /// <param name="user_id"></param>
+        /// <param name="userID"></param>
         /// <param name="day"></param>
         /// <returns></returns>
-        public static List<Daily_Annotation_Summary> get_daily_activity_summary_from_annotations(int user_id, DateTime day)
+        public static List<Daily_Annotation_Summary> get_daily_activity_summary_from_annotations(int userID, DateTime day)
         {
             //this method calls the relevant database stored procedure to retrieve a list of annotations already associated with this event...
             List<Daily_Annotation_Summary> list_of_annotations = new List<Daily_Annotation_Summary>();
             SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
-            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spGet_daily_activity_summary_from_annotations(user_id, day), con);
+            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spGet_daily_activity_summary_from_annotations(userID, day), con);
             
             string annotation_type;
             int activity_total_number_of_seconds;
@@ -80,27 +77,27 @@ namespace SenseCamBrowser1
         /// <summary>
         /// this method retrieves a list of events in a day that belong to a certain activity/annotation type/class
         /// </summary>
-        /// <param name="user_id"></param>
+        /// <param name="userID"></param>
         /// <param name="day"></param>
         /// <param name="annotation_type"></param>
         /// <returns></returns>
-        public static List<int> get_list_of_event_ids_to_highlight_for_annotation_type(int user_id, DateTime day, string annotation_type)
+        public static List<int> get_list_of_eventIDs_to_highlight_for_annotation_type(int userID, DateTime day, string annotation_type)
         {
             //this method calls the relevant database stored procedure to retrieve a list of annotations already associated with this event...
-            List<int> list_of_event_ids = new List<int>();
+            List<int> list_of_eventIDs = new List<int>();
             SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
-            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spGet_event_ids_in_day_for_specific_activity(user_id, day, annotation_type), con);
+            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spGet_event_ids_in_day_for_specific_activity(userID, day, annotation_type), con);
             
             //then open the db connection, connect to the stored procedure and return the list of results...
             con.Open();
             SQLiteDataReader read_events = selectCmd.ExecuteReader();
             while (read_events.Read())
             {
-                list_of_event_ids.Add(int.Parse(read_events[0].ToString()));                
+                list_of_eventIDs.Add(int.Parse(read_events[0].ToString()));                
             } //end while (read_chunk_ids.Read())...
             con.Close();
 
-            return list_of_event_ids; //and finally return the event ids which belong to this type of activity...
+            return list_of_eventIDs; //and finally return the event ids which belong to this type of activity...
         } //close method get_daily_activity_summary_from_annotations()...
 
 

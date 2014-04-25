@@ -35,7 +35,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
         public static int USER_HOUR_TIME_ADJUSTMENT_HOURS = int.Parse(ConfigurationManager.AppSettings["hour_offset_of_uploaded_data"].ToString());
 
 
-        public static Segmentation_Image_Rep[] process_csv_file(string local_folder, int user_id, Upload_and_Segment_Images_Thread.DeviceType device_type)
+        public static Segmentation_Image_Rep[] process_csv_file(string local_folder, int userID, Upload_and_Segment_Images_Thread.DeviceType device_type)
         {
             //read the sensor.csv file in the given folder
             //From reading that it'll store the sensor values
@@ -54,7 +54,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
             manipulate_sensor_information(sensor_values, device_type);
 
             //now upload the sensor readings to the database...
-            upload_sensor_readings_to_db(sensor_values, user_id, device_type);
+            upload_sensor_readings_to_db(sensor_values, userID, device_type);
 
             //FINALLY RETURN A LIST OF IMAGES WITH MANIPULATED SENSOR VALUES
             return get_image_list(sensor_values, local_folder);
@@ -920,7 +920,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
             FileInfo current_image;
             int chunk_id = -5, previous_chunk_id = -5;            
-            DateTime chunk_start_time = new DateTime(), previous_sample_time = new DateTime(), current_image_time;
+            DateTime chunk_startTime = new DateTime(), previous_sample_time = new DateTime(), current_image_time;
             bool first_reading = true;
 
             //these two variables are used to segment events into equal sizes (in terms of the number of images they contain)
@@ -954,7 +954,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                     if (chunk_id != previous_chunk_id)
                     {
                         previous_chunk_id = chunk_id;
-                        chunk_start_time = current_image_time;
+                        chunk_startTime = current_image_time;
                     } //end if(chunk_id!=previous_chunk_id)
 
                     //now we've read the first image, set this to false (it was set to true, to help calculate the initial 
@@ -977,7 +977,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
 
                     //and add the image to our list...
-                    list_of_all_images.Add(new Segmentation_Image_Rep(chunk_id, current_image.Name, chunk_start_time, current_image_time, current_non_csv_acccomb_value, current_non_csv_acccomb_value, current_non_csv_acccomb_value));
+                    list_of_all_images.Add(new Segmentation_Image_Rep(chunk_id, current_image.Name, chunk_startTime, current_image_time, current_non_csv_acccomb_value, current_non_csv_acccomb_value, current_non_csv_acccomb_value));
 
                 } //end if (current_image.Length > 4096)
                 
@@ -994,7 +994,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
         #region upload sensor readings to db...
 
-        private static void upload_sensor_readings_to_db(Sensor_Reading[] sensor_readings, int user_id, Upload_and_Segment_Images_Thread.DeviceType device_type)
+        private static void upload_sensor_readings_to_db(Sensor_Reading[] sensor_readings, int userID, Upload_and_Segment_Images_Thread.DeviceType device_type)
         {
             // http://sqlite.phxsoftware.com/forums/t/134.aspx
             DbConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
@@ -1004,9 +1004,9 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                 using (DbCommand cmd = con.CreateCommand())
                 {
                     //cmd.CommandText = "INSERT INTO TestCase(MyValue) VALUES(?)";
-                    cmd.CommandText = "INSERT INTO Sensor_Readings(user_id,sample_time,acc_x,acc_y,acc_z,white_val,battery,temperature,pir,trigger_code,image_name,mag_x,mag_y,mag_z) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-                    DbParameter user_id_field, sample_time_field,acc_x_field,acc_y_field,acc_z_field,white_val_field,battery_field,temperature_field,pir_field,trigger_code_field,image_name_field,mag_x_field,mag_y_field,mag_z_field;
-                    user_id_field = cmd.CreateParameter();
+                    cmd.CommandText = "INSERT INTO Sensor_Readings(userID,sample_time,acc_x,acc_y,acc_z,white_val,battery,temperature,pir,trigger_code,image_name,mag_x,mag_y,mag_z) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    DbParameter userID_field, sample_time_field,acc_x_field,acc_y_field,acc_z_field,white_val_field,battery_field,temperature_field,pir_field,trigger_code_field,image_name_field,mag_x_field,mag_y_field,mag_z_field;
+                    userID_field = cmd.CreateParameter();
                     sample_time_field = cmd.CreateParameter();
                     acc_x_field = cmd.CreateParameter();
                     acc_y_field = cmd.CreateParameter();
@@ -1020,7 +1020,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                     mag_x_field = cmd.CreateParameter();
                     mag_y_field = cmd.CreateParameter();
                     mag_z_field = cmd.CreateParameter();
-                    cmd.Parameters.Add(user_id_field);
+                    cmd.Parameters.Add(userID_field);
                     cmd.Parameters.Add(sample_time_field);
                     cmd.Parameters.Add(acc_x_field);
                     cmd.Parameters.Add(acc_y_field);
@@ -1037,7 +1037,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
                     for (int row_counter = 0; row_counter < sensor_readings.Length; row_counter++)
                     {
-                        user_id_field.Value = user_id;
+                        userID_field.Value = userID;
                         sample_time_field.Value = sensor_readings[row_counter].get_sample_time();
                         acc_x_field.Value = Standard_Calculation.get_signed_int(sensor_readings[row_counter].get_acc_x(), device_type);
                         acc_y_field.Value = Standard_Calculation.get_signed_int(sensor_readings[row_counter].get_acc_y(), device_type);
