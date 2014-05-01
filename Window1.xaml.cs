@@ -202,7 +202,7 @@ how to find where my SenseCam images are stored?
                 lstDailyActivitySummary.ItemsSource = Daily_Annotation_Summary.get_daily_activity_summary_from_annotations(Window1.OVERALL_userID, day_to_display);
 
                 //and also a breakdown of the individual annotated events...
-                lstIndividual_Journeys.ItemsSource = Interface_Code.Event_Activity_Annotation.get_list_of_annotated_events_in_day(Window1.OVERALL_userID, day_to_display);
+                lstIndividual_Journeys.ItemsSource = Interface_Code.Event_Activity_Annotation.getAnnotatedEventsDay(Window1.OVERALL_userID, day_to_display);
             } //end method display_days_events_on_interface()
 
 

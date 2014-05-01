@@ -29,7 +29,8 @@ namespace SenseCamBrowser1
         public static List<Image_Rep> ImageList;
         private static string BackupImage = "Image-Unavailable.gif";
         private static int ScaledImagePixelWidth = 120;
-        private static string DbString = global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString;
+        private static string DbString = 
+            global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString;
 
         //Image properties.
         public DateTime imgTime { get; set; }
@@ -67,7 +68,9 @@ namespace SenseCamBrowser1
                     tmpBitmap.DecodePixelWidth = ScaledImagePixelWidth;
 
                 tmpBitmap.CacheOption = BitmapCacheOption.OnLoad;
-                tmpBitmap.UriSource = new Uri(imgPath, UriKind.RelativeOrAbsolute);                
+                tmpBitmap.UriSource = new Uri(
+                    imgPath,
+                    UriKind.RelativeOrAbsolute);                
                 tmpBitmap.EndInit();
                 tmpBitmap.Freeze();
             }
@@ -104,7 +107,8 @@ namespace SenseCamBrowser1
         public static int GetNumImagesInDay(int userID, DateTime day)
         {
             int numImages = 0;
-            string query = Database_Versioning.text_for_stored_procedures.spGet_Num_Images_In_Day(
+            string query = 
+                Database_Versioning.text_for_stored_procedures.spGet_Num_Images_In_Day(
                 userID,
                 day);
             SQLiteConnection con = new SQLiteConnection(DbString);
@@ -130,7 +134,8 @@ namespace SenseCamBrowser1
             String imgPath;
 
             //Get images from database for event.
-            string query = Database_Versioning.text_for_stored_procedures.spGet_Paths_Of_All_Images_In_Event(
+            string query = 
+                Database_Versioning.text_for_stored_procedures.spGet_Paths_Of_All_Images_In_Event(
                 userID,
                 eventID);
             SQLiteConnection con = new SQLiteConnection(DbString);
@@ -157,7 +162,8 @@ namespace SenseCamBrowser1
         {
             //Get the start and end times of images captured in a given day.
             //This method returns void and updates two parameters by reference.
-            string query = Database_Versioning.text_for_stored_procedures.spGet_Day_Start_and_end_times(
+            string query = 
+                Database_Versioning.text_for_stored_procedures.spGet_Day_Start_and_end_times(
                 userID,
                 day);
             SQLiteConnection con = new SQLiteConnection(DbString);
@@ -182,7 +188,8 @@ namespace SenseCamBrowser1
             string imgPath)
         {
             //This method deletes an image from the database and from the PC.
-            string query = Database_Versioning.text_for_stored_procedures.spDelete_Image_From_Event(
+            string query = 
+                Database_Versioning.text_for_stored_procedures.spDelete_Image_From_Event(
                 userID,
                 eventID,
                 imgTime);
@@ -197,37 +204,37 @@ namespace SenseCamBrowser1
         }
         
         
-        public static void sortImagesByID(List<Image_Rep> imageList)
+        public static void sortImagesByID(List<Image_Rep> imgList)
         {
             //This method uses the BubbleSort algorithm to sort images by ID
             int i;
             int j;
             Image_Rep temp = new Image_Rep(DateTime.Now,"",-99);
 
-            for (i = (imageList.Count - 1); i >= 0; i--)
+            for (i = (imgList.Count - 1); i >= 0; i--)
             {
                 for (j = 1; j <= i; j++)
                 {
-                    if (imageList[j - 1].position > imageList[j].position)
+                    if (imgList[j - 1].position > imgList[j].position)
                     {
                         //swap the 2 images if they are in the wrong order
-                        temp.position = imageList[j - 1].position;
-                        temp.imgPath = imageList[j - 1].imgPath;
-                        temp.imgTime = imageList[j - 1].imgTime;
-                        temp.scaledImgSource = imageList[j - 1].scaledImgSource;
-                        temp.shortImgTime = imageList[j - 1].shortImgTime;
+                        temp.position = imgList[j - 1].position;
+                        temp.imgPath = imgList[j - 1].imgPath;
+                        temp.imgTime = imgList[j - 1].imgTime;
+                        temp.scaledImgSource = imgList[j - 1].scaledImgSource;
+                        temp.shortImgTime = imgList[j - 1].shortImgTime;
 
-                        imageList[j - 1].position = imageList[j].position;
-                        imageList[j - 1].imgPath = imageList[j].imgPath;
-                        imageList[j - 1].imgTime = imageList[j].imgTime;
-                        imageList[j - 1].scaledImgSource = imageList[j].scaledImgSource;
-                        imageList[j - 1].shortImgTime = imageList[j].shortImgTime;
+                        imgList[j - 1].position = imgList[j].position;
+                        imgList[j - 1].imgPath = imgList[j].imgPath;
+                        imgList[j - 1].imgTime = imgList[j].imgTime;
+                        imgList[j - 1].scaledImgSource = imgList[j].scaledImgSource;
+                        imgList[j - 1].shortImgTime = imgList[j].shortImgTime;
 
-                        imageList[j].position = temp.position;
-                        imageList[j].imgPath = temp.imgPath;
-                        imageList[j].imgTime = temp.imgTime;
-                        imageList[j].scaledImgSource = temp.scaledImgSource;
-                        imageList[j].shortImgTime = temp.shortImgTime;
+                        imgList[j].position = temp.position;
+                        imgList[j].imgPath = temp.imgPath;
+                        imgList[j].imgTime = temp.imgTime;
+                        imgList[j].scaledImgSource = temp.scaledImgSource;
+                        imgList[j].shortImgTime = temp.shortImgTime;
                     }
                 }
             }

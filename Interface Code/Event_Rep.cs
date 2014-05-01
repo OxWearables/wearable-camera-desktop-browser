@@ -27,7 +27,8 @@ namespace SenseCamBrowser1
     {
         public static string DefaultImageCaption = "     Free text annotation";
         public static string DefaultKeyframeBorderColour = "#24000000";
-        private static string DbString = global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString;
+        private static string DbString = 
+            global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString;
 
         //Event properties.
         public int eventID{ get; set; }
@@ -68,7 +69,9 @@ namespace SenseCamBrowser1
             {
                 this.strTime = startTime.ToShortTimeString() + " pm";
             }
-            this.eventLength = Daily_Annotation_Summary.format_total_seconds_to_mins_and_seconds((int)eventDuration.TotalSeconds);
+            this.eventLength = 
+                Daily_Annotation_Summary.format_total_seconds_to_mins_and_seconds(
+                (int)eventDuration.TotalSeconds);
         }
 
 
@@ -104,7 +107,8 @@ namespace SenseCamBrowser1
             List<Event_Rep> eventList = new List<Event_Rep>();      
 
             //Connect to database and retrieve all events in day.
-            string query = Database_Versioning.text_for_stored_procedures.spGet_All_Events_In_Day(
+            string query = 
+                Database_Versioning.text_for_stored_procedures.spGet_All_Events_In_Day(
                 userID,
                 day);
             SQLiteConnection con = new SQLiteConnection(DbString);
@@ -137,9 +141,13 @@ namespace SenseCamBrowser1
         }
 
 
-        public static void UpdateComment(int userID, int eventID, string comment)
+        public static void UpdateComment(
+            int userID,
+            int eventID,
+            string comment)
         {
-            string query = Database_Versioning.text_for_stored_procedures.spUpdateEventComment(
+            string query = 
+                Database_Versioning.text_for_stored_procedures.spUpdateEventComment(
                 userID,
                 eventID,
                 comment);
@@ -155,7 +163,8 @@ namespace SenseCamBrowser1
         {
             //Update DB with how many times this particular event has been viewed.
             //This may be helpful for memory researchers interested in visual exposure.
-            string query = Database_Versioning.text_for_stored_procedures.spUpdateEvent_Number_Times_Viewed(
+            string query = 
+                Database_Versioning.text_for_stored_procedures.spUpdateEvent_Number_Times_Viewed(
                 userID,
                 eventID);
             SQLiteConnection con = new SQLiteConnection(DbString);
@@ -171,7 +180,8 @@ namespace SenseCamBrowser1
             int eventID,
             string keyframePath)
         {
-            string query = Database_Versioning.text_for_stored_procedures.spUpdate_Event_Keyframe_Path(
+            string query = 
+                Database_Versioning.text_for_stored_procedures.spUpdate_Event_Keyframe_Path(
                 userID,
                 eventID,
                 keyframePath);
@@ -185,7 +195,8 @@ namespace SenseCamBrowser1
 
         public static void DeleteEvent(int userID, int eventID)
         {
-            string query = Database_Versioning.text_for_stored_procedures.spDelete_Event(
+            string query = 
+                Database_Versioning.text_for_stored_procedures.spDelete_Event(
                 userID,
                 eventID);
             SQLiteConnection con = new SQLiteConnection(DbString);
@@ -201,8 +212,8 @@ namespace SenseCamBrowser1
             int sourceEventID,
             DateTime targetEndTime)
         {
-            //This method sends all the images in an event before a certain time, to
-            //the previous event in the database.
+            //This method sends all the images in an event before a certain time
+            //to the previous event in the database.
             //If there is no previous event in the day, a new one is created.
 
             SQLiteConnection con = new SQLiteConnection(DbString);
@@ -210,17 +221,19 @@ namespace SenseCamBrowser1
             con.Open();
 
             //Find the day of the source event.      
-            command.CommandText = Database_Versioning.text_for_stored_procedures.spGet_day_of_source_event(
-            userID,
-            sourceEventID);
+            command.CommandText = 
+                Database_Versioning.text_for_stored_procedures.spGet_day_of_source_event(
+                userID,
+                sourceEventID);
             DateTime sourceEventDay = DateTime.Parse(command.ExecuteScalar().ToString());
 
             //Find the ID of the previous event to append images to.
-            command.CommandText = Database_Versioning.text_for_stored_procedures.spGet_id_of_event_before_ID_and_time(
-            userID,
-            sourceEventID,
-            targetEndTime,
-            sourceEventDay);
+            command.CommandText = 
+                Database_Versioning.text_for_stored_procedures.spGet_id_of_event_before_ID_and_time(
+                userID,
+                sourceEventID,
+                targetEndTime,
+                sourceEventDay);
             int newEventID = -1;
             try
             {
@@ -234,14 +247,16 @@ namespace SenseCamBrowser1
             //If no previous event exists, we create a new event.
             if (newEventID < 0)
             {
-                command.CommandText = Database_Versioning.text_for_stored_procedures.spCreate_new_event_and_return_its_ID(
+                command.CommandText = 
+                    Database_Versioning.text_for_stored_procedures.spCreate_new_event_and_return_its_ID(
                     userID,
                     sourceEventDay);
                 newEventID = int.Parse(command.ExecuteScalar().ToString());
             }
 
             //Update Image and Sensor ID tables in DB with new event IDs.
-            command.CommandText = Database_Versioning.text_for_stored_procedures.spUpdate_image_sensors_tables_with_new_event_id_before_target_time(
+            command.CommandText = 
+                Database_Versioning.text_for_stored_procedures.spUpdate_image_sensors_tables_with_new_event_id_before_target_time(
                 userID,
                 newEventID,
                 sourceEventID,
@@ -270,13 +285,16 @@ namespace SenseCamBrowser1
             con.Open();
 
             //Find the day of the source event.
-            command.CommandText = Database_Versioning.text_for_stored_procedures.spGet_day_of_source_event(
+            command.CommandText = 
+                Database_Versioning.text_for_stored_procedures.spGet_day_of_source_event(
                 userID,
                 sourceEventID);
-            DateTime sourceEventDay = DateTime.Parse(command.ExecuteScalar().ToString());
+            DateTime sourceEventDay = DateTime.Parse(
+                command.ExecuteScalar().ToString());
 
             //Find ID of the next event to append images to.
-            command.CommandText = Database_Versioning.text_for_stored_procedures.spGet_id_of_event_after_ID_and_time(
+            command.CommandText = 
+                Database_Versioning.text_for_stored_procedures.spGet_id_of_event_after_ID_and_time(
                 userID,
                 sourceEventID,
                 targetStartTime,
@@ -288,14 +306,16 @@ namespace SenseCamBrowser1
             //If no next event exists, we create a new event.
             if (newEventID < 0)
             {
-                command.CommandText = Database_Versioning.text_for_stored_procedures.spCreate_new_event_and_return_its_ID(
+                command.CommandText = 
+                    Database_Versioning.text_for_stored_procedures.spCreate_new_event_and_return_its_ID(
                     userID,
                     sourceEventDay);
                 newEventID = int.Parse(command.ExecuteScalar().ToString());
             }
 
             //Update Image and Sensor ID tables in DB with new event IDs.
-            command.CommandText = Database_Versioning.text_for_stored_procedures.spUpdate_image_sensors_tables_with_new_event_id_after_target_time(
+            command.CommandText = 
+                Database_Versioning.text_for_stored_procedures.spUpdate_image_sensors_tables_with_new_event_id_after_target_time(
                 userID,
                 newEventID,
                 sourceEventID,
@@ -323,19 +343,22 @@ namespace SenseCamBrowser1
             con.Open();
 
             //Find the day of the source event.
-            command.CommandText = Database_Versioning.text_for_stored_procedures.spGet_day_of_source_event(
+            command.CommandText = 
+                Database_Versioning.text_for_stored_procedures.spGet_day_of_source_event(
                 userID,
                 sourceEventID);
             DateTime sourceEventDay = DateTime.Parse(command.ExecuteScalar().ToString());
 
             //Create a new event where the split images will be sent to.
-            command.CommandText = Database_Versioning.text_for_stored_procedures.spCreate_new_event_and_return_its_ID(
+            command.CommandText = 
+                Database_Versioning.text_for_stored_procedures.spCreate_new_event_and_return_its_ID(
                 userID,
                 sourceEventDay);
             int newEventID = int.Parse(command.ExecuteScalar().ToString());
 
             //Update Image and Sensor ID tables in DB with new event IDs.
-            command.CommandText = Database_Versioning.text_for_stored_procedures.spUpdate_image_sensors_tables_with_new_event_id_after_target_time(
+            command.CommandText = 
+                Database_Versioning.text_for_stored_procedures.spUpdate_image_sensors_tables_with_new_event_id_after_target_time(
                 userID,
                 newEventID,
                 sourceEventID,
@@ -362,7 +385,8 @@ namespace SenseCamBrowser1
             con.Open();
 
             //Check if there any images remain in the event.
-            command.CommandText = Database_Versioning.text_for_stored_procedures.spGet_Num_Images_In_Event(
+            command.CommandText = 
+                Database_Versioning.text_for_stored_procedures.spGet_Num_Images_In_Event(
                 userID,
                 eventID);
             int numEventImages = int.Parse(command.ExecuteScalar().ToString());
@@ -370,7 +394,8 @@ namespace SenseCamBrowser1
             //Delete the event if no images remain, otherwise update event info.
             if (numEventImages == 0)
             {
-                command.CommandText = Database_Versioning.text_for_stored_procedures.spDelete_Event(
+                command.CommandText = 
+                    Database_Versioning.text_for_stored_procedures.spDelete_Event(
                     userID,
                     eventID);
                 command.ExecuteNonQuery();
@@ -378,7 +403,8 @@ namespace SenseCamBrowser1
             else
             {
                 //Find event start/end time info from All_Images table.
-                command.CommandText = Database_Versioning.text_for_stored_procedures.spGet_start_end_time_of_event(
+                command.CommandText = 
+                    Database_Versioning.text_for_stored_procedures.spGet_start_end_time_of_event(
                     userID,
                     eventID);
                 SQLiteDataReader readTimes = command.ExecuteReader();
@@ -389,11 +415,13 @@ namespace SenseCamBrowser1
 
                 //Set target keyframe time as mid-point between event start/end.
                 TimeSpan eventLength = endTime - startTime; //seconds
-                DateTime targetTime = startTime.AddSeconds(eventLength.TotalSeconds / 2);
+                DateTime targetTime = startTime.AddSeconds(
+                    eventLength.TotalSeconds / 2);
 
                 //Try to set new keyframe path as random image near target time.
                 int KeyframeSearchWindow = 2; //minutes
-                command.CommandText = Database_Versioning.text_for_stored_procedures.spSelect_random_image_from_event_around_target_window(
+                command.CommandText = 
+                    Database_Versioning.text_for_stored_procedures.spSelect_random_image_from_event_around_target_window(
                     userID,
                     eventID,
                     targetTime,
@@ -406,14 +434,16 @@ namespace SenseCamBrowser1
                 //any random image from the event.
                 if (newKeyframe.Equals(""))
                 {
-                    command.CommandText = Database_Versioning.text_for_stored_procedures.spSelect_any_random_image_from_event(
+                    command.CommandText = 
+                        Database_Versioning.text_for_stored_procedures.spSelect_any_random_image_from_event(
                         userID,
                         eventID);
                     newKeyframe = command.ExecuteScalar().ToString();
                 }
 
                 //Update All_Events table in DB with start/end time + keyframe.
-                command.CommandText = Database_Versioning.text_for_stored_procedures.spUpdate_Event_time_keyframe_info(
+                command.CommandText = 
+                    Database_Versioning.text_for_stored_procedures.spUpdate_Event_time_keyframe_info(
                     userID,
                     eventID,
                     startTime,
