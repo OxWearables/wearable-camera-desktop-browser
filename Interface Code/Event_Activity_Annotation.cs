@@ -30,8 +30,7 @@ namespace SenseCamBrowser1.Interface_Code
             this.eventID = eventID;
             this.annotation = annotation;
             this.durationSeconds = durationSec;
-            this.durationStr = 
-                Daily_Annotation_Summary.format_total_seconds_to_mins_and_seconds(
+            this.durationStr = Daily_Annotation_Summary.SecondsToString(
                 durationSec);
         }
 

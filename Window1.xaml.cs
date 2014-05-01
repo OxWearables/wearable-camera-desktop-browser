@@ -199,7 +199,7 @@ how to find where my SenseCam images are stored?
 
 
                 //finally give a breakdown of the amount of time spent on various activities...
-                lstDailyActivitySummary.ItemsSource = Daily_Annotation_Summary.get_daily_activity_summary_from_annotations(Window1.OVERALL_userID, day_to_display);
+                lstDailyActivitySummary.ItemsSource = Daily_Annotation_Summary.getDayAnnotationSummary(Window1.OVERALL_userID, day_to_display);
 
                 //and also a breakdown of the individual annotated events...
                 lstIndividual_Journeys.ItemsSource = Interface_Code.Event_Activity_Annotation.getAnnotatedEventsDay(Window1.OVERALL_userID, day_to_display);
@@ -444,7 +444,7 @@ how to find where my SenseCam images are stored?
                     //firstly get the type of activity we want to highlight...
                     Daily_Annotation_Summary selected_activity = (Daily_Annotation_Summary)lstDailyActivitySummary.SelectedItem;
                     //then find the event ids displayed today which are part of the given activity type
-                    List<int> eventIDs_to_highlight = Daily_Annotation_Summary.get_list_of_eventIDs_to_highlight_for_annotation_type(Window1.OVERALL_userID, current_day_on_display, selected_activity.annType);
+                    List<int> eventIDs_to_highlight = Daily_Annotation_Summary.ActivityEventIds(Window1.OVERALL_userID, current_day_on_display, selected_activity.annType);
 
                     foreach (Event_Rep displayed_event in LstDisplayEvents.Items)
                     {

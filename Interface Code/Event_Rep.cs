@@ -69,8 +69,7 @@ namespace SenseCamBrowser1
             {
                 this.strTime = startTime.ToShortTimeString() + " pm";
             }
-            this.eventLength = 
-                Daily_Annotation_Summary.format_total_seconds_to_mins_and_seconds(
+            this.eventLength = Daily_Annotation_Summary.SecondsToString(
                 (int)eventDuration.TotalSeconds);
         }
 
