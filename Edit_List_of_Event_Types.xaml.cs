@@ -82,7 +82,7 @@ namespace SenseCamBrowser1
             if (!annotation_type_name.Equals("")) //let's just make sure the user didn't click the button by mistake...
             {
                 //2. then add it to the database...
-                Annotation_Rep.add_annotation_type_to_database(annotation_type_name);
+                Annotation_Rep.AddAnnotationType(annotation_type_name);
 
                 //3. finally update the display list to reflect this new change...
                 update_list_on_display_with_latest_database_snapshot();
@@ -116,7 +116,7 @@ namespace SenseCamBrowser1
                 string annotation_type_database_text_entry = Annotation_Rep_Tree_Data.convert_tree_node_to_delimited_string(annotation_type_delete);
                 
                 //3. then delete it from the database...
-                Annotation_Rep.clear_annotation_type_from_database(annotation_type_database_text_entry);
+                Annotation_Rep.RmAnnotationType(annotation_type_database_text_entry);
 
                 //4. finally update the display list to reflect this new change...
                 update_list_on_display_with_latest_database_snapshot();
@@ -136,7 +136,7 @@ namespace SenseCamBrowser1
         /// <param name="e"></param>
         private void btnRemove_All_EventType_Names_Click(object sender, RoutedEventArgs e)
         {
-            Annotation_Rep.clear_all_annotation_types_from_database();
+            Annotation_Rep.RmAllAnnotationTypes();
 
             //and update the display list to reflect this new change...
             update_list_on_display_with_latest_database_snapshot();
@@ -152,7 +152,7 @@ namespace SenseCamBrowser1
         /// </summary>
         private void update_list_on_display_with_latest_database_snapshot()
         {
-            lst_Current_Event_Types.ItemsSource = Annotation_Rep.get_list_of_annotation_types().FirstGeneration[0].Children;            
+            lst_Current_Event_Types.ItemsSource = Annotation_Rep.GetAnnotationTypes().FirstGeneration[0].Children;            
         } //close method update_list_on_display_with_latest_database_snapshot()...
                 
 

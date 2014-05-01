@@ -74,7 +74,7 @@ namespace SenseCamBrowser1
                 SPEED_SLIDER_DEFAULT_VALUE = 950;
 
                 //credit note: ... http://weblogs.asp.net/psheriff/archive/2012/07/23/wpf-tree-view-with-multiple-levels.aspx was very helpful for a syntax template...
-                lst_event_concept_types.ItemsSource = Annotation_Rep.get_list_of_annotation_types().FirstGeneration[0].Children;
+                lst_event_concept_types.ItemsSource = Annotation_Rep.GetAnnotationTypes().FirstGeneration[0].Children;
 
                 annotation_editor.prepare_annotation_type_tool(New_Annotation_Types_To_Display_Callback);
 
@@ -143,7 +143,8 @@ namespace SenseCamBrowser1
             /// <param name="eventID"></param>
             private void update_UI_with_list_of_annotations(int userID, int eventID)
             {
-                lst_episode_codings_in_database.ItemsSource = Annotation_Rep.get_event_prior_annotations(userID, eventID);
+                lst_episode_codings_in_database.ItemsSource =
+                    Annotation_Rep.GetEventAnnotations(userID, eventID);
                 /*
                 txt_priorAnnotations.Text = "";
                 List<Annotation_Rep> prior_annotations = Annotation_Rep.get_event_prior_annotations(userID, eventID);
@@ -346,7 +347,7 @@ namespace SenseCamBrowser1
         /// </summary>
         public void update_UI_based_on_newly_loaded_annotation_types()
         {
-            lst_event_concept_types.ItemsSource = Annotation_Rep.get_list_of_annotation_types().FirstGeneration[0].Children;
+            lst_event_concept_types.ItemsSource = Annotation_Rep.GetAnnotationTypes().FirstGeneration[0].Children;
         } //close method update_UI_based_on_newly_loaded_annotation_types()...
         private delegate void update_UI_based_on_newly_loaded_annotation_types_Delegate(); //and a delegate for the above method must be called if we want to update the UI, hence we declare this line
 
@@ -815,7 +816,7 @@ namespace SenseCamBrowser1
             {
                 Annotation_Rep_Tree_Data_Model annotated_item = (Annotation_Rep_Tree_Data_Model) lst_event_concept_types.SelectedItem;
                 string database_annotation_entry = Annotation_Rep_Tree_Data.convert_tree_node_to_delimited_string(annotated_item);
-                Annotation_Rep.add_event_annotation_to_database(current_userID, current_event.eventID, database_annotation_entry);
+                Annotation_Rep.AddEventAnnotation(current_userID, current_event.eventID, database_annotation_entry);
                 //let's log this interaction
                 Record_User_Interactions.log_interaction_to_database("scImgViewer_lst_event_concept_types_PreviewMouseLeftButtonUp", current_event.eventID + "," + database_annotation_entry);
                 Thread.Sleep(50); //for some reason I have to introduce this command to allow the annotations be added to the database (2 lines up)
@@ -835,11 +836,11 @@ namespace SenseCamBrowser1
         private void btnCancel_Annotations_Click(object sender, RoutedEventArgs e)
         {
             if (lst_episode_codings_in_database.SelectedIndex == -1)
-                Annotation_Rep.clear_event_annotations_from_database(current_userID, current_event.eventID); //then delete all prior annotations from database...
+                Annotation_Rep.RmEventAnnotations(current_userID, current_event.eventID); //then delete all prior annotations from database...
             else
             {
                 foreach (string annotation_to_delete in lst_episode_codings_in_database.SelectedItems)
-                    Annotation_Rep.clear_event_annotations_from_database(current_userID, current_event.eventID, annotation_to_delete);
+                    Annotation_Rep.RmEventAnnotation(current_userID, current_event.eventID, annotation_to_delete);
             } //close if ... else... to delete selected codings from database...
 
             //visually update the listbox to reflect no items will now be selected...
