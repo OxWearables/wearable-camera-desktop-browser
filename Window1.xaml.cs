@@ -273,6 +273,7 @@ how to find where my SenseCam images are stored?
                 } //close if (LstDisplayEvents.Items.Count == 1)...
                 else
                 {
+                    //todo bug when I delete all images in event?
                     LstDisplayEvents.Items.Remove(param_deleted_event);
                     LstDisplayEvents.Items.Refresh();
                 } //close else ... if (LstDisplayEvents.Items.Count == 1)...
