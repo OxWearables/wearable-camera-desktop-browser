@@ -812,7 +812,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                 using (DbCommand cmd = con.CreateCommand())
                 {
                     //cmd.CommandText = "INSERT INTO TestCase(MyValue) VALUES(?)";
-                    cmd.CommandText = "INSERT INTO All_Images(userID,image_path,image_time) VALUES(?,?,?)";
+                    cmd.CommandText = "INSERT INTO All_Images(user_id,image_path,image_time) VALUES(?,?,?)";
                     DbParameter userID_field, image_path_field, image_time_field;
                     userID_field = cmd.CreateParameter();
                     image_path_field = cmd.CreateParameter();
@@ -845,7 +845,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                 using (DbCommand cmd = con.CreateCommand())
                 {
                     //cmd.CommandText = "INSERT INTO TestCase(MyValue) VALUES(?)";
-                    cmd.CommandText = "INSERT INTO All_Events(userID,day,startTime,endTime,keyframe_path,number_times_viewed) VALUES(?,?,?,?,?,?)";
+                    cmd.CommandText = "INSERT INTO All_Events(user_id,day,start_time,end_time,keyframe_path,number_times_viewed) VALUES(?,?,?,?,?,?)";
                     DbParameter userID_field, day_field, startTime_field, endTime_field,keyframe_path_field,number_times_viewed_field;
                     userID_field = cmd.CreateParameter();
                     day_field = cmd.CreateParameter();

@@ -1004,7 +1004,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                 using (DbCommand cmd = con.CreateCommand())
                 {
                     //cmd.CommandText = "INSERT INTO TestCase(MyValue) VALUES(?)";
-                    cmd.CommandText = "INSERT INTO Sensor_Readings(userID,sample_time,acc_x,acc_y,acc_z,white_val,battery,temperature,pir,trigger_code,image_name,mag_x,mag_y,mag_z) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    cmd.CommandText = "INSERT INTO Sensor_Readings(user_id,sample_time,acc_x,acc_y,acc_z,white_val,battery,temperature,pir,trigger_code,image_name,mag_x,mag_y,mag_z) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
                     DbParameter userID_field, sample_time_field,acc_x_field,acc_y_field,acc_z_field,white_val_field,battery_field,temperature_field,pir_field,trigger_code_field,image_name_field,mag_x_field,mag_y_field,mag_z_field;
                     userID_field = cmd.CreateParameter();
                     sample_time_field = cmd.CreateParameter();
