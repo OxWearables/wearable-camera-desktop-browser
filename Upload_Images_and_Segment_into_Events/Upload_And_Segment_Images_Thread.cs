@@ -493,7 +493,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
             } //close try
             catch (Exception excep)
             {
-                write_output("Couldn't copy file: " + image_file.Name);
+                write_output("Could not copy file: " + image_file.Name);
             } //close catch ... try ...
         } //end method attempt_to_copy_image_file()
 
