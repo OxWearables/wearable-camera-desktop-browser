@@ -1,0 +1,81 @@
+CREATE TABLE All_Events(
+event_id INTEGER PRIMARY KEY NOT NULL,
+user_id INT,
+day DATETIME NOT NULL,
+start_time DATETIME NOT NULL,
+end_time DATETIME NOT NULL,
+keyframe_path CHAR(256) NOT NULL,
+comment TEXT,
+number_times_viewed INT
+);
+
+CREATE TABLE All_Images(
+image_id INTEGER PRIMARY KEY,
+user_id INT,
+event_id INT,
+image_path CHAR(200),
+image_time DATETIME
+);
+
+CREATE TABLE Annotation_Types(
+annotation_id INTEGER PRIMARY KEY NOT NULL,
+annotation_type CHAR(100),
+description CHAR(150)
+);
+
+CREATE TABLE SC_Browser_User_Annotations(
+user_id INT,
+event_id INT,
+timestamp DATETIME,
+annotation_name CHAR(100)
+);
+
+CREATE TABLE Sensor_Readings(
+user_id INT,
+event_id INT,
+sample_time DATETIME,
+acc_x DECIMAL(10,4),
+acc_y DECIMAL(10,4),
+acc_z DECIMAL(10,4),
+white_val INT,
+battery INT,
+temperature DECIMAL(10,4),
+pir INT,
+trigger_code CHAR(1),
+image_name CHAR(50),
+mag_x DECIMAL(10,4),
+mag_y DECIMAL(10,4),
+mag_z DECIMAL(10,4)
+);
+
+CREATE TABLE User_Interaction_Log(
+user_id INT NOT NULL,
+interaction_time DATETIME NOT NULL,
+xaml_ui_element CHAR(80) NOT NULL,
+comma_seperated_parameters CHAR(256)
+);
+
+CREATE TABLE Users(
+user_id INTEGER PRIMARY KEY NOT NULL,
+username CHAR(50),
+password CHAR(50),
+name CHAR(50)
+);
+
+CREATE INDEX ae_day on All_Events(day);
+CREATE INDEX ae_start on All_Events(start_time);
+CREATE INDEX ae_user on All_Events(user_id);
+CREATE INDEX ai_event on All_Images(event_id);
+CREATE INDEX ai_user on All_Images(user_id);
+CREATE INDEX sr_event on Sensor_Readings(event_id);
+CREATE INDEX sr_time on Sensor_Readings(sample_time);
+CREATE INDEX sr_user on Sensor_Readings(user_id);
+CREATE INDEX ua_event on SC_Browser_User_Annotations(event_id);
+CREATE INDEX ua_time on SC_Browser_User_Annotations(timestamp);
+CREATE INDEX ua_user on SC_Browser_User_Annotations(user_id);
+CREATE INDEX ui_time on User_Interaction_Log(interaction_time);
+CREATE INDEX ui_user on User_Interaction_Log(user_id);
+
+INSERT INTO USERS(username,password,name) VALUES('Aiden', 'Aiden', 'Aiden');
+INSERT INTO ALL_EVENTS(user_id,day,start_time,end_time,keyframe_path) VALUES(1, '1999-01-01 00:00:00', '1999-01-01 00:00:00', '1999-01-01 00:00:00', '');
+INSERT INTO ALL_IMAGES(user_id,event_id,image_path,image_time) VALUES(1, 1, '', '1999-01-01 00:00:00');
