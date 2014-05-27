@@ -9,3 +9,4 @@ adding photos.bmp
 doherty_sensecam.db
 System.Data.SQLite.dll
 System.Data.SQLite.xml
+delete_images_from_sensecam.exe
