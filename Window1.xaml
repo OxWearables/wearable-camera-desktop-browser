@@ -56,7 +56,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
                                     <DropShadowBitmapEffect Softness="0.113387" ShadowDepth="0" Opacity="0.599998" Color="#FF000000" Direction="315" Noise="0"/>
                                 </Path.BitmapEffect>
                             </Path>
-                            <TextBlock Margin="5,24,5,24" FontSize="18" TextAlignment="Center" TextWrapping="Wrap" x:Name="textBlock"><Run Language="en-ie" Text="Show Calendar"/></TextBlock>
+                            <TextBlock Margin="5,24,5,24" FontSize="18" TextAlignment="Center" TextWrapping="Wrap" x:Name="textBlock"><Run Language="en-ie" Text="Calendar"/></TextBlock>
                             <Path Stretch="Fill" Data="F1 M 480.145,0L 406.822,0C 405.033,0 403.558,1.49847 403.355,3.42981C 404.757,12.5845 422.36,19.8223 443.869,19.8223C 463.472,19.8223 479.83,13.8106 483.637,5.815L 483.637,3.888C 483.637,1.74072 482.074,0 480.145,0 Z " Margin="2.54,1.968,3.053,0" VerticalAlignment="Top" Height="19.822" x:Name="path1">
                                 <Path.Fill>
                                     <LinearGradientBrush StartPoint="0.459989,0.40623" EndPoint="0.459989,1.53948">
@@ -634,7 +634,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
                                     </TransformGroup>
                                 </Path.RenderTransform>
                             </Path>
-                            <TextBlock Margin="-18.831,19.614,-19.237,19.246" Width="Auto" Height="Auto" FontSize="20" Text="Close" TextAlignment="Center" TextWrapping="Wrap"/>
+                            <TextBlock Margin="-18.831,19.614,-19.237,19.246" Width="Auto" Height="Auto" FontSize="20" Text="Quit" TextAlignment="Center" TextWrapping="Wrap"/>
                         </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">

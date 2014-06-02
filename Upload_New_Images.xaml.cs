@@ -574,7 +574,7 @@ namespace SenseCamBrowser1
             if (!uploading_from_flash_drive)
             {
                 lblImages_Source.Content = "Path of images already on your PC:";
-                btnSCOldImages.Content = "Upload from SenseCam/Revue...";
+                btnSCOldImages.Content = "Download from SenseCam/Revue...";
                 txtPCPath.Text = "Images already stored on PC...";
                 txtPCPath.IsEnabled = false;
                 btnPCPath.Visibility = Visibility.Hidden;
@@ -585,7 +585,7 @@ namespace SenseCamBrowser1
             else //else we are uploading from the flash drive (i.e. SC should be connected)...
             {
                 lblImages_Source.Content = "SenseCam or Vicon Revue path:";
-                btnSCOldImages.Content = "Upload from PC...";
+                btnSCOldImages.Content = "Download from PC...";
                 txtSCPath.Text = detect_Autographer_USB_data_directory();
                 txtPCPath.IsEnabled = false;
                 txtPCPath.Text = get_likely_PC_destination_root(object_userID, object_user_name);

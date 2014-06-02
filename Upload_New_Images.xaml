@@ -193,7 +193,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
                                         </LinearGradientBrush>
                                     </Path.Fill>
                                 </Path>
-                                <TextBlock HorizontalAlignment="Left" Margin="7.7,1.5,0,0" VerticalAlignment="Top" Width="Auto" TextWrapping="Wrap"><Run Text="I want to upload old SC images..." Language="en-ie"/></TextBlock>
+                                <TextBlock HorizontalAlignment="Left" Margin="7.7,1.5,0,0" VerticalAlignment="Top" Width="Auto" TextWrapping="Wrap"><Run Text="I want to download old SC images..." Language="en-ie"/></TextBlock>
                             </Grid>
                         </Microsoft_Windows_Themes:ButtonChrome>
                         <ControlTemplate.Triggers>
@@ -238,7 +238,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
                                         </LinearGradientBrush>
                                     </Path.Fill>
                                 </Path>
-                                <TextBlock HorizontalAlignment="Left" Margin="7.7,1.5,0,0" VerticalAlignment="Top" Width="Auto" TextWrapping="Wrap"><Run Text="Upload from SenseCam..." Language="en-ie"/></TextBlock>
+                                <TextBlock HorizontalAlignment="Left" Margin="7.7,1.5,0,0" VerticalAlignment="Top" Width="Auto" TextWrapping="Wrap"><Run Text="Download from SenseCam..." Language="en-ie"/></TextBlock>
                             </Grid>
                         </Microsoft_Windows_Themes:ButtonChrome>
                         <ControlTemplate.Triggers>
@@ -418,7 +418,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
                                 <TextBox x:Name="txtPCPath" Margin="6.61,25,82.031,9" VerticalAlignment="Center" Height="27" BorderBrush="#FF3A0876" Visibility="Visible" d:LayoutOverrides="Height" Cursor="Arrow" />
                                 <TextBox x:Name="txtEpisodeCSVPath" Margin="6.61,-24,82.031,9" VerticalAlignment="Bottom" Height="27" BorderBrush="#FF3A0876" Visibility="Visible" d:LayoutOverrides="Height" Cursor="Arrow" />
                                 <Label Height="Auto" x:Name="lblImages_Source" HorizontalAlignment="Left" VerticalAlignment="Top" Width="Auto" Content="SenseCam source:" FontSize="14" Foreground="#FF3A0876" Visibility="Visible" Margin="1.5,1.5,0,0"/>
-                                <Button x:Name="btnSCOldImages" Width="240" Click="btnSCOldImages_Click"  HorizontalAlignment="Left" Margin="120,-35,6,0" VerticalAlignment="Top" Height="27" Content="Upload from PC..." RenderTransformOrigin="-4.168,1.997" Visibility="Visible"/>
+                                <Button x:Name="btnSCOldImages" Width="240" Click="btnSCOldImages_Click"  HorizontalAlignment="Left" Margin="120,-35,6,0" VerticalAlignment="Top" Height="27" Content="Download from PC..." RenderTransformOrigin="-4.168,1.997" Visibility="Visible"/>
                                 <Label x:Name="label2" HorizontalAlignment="Left" Margin="1.5,53.087,0,30.556" Width="Auto" Height="Auto" Content="PC destination:" FontSize="14" Foreground="#FF3A0876" Visibility="Visible" d:LayoutOverrides="Height"/>
                                 <Label x:Name="label3" HorizontalAlignment="Left" Margin="1.5,105.887,-20,00.556" Width="Auto" Height="Auto" Content="Episode definitions:" FontSize="14" Foreground="#FF3A0876" Visibility="Visible" d:LayoutOverrides="Height"/>
                                 <Button x:Name="btnSCPath" Width="72.4" Click="btnSCPath_Click" HorizontalAlignment="Right" Margin="0,24,6,0" Style="{DynamicResource ButtonStyle3}" VerticalAlignment="Top" Height="27" Content="Browse..." RenderTransformOrigin="-4.168,1.997" Visibility="Visible"/>
