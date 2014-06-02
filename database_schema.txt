@@ -79,3 +79,6 @@ CREATE INDEX ui_user on User_Interaction_Log(user_id);
 INSERT INTO USERS(username,password,name) VALUES('Aiden', 'Aiden', 'Aiden');
 INSERT INTO ALL_EVENTS(user_id,day,start_time,end_time,keyframe_path) VALUES(1, '1999-01-01 00:00:00', '1999-01-01 00:00:00', '1999-01-01 00:00:00', '');
 INSERT INTO ALL_IMAGES(user_id,event_id,image_path,image_time) VALUES(1, 1, '', '1999-01-01 00:00:00');
+INSERT INTO Annotation_Types(annotation_type,description) VALUES('walking','walking');
+INSERT INTO Annotation_Types(annotation_type,description) VALUES('cycling','cycling');
+INSERT INTO Annotation_Types(annotation_type,description) VALUES('gardening','gardening');
