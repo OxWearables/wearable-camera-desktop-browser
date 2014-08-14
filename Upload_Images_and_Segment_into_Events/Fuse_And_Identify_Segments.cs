@@ -58,7 +58,8 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                 if (chunk_raw_values.Length >= 1) //let's make sure that there are actually some images in this chunk...
                 {
                     Segmentation_Image_Rep[] final_boundary_images;
-                    if (AUTOMATIC_EVENT_SEGMENTATION_ENABLED == 1) {
+                    //perform hourly segmentation if automatic mode disabled
+                    if (AUTOMATIC_EVENT_SEGMENTATION_ENABLED == 0) {
                         final_boundary_images = getHourBoundaries(chunk_raw_values);
                     } else {
                         normalise_and_fuse_data_sources(chunk_raw_values);
