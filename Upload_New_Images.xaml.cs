@@ -338,7 +338,7 @@ namespace SenseCamBrowser1
         /// <param name="e"></param>
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
-            //let's log this interaction
+            //let's log this interaction            
             play_sound();
             Record_User_Interactions.log_interaction_to_database("UploadNewImages_btnclose_click");
 
