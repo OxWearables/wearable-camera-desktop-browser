@@ -88,10 +88,7 @@ namespace SenseCamBrowser1
         #endregion properties and initially setting up this user control (includes speed of image playback)
 
 
-
-
-
-
+        
         #region code to receive and update information on the event to display...
 
             /// <summary>
@@ -891,7 +888,8 @@ namespace SenseCamBrowser1
                     //img_to_show.Source = list_of_event_images[array_position_of_current_image].scaled_image_src; //list_of_event_images[array_position_of_current_image].image_source(); //show full size image...
                     if (PlayBtn.IsEnabled)
                     {
-                        img_to_show.Source = list_of_event_images[array_position_of_current_image].scaledImgSource;
+                        //load next full screen image in its full resolution
+                        img_to_show.Source = Image_Rep.GetImgBitmap(list_of_event_images[array_position_of_current_image].imgPath, false);
                         //lst_display_images.ItemsSource = null;
                         //lst_display_images.Items.Clear();
                         //lst_display_images.Items.Add(list_of_event_images[array_position_of_current_image]);

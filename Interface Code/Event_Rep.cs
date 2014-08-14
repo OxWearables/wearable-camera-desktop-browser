@@ -57,7 +57,7 @@ namespace SenseCamBrowser1
             this.comment = comment;
             this.shortComment = GetStringStart(comment, 15);            
             this.keyframePath = keyframePath;
-            this.keyframeSource = Image_Rep.GetImgBitmap(keyframePath, true);
+            this.keyframeSource = Image_Rep.GetImgBitmap(keyframePath, false);
             this.borderColour = DefaultKeyframeBorderColour;
            
             //format time string for UI

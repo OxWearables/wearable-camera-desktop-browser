@@ -357,15 +357,12 @@ how to find where my SenseCam images are stored?
                 {                   
 
                     txtEventNumber.UpdateLayout();
-
                     Event_Rep event_rep = (Event_Rep)LstDisplayEvents.SelectedItem;
-
                     //let's log this interaction
                     Record_User_Interactions.log_interaction_to_database("Window1_eventdetail_click", event_rep.eventID.ToString());
                     
-
                     sc_img_viewer.update_event_on_display(Window1.OVERALL_userID, event_rep, New_Event_Comment_Callback, Event_Deleted_Callback, Images_Moved_Between_Events_Callback);
-                    sc_img_viewer.Visibility = Visibility.Visible;
+                    sc_img_viewer.Visibility = Visibility.Visible;                    
                     
                 } //close if (LstDisplayEvents.SelectedIndex >= 0)                
             } //close LstDisplayEvents_MouseLeftButtonUp()...
