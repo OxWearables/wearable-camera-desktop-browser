@@ -439,8 +439,8 @@ how to find where my SenseCam images are stored?
                 {
                     //save annotations for this day to file
                     string fileName = saveFileDialog.FileName;
-                    Daily_Annotation_Summary.writeDayAnnotationsToCsv(userId,
-                            current_day_on_display, fileName);
+                    Daily_Annotation_Summary.writeAllAnnotationsToCsv(userId,
+                            fileName);
                     Record_User_Interactions.log_interaction_to_database(
                             "Window1_btnExport_Click", fileName);
                 }

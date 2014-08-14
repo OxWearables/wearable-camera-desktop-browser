@@ -95,15 +95,13 @@ namespace SenseCamBrowser1
         }
 
 
-        public static void writeDayAnnotationsToCsv(int userID, DateTime day,
-                string csvFile)
+        public static void writeAllAnnotationsToCsv(int userID, string csvFile)
         {
             //write a participant's annotations for a given day to csv output file
             TextWriter fWriter = new StreamWriter(csvFile);
             string query =
-                Database_Versioning.text_for_stored_procedures.spGetDaySummary(
-                userID,
-                day);
+                    Database_Versioning.text_for_stored_procedures.spGetAnnotationSummary(
+                    userID);
             SQLiteConnection con = new SQLiteConnection(DbString);
             SQLiteCommand selectCmd = new SQLiteCommand(query, con);
             con.Open();
