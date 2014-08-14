@@ -21,6 +21,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Data.SQLite;
 using System.Data.Common;
+using System.Configuration;
 
 namespace SenseCamBrowser1
 {
@@ -28,9 +29,10 @@ namespace SenseCamBrowser1
     {
         public static List<Image_Rep> ImageList;
         private static string BackupImage = "Image-Unavailable.gif";
-        private static int ScaledImagePixelWidth = 120;
+        private static int ScaledImagePixelWidth = 
+                int.Parse(ConfigurationManager.AppSettings["scaledImagePixelWidth"].ToString());
         private static string DbString = 
-            global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString;
+                global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString;
 
         //Image properties.
         public DateTime imgTime { get; set; }
