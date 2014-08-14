@@ -110,6 +110,86 @@ namespace SenseCamBrowser1
         } //end method insert_new_user_into_database_and_get_id()
 
 
+        /// <summary>
+        /// this method is used to automatically detect the likely desired destination of the SenseCam images, i.e. where the most recent images have been uploaded to...
+        /// </summary>
+        /// <param name="userID"></param>
+        /// <returns></returns>
+        public static string get_likely_PC_destination_root(int userID, string user_name)
+        {
+            string last_keyframe_path = "";
+            //this method calls a database stored procedure to return the number of images in an event
+            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
+            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spGet_Last_Keyframe_Path(userID), con);
+            con.Open();
+            try
+            {
+                last_keyframe_path = selectCmd.ExecuteScalar().ToString(); //gets the path of the most recently uploaded event...
+            }
+            catch (Exception excep) { }
+            con.Close();
+
+            //now we examine the last_keyframe_path (if one exists)
+            if (!last_keyframe_path.Equals(""))
+            {
+                string[] components = last_keyframe_path.Split(new string[] { @"\", "/" }, StringSplitOptions.RemoveEmptyEntries); //in case there are any web url images in there, we change the "\", "/" slashes
+                last_keyframe_path = ""; //let's reset this string...
+                for (int c = 0; c < components.Length - 2; c++) //so we include all elements except the last 2, which is the image name, and the direct folder holding those images
+                    last_keyframe_path += components[c] + @"\"; //this is our likely SenseCam root directory...
+            } //close if (!last_keyframe_path.Equals(""))...
+
+
+            //now check to make sure we've got a valid path
+            if (last_keyframe_path.Equals(""))
+                last_keyframe_path = get_likely_PC_destination_root_based_on_another_user(userID, user_name); //else (when it's first time to upload for this user) try getting an estimated path, based on another user...
+
+            return last_keyframe_path;
+        }
+        
+
+        /// <summary>
+        /// this method is used to automatically detect the likely desired destination of the SenseCam images (for a new user uploading images for the 1st time)
+        /// i.e. where the most recent images have been uploaded to...
+        /// </summary>
+        /// <param name="userID"></param>
+        /// <returns></returns>
+        private static string get_likely_PC_destination_root_based_on_another_user(int userID_of_first_time_user, string user_name)
+        {
+            int userID_of_user_with_most_recent_data = -1;
+            SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
+            SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spGet_user_id_of_Most_Recent_Data_Upload(), con);
+            con.Open();
+            try
+            {
+                userID_of_user_with_most_recent_data = int.Parse(selectCmd.ExecuteScalar().ToString()); //gets the userID of the user who has the most data (it's likely all other users info will be stored near the same folder location as them)...
+            }
+            catch (Exception excep) { }
+            con.Close();
+
+            string last_keyframe_path = "";
+            //this method calls a database stored procedure to return the number of images in an event
+            selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spGet_Last_Keyframe_Path(userID_of_user_with_most_recent_data), con);
+            con.Open();
+            try
+            {
+                last_keyframe_path = selectCmd.ExecuteScalar().ToString(); //gets the path of the most recently uploaded event...
+            }
+            catch (Exception excep) { }
+            con.Close();
+
+            //now we examine the last_keyframe_path (if one exists)
+            if (!last_keyframe_path.Equals(""))
+            {
+                string[] components = last_keyframe_path.Split(new string[] { @"\", "/" }, StringSplitOptions.RemoveEmptyEntries); //in case there are any web url images in there, we change the "\", "/" slashes
+                last_keyframe_path = ""; //let's reset this string...
+                for (int c = 0; c < components.Length - 3; c++) //so we include all elements except the last 2, which is the image name, and the direct folder holding those images
+                    last_keyframe_path += components[c] + @"\"; //this is our likely SenseCam root directory...
+            } //close if (!last_keyframe_path.Equals(""))...
+
+            return last_keyframe_path + user_name + @"\";
+        }
+
+
 
     } //close class User_Object...
 
