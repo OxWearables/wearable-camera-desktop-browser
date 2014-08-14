@@ -19,7 +19,6 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
              xmlns:SCImgViewer="clr-namespace:SenseCamBrowser1"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" xmlns:Microsoft_Windows_Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Luna"
             xmlns:sc_Keyboard="clr-namespace:SenseCamBrowser1" Height="Auto" >
-
     <UserControl.Resources>
         <Style x:Key="ButtonStyle1" BasedOn="{x:Null}" TargetType="{x:Type Button}">
             <Setter Property="Template">
@@ -1535,7 +1534,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
                         <TextBlock Grid.Row="0" Grid.Column="1" x:Name="txt_image_number" Padding="3,3,3,3" Margin="0,1.511,21.3,0" Background="{x:Null}" FontSize="18" TextAlignment="Right" HorizontalAlignment="Right" VerticalAlignment="Top" Width="Auto" Height="Auto" Foreground="#FFFFFFFF" ><TextBlock.BitmapEffect>
                         		<DropShadowBitmapEffect Softness="0" Direction="307" ShadowDepth="1"/>
                         	</TextBlock.BitmapEffect><Run Text="Image " /><Run Text="X of Y" Language="en-ie"/></TextBlock>
-                        <TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="Please wait a few seconds while the photos are loading..." TextWrapping="Wrap" x:Name="txtPlease_Wait" FontSize="24" Foreground="#FFFAE108" Background="{x:Null}" TextAlignment="Center" Visibility="Visible" Margin="30,0,30,0">
+                        <TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="Please wait for the photos to load..." TextWrapping="Wrap" x:Name="txtPlease_Wait" FontSize="24" Foreground="#FFFAE108" Background="{x:Null}" TextAlignment="Center" Visibility="Visible" Margin="30,0,30,0">
                         	<TextBlock.BitmapEffect>
                         		<DropShadowBitmapEffect ShadowDepth="1" Softness="0" Direction="284"/>
                         	</TextBlock.BitmapEffect>

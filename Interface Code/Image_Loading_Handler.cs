@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Configuration;
 
 namespace SenseCamBrowser1
 {
@@ -35,9 +36,9 @@ namespace SenseCamBrowser1
         ///////////////////////////// THREAD CALLBACK PROPERTIES /////////////////////////////////////////////
         ///////////////////////////// THREAD CALLBACK PROPERTIES /////////////////////////////////////////////
         ///////////////////////////// THREAD CALLBACK PROPERTIES /////////////////////////////////////////////
-
-
-
+        private static int IMG_LOADING_WAIT_MS =
+                int.Parse(ConfigurationManager.AppSettings["imgLoadingWaitMs"].ToString());
+        
 
         /// <summary>
         /// constructor to get the necessary variables (user/event id's so we know which images to get from the database, and callback to send the loaded image list)
@@ -60,6 +61,7 @@ namespace SenseCamBrowser1
         /// </summary>
         public void load_all_event_images_into_memory()
         {
+            System.Threading.Thread.Sleep(IMG_LOADING_WAIT_MS);
             Image_Rep.ImageList = Image_Rep.GetEventImages(userID, eventID); ; //get all the images in the event
 
             //and we return our callback (to the UI)
