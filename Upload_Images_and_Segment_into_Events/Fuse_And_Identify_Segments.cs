@@ -32,7 +32,8 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
         
 
 
-        public static Segmentation_Event_Rep[] get_boundary_times_for_all_images(Segmentation_Image_Rep[] list_of_images)
+        public static Segmentation_Event_Rep[] get_boundary_times_for_all_images(
+                Segmentation_Image_Rep[] list_of_images, bool hourSegmentation)
         {
             //BASICALLY RETURNS A LIST OF THE BOUNDARY TIMES (AND CHUNK BOUNDARY TIMES)
             //READ IN THE new_images TABLE FROM THE DATABASE
@@ -56,26 +57,28 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
                 if (chunk_raw_values.Length >= 1) //let's make sure that there are actually some images in this chunk...
                 {
-                    //2. NORMALISE AND FUSE DATA SOURCES
-                    normalise_and_fuse_data_sources(chunk_raw_values);
+                    Segmentation_Image_Rep[] final_boundary_images;
+                    if (hourSegmentation) {
+                        final_boundary_images = getHourBoundaries(chunk_raw_values);
+                    } else {
+                        normalise_and_fuse_data_sources(chunk_raw_values);
+                        peak_score_image_array(chunk_raw_values);
+                        Segmentation_Image_Rep[] vals_above_threshold = 
+                                fused_image_vals_above_dynamic_threshold(
+                                        chunk_raw_values);
+                        //clean up boundary images
+                        final_boundary_images = cluster_boundary_list(
+                                vals_above_threshold,
+                                MINIMUM_LENGTH_OF_AUTOMATICALLY_SEGMENTED_EVENTS_IN_MINUTES,
+                                chunk_raw_values.Length,
+                                NUM_END_IMAGES_IN_DAY_TO_IGNORE_IN_EVENT_CLUSTERING);
+                    }
 
-
-                    //3. PROCESS PEAK SCORING
-                    peak_score_image_array(chunk_raw_values);
-
-
-                    //4. THRESHOLD IMAGE TRIGGERED MANIPULATED VALUES
-                    Segmentation_Image_Rep[] vals_above_threshold = fused_image_vals_above_dynamic_threshold(chunk_raw_values);
-
-
-                    //5. CLEAN UP BOUNDARY IMAGES (I.E. ONES WITHING SAY 5 MINUTES OF EACH OTHER)
-                    Segmentation_Image_Rep[] final_boundary_images = cluster_boundary_list(vals_above_threshold, MINIMUM_LENGTH_OF_AUTOMATICALLY_SEGMENTED_EVENTS_IN_MINUTES, chunk_raw_values.Length, NUM_END_IMAGES_IN_DAY_TO_IGNORE_IN_EVENT_CLUSTERING);
-                    
-                    
                     //6. APPEND LIST OF BOUNDARY IMAGES TO AN ARRAY LIST OF EVENTS
-                    if (final_boundary_images != null && AUTOMATIC_EVENT_SEGMENTATION_ENABLED==1)
-                      add_new_events_from_chunk_to_event_list(all_events, final_boundary_images, chunk_raw_values);
+                    if (final_boundary_images != null)// && AUTOMATIC_EVENT_SEGMENTATION_ENABLED == 1)
+                        add_new_events_from_chunk_to_event_list(all_events, final_boundary_images, chunk_raw_values);
                     else all_events.Add(new Segmentation_Event_Rep(chunk_raw_values, 0, chunk_raw_values.Length - 1));
+                    
                 } //close if (chunk_raw_values.Length >= 1)...
 
             } //end foreach (int chunk_id in user_chunk_ids)
@@ -91,14 +94,18 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
 
 
-        public static Segmentation_Event_Rep[] SET_boundary_times_for_all_images(Segmentation_Image_Rep[] list_of_images, List<Segmentation_Event_Rep> list_of_user_defined_boundary_times)
+        public static Segmentation_Event_Rep[] SET_boundary_times_for_all_images(
+                Segmentation_Image_Rep[] list_of_images,
+                List<Segmentation_Event_Rep> list_of_user_defined_boundary_times,
+                bool hourSegmentation)
         {
             //the main aim of this method is to take in a list of user-defined boundary start/end times from accelerometer, or GPS, or heart rate, or ... data ... and then to add it to the SenseCam database...
             List<Segmentation_Event_Rep> all_events = new List<Segmentation_Event_Rep>();
             
             //in case the user mistakingly enters in no boundary times, we'll then just segment the data as normal using the SenseCam processing method of "get_boundary_times_for_all_images()..."
             if (list_of_user_defined_boundary_times.Count == 0)
-                return get_boundary_times_for_all_images(list_of_images);
+                return get_boundary_times_for_all_images(list_of_images,
+                        hourSegmentation);
 
             //however if we do have a list of boundary times, let's record them...
             else if (list_of_user_defined_boundary_times.Count >= 1)
@@ -113,6 +120,38 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
         } //end method get_boundary_times_for_all_images()
 
 
+        public static Segmentation_Image_Rep[] getHourBoundaries(
+                Segmentation_Image_Rep[] inputStream)
+        {
+            //Generate hourly event boundaries for all inputStream images           
+            //get information on the overall "chunk" of inputStream images
+            List<Segmentation_Image_Rep> boundaryList = new List<Segmentation_Image_Rep>();
+            DateTime chunkStart = inputStream[0].get_image_time();
+            DateTime chunkEnd = inputStream[inputStream.Length - 1].get_image_time();
+
+            //get information on the target boundary time (i.e. 59min 59sec)
+            DateTime targetBoundary = new DateTime(chunkStart.Year, chunkStart.Month,
+                        chunkStart.Day, chunkStart.Hour, 59, 59);
+            
+            //go through all images and identify boundary targets
+            for (int c = 0; c < inputStream.Length; c++) {
+                //boundary image will be first identified after target time
+                if (inputStream[c].get_image_time() > targetBoundary)
+                {
+                    //add boundary to list, then reset target to next hour
+                    boundaryList.Add(inputStream[c]);
+                    targetBoundary = targetBoundary.AddHours(1);
+                }                
+            }
+
+            //return list of boundary images as an array
+            if (boundaryList.Count > 0) {
+                return boundaryList.ToArray();
+            }
+            else {
+                return null;
+            }
+        }
 
 
         private static Segmentation_Image_Rep[] get_image_values_from_chunk(Segmentation_Image_Rep[] all_images, int chunk_id)

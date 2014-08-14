@@ -43,10 +43,11 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
         ///////////////////////////// THREAD CALLBACK PROPERTIES /////////////////////////////////////////////
         private static int MINIMUM_FILE_SIZE = 2048; //THE SMALLEST SIZE (IN BYTES) ANY SENSECAM IMAGE IS ALLOWED TO BE ... IF IT'S SMALLER THAN THIS WE DISREGARD IT
         private static int MAXIMUM_FILE_SIZE = 85002048; //THE LARGEST SIZE (IN BYTES) ANY SENSECAM IMAGE IS ALLOWED TO BE (85MB roughly) ... IF IT'S LARGER THAN THIS WE DISREGARD IT ... 
-
+       
         private bool upload_is_direct_from_sensecam, is_multiple_folder_upload_class_variable;
         private string SenseCam_data_directory, current_root_folder, episode_data_csv_file_obj;
         private int userID;
+        private static bool HOUR_SEGMENTATION = true;
 
 
 
@@ -700,9 +701,11 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                 Segmentation_Event_Rep[] list_of_calculated_events;
                 
                 if (sensor_file_exists)
-                    list_of_calculated_events = Fuse_And_Identify_Segments.get_boundary_times_for_all_images(manipulated_images);
-                else list_of_calculated_events = Fuse_And_Identify_Segments.get_boundary_times_for_all_non_csv_images(manipulated_images);
-                
+                    list_of_calculated_events = Fuse_And_Identify_Segments.get_boundary_times_for_all_images(
+                            manipulated_images, HOUR_SEGMENTATION);
+                else list_of_calculated_events = Fuse_And_Identify_Segments.get_boundary_times_for_all_non_csv_images(
+                            manipulated_images);
+                                
                 if (list_of_calculated_events != null)
                 {
                     //3. AND WRITE OUT THE LIST OF IMAGES AND EVENTS TO THE DATABASE!			
@@ -728,7 +731,11 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
 
 
-        private void segment_folder_images_into_events_and_upload_to_db(int userID, string selected_folder, DeviceType device_type, string external_episode_definition_csv_file)
+        private void segment_folder_images_into_events_and_upload_to_db(
+                int userID,
+                string selected_folder,
+                DeviceType device_type,
+                string external_episode_definition_csv_file)
         {
             selected_folder += @"\";
             //1. READ SENSOR.CSV INFORMATION IN FOLDER
@@ -755,8 +762,10 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
                 //todo create example CSV file to show correct format for: startTime, endTime, description
                 List<Segmentation_Event_Rep> user_defined_episodes = new List<Segmentation_Event_Rep>();
-                user_defined_episodes = Segmentation_Event_Rep.read_in_list_of_user_defined_episodes_from_file(external_episode_definition_csv_file, selected_folder);
-                list_of_calculated_events = Fuse_And_Identify_Segments.SET_boundary_times_for_all_images(manipulated_images, user_defined_episodes);                
+                //user_defined_episodes = Segmentation_Event_Rep.read_in_list_of_user_defined_episodes_from_file(external_episode_definition_csv_file, selected_folder);
+                list_of_calculated_events = Fuse_And_Identify_Segments.SET_boundary_times_for_all_images(
+                        manipulated_images, user_defined_episodes,
+                        HOUR_SEGMENTATION);
 
                 if (list_of_calculated_events != null)
                 {

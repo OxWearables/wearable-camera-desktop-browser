@@ -172,10 +172,9 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
             episode_reader.Close(); //closing the stream
             
             return list_of_all_sensor_values;
-        } //close method read_in_list_of_user_defined_episodes_from_file()...
+        }
 
 
+	}
 
-	} //end class Event_Rep
-
-} //end namespace
+}
