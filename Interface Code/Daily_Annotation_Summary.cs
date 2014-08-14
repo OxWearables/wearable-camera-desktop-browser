@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Data;
 using System.Data.SQLite;
 using System.Data.Common;
+using System.IO;
 
 namespace SenseCamBrowser1
 {
@@ -91,6 +92,34 @@ namespace SenseCamBrowser1
             }
             con.Close();
             return idList;
+        }
+
+
+        public static void writeDayAnnotationsToCsv(int userID, DateTime day,
+                string csvFile)
+        {
+            //write a participant's annotations for a given day to csv output file
+            TextWriter fWriter = new StreamWriter(csvFile);
+            string query =
+                Database_Versioning.text_for_stored_procedures.spGetDaySummary(
+                userID,
+                day);
+            SQLiteConnection con = new SQLiteConnection(DbString);
+            SQLiteCommand selectCmd = new SQLiteCommand(query, con);
+            con.Open();
+            SQLiteDataReader dbAnnotates = selectCmd.ExecuteReader();
+            fWriter.WriteLine("participant,startTime,endTime,annotation");
+            while (dbAnnotates.Read())
+            {
+                string participant = dbAnnotates[0].ToString();
+                DateTime startTime = DateTime.Parse(dbAnnotates[1].ToString());
+                DateTime endTime = DateTime.Parse(dbAnnotates[2].ToString());
+                string annotation = dbAnnotates[3].ToString();
+                fWriter.WriteLine(participant + "," + startTime + "," + endTime
+                        + "," + annotation);
+            }
+            con.Close();
+            fWriter.Close();
         }
 
     }

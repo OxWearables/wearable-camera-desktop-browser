@@ -494,6 +494,22 @@ namespace SenseCamBrowser1.Database_Versioning
             return end_string;
         } //close method spGet_daily_activity_summary_from_annotations()...
 
+
+        public static string spGetDaySummary(int userId, DateTime day)
+        {
+            string endString = "SELECT u.name, evnt.start_time, evnt.end_time, coding.annotation_name";
+            endString += "\n" + "FROM SC_Browser_User_Annotations AS coding";
+            endString += "\n" + "INNER JOIN Users AS u";
+            endString += "\n" + "  ON coding.[user_id] = u.[user_id]";
+            endString += "\n" + "  INNER JOIN All_Events AS evnt";
+            endString += "\n" + "      ON coding.[user_id] = evnt.[user_id] AND coding.event_id = evnt.event_id";
+            endString += "\n" + "WHERE evnt.[user_id]=" + userId;
+            endString += "\n" + "AND evnt.day >=" + convert_datetime_to_sql_string(new DateTime(day.Year, day.Month, day.Day)) + "";
+            endString += "\n" + "AND evnt.day <=" + convert_datetime_to_sql_string(new DateTime(day.Year, day.Month, day.Day, 23, 59, 59)) + "";
+            endString += "\n" + "ORDER BY u.[user_id], evnt.start_time";            
+            return endString;
+        }
+
         #endregion get event annotations
 
 

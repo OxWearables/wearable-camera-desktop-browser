@@ -48,6 +48,8 @@ using System.Windows.Shapes;
 using System.Windows.Media.Animation;
 using System.Management;
 using System.Configuration;
+using System.IO;
+using Microsoft.Win32;
 
 namespace SenseCamBrowser1
 {
@@ -423,9 +425,25 @@ how to find where my SenseCam images are stored?
             /// <param name="e"></param>
             private void btnExport_Click(object sender, RoutedEventArgs e)
             {
-                //todo add in ability to export annotations for user to CSV file...
-                //let's log this interaction
-                Record_User_Interactions.log_interaction_to_database("Window1_btnExport_Click", current_day_on_display.ToString());
+                int userId = User_Object.OVERALL_userID;
+                string userName = User_Object.OVERALL_USER_NAME;
+                //will suggest saving output to participant's most recent data folder
+                string suggestedPath = User_Object.get_likely_PC_destination_root(
+                        userId, userName);
+                
+                //prompt researcher on where to store annotations
+                SaveFileDialog saveFileDialog = new SaveFileDialog();
+                saveFileDialog.InitialDirectory = suggestedPath;
+                saveFileDialog.FileName = userName + ".csv";
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    //save annotations for this day to file
+                    string fileName = saveFileDialog.FileName;
+                    Daily_Annotation_Summary.writeDayAnnotationsToCsv(userId,
+                            current_day_on_display, fileName);
+                    Record_User_Interactions.log_interaction_to_database(
+                            "Window1_btnExport_Click", fileName);
+                }
             } //close method btnExport_Click()...
 
 
