@@ -634,7 +634,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
                                     </TransformGroup>
                                 </Path.RenderTransform>
                             </Path>
-                            <TextBlock Margin="-18.831,19.614,-19.237,19.246" Width="Auto" Height="Auto" FontSize="20" Text="Quit" TextAlignment="Center" TextWrapping="Wrap"/>
+                            <TextBlock Margin="-18.831,19.614,-19.237,19.246" Width="Auto" Height="Auto" FontSize="20" Text="Exit" TextAlignment="Center" TextWrapping="Wrap"/>
                         </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">

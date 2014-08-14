@@ -38,8 +38,8 @@ namespace SenseCamBrowser1
     public partial class User_Management_Window : Window
     {
 
-        private static string TEXT_FOR_NEW_USER_TEXTBOX = "Please enter new user name...";
-        private static string TEXT_FOR_NEW_USER_NAME = "<new user>";
+        private static string TEXT_FOR_NEW_USER_TEXTBOX = "Please enter new participant name...";
+        private static string TEXT_FOR_NEW_USER_NAME = "<new participant>";
         private static List<User_Object> list_of_users_in_db;
 
 
@@ -97,7 +97,7 @@ namespace SenseCamBrowser1
                         selected_userID = User_Object.insert_new_user_into_database_and_get_id(newly_entered_username);
                         selected_username = newly_entered_username;
                     } //close if (!name_already_exists)....
-                    else MessageBox.Show("User '" + newly_entered_username + "' already exists. Please enter a unique name."); //else this isn't a valid username...
+                    else MessageBox.Show("Participant '" + newly_entered_username + "' already exists. Please enter a unique name."); //else this isn't a valid username...
 
                 } //close if (selected_user.name.Equals(TEXT_FOR_NEW_USER_NAME))...
                 else //i.e. it's an existing user we want to see...
@@ -107,7 +107,7 @@ namespace SenseCamBrowser1
                 } //close else ... if (selected_user.name.Equals(TEXT_FOR_NEW_USER_NAME))
 
             } //close if (cboUserList.SelectedIndex != -1)...
-            else MessageBox.Show("Please select a user from the drop down list");
+            else MessageBox.Show("Please select a participant from the drop down list");
 
 
             //finally if we've selected a valid user id, let's start the browsing session!
