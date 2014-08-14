@@ -33,7 +33,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
 
         public static Segmentation_Event_Rep[] get_boundary_times_for_all_images(
-                Segmentation_Image_Rep[] list_of_images, bool hourSegmentation)
+                Segmentation_Image_Rep[] list_of_images)
         {
             //BASICALLY RETURNS A LIST OF THE BOUNDARY TIMES (AND CHUNK BOUNDARY TIMES)
             //READ IN THE new_images TABLE FROM THE DATABASE
@@ -58,7 +58,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                 if (chunk_raw_values.Length >= 1) //let's make sure that there are actually some images in this chunk...
                 {
                     Segmentation_Image_Rep[] final_boundary_images;
-                    if (hourSegmentation) {
+                    if (AUTOMATIC_EVENT_SEGMENTATION_ENABLED == 1) {
                         final_boundary_images = getHourBoundaries(chunk_raw_values);
                     } else {
                         normalise_and_fuse_data_sources(chunk_raw_values);
@@ -74,8 +74,8 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                                 NUM_END_IMAGES_IN_DAY_TO_IGNORE_IN_EVENT_CLUSTERING);
                     }
 
-                    //6. APPEND LIST OF BOUNDARY IMAGES TO AN ARRAY LIST OF EVENTS
-                    if (final_boundary_images != null)// && AUTOMATIC_EVENT_SEGMENTATION_ENABLED == 1)
+                    //APPEND LIST OF BOUNDARY IMAGES TO AN ARRAY LIST OF EVENTS
+                    if (final_boundary_images != null)
                         add_new_events_from_chunk_to_event_list(all_events, final_boundary_images, chunk_raw_values);
                     else all_events.Add(new Segmentation_Event_Rep(chunk_raw_values, 0, chunk_raw_values.Length - 1));
                     
@@ -96,16 +96,14 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
         public static Segmentation_Event_Rep[] SET_boundary_times_for_all_images(
                 Segmentation_Image_Rep[] list_of_images,
-                List<Segmentation_Event_Rep> list_of_user_defined_boundary_times,
-                bool hourSegmentation)
+                List<Segmentation_Event_Rep> list_of_user_defined_boundary_times)
         {
             //the main aim of this method is to take in a list of user-defined boundary start/end times from accelerometer, or GPS, or heart rate, or ... data ... and then to add it to the SenseCam database...
             List<Segmentation_Event_Rep> all_events = new List<Segmentation_Event_Rep>();
             
             //in case the user mistakingly enters in no boundary times, we'll then just segment the data as normal using the SenseCam processing method of "get_boundary_times_for_all_images()..."
             if (list_of_user_defined_boundary_times.Count == 0)
-                return get_boundary_times_for_all_images(list_of_images,
-                        hourSegmentation);
+                return get_boundary_times_for_all_images(list_of_images);
 
             //however if we do have a list of boundary times, let's record them...
             else if (list_of_user_defined_boundary_times.Count >= 1)

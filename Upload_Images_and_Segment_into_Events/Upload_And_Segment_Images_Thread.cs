@@ -47,9 +47,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
         private bool upload_is_direct_from_sensecam, is_multiple_folder_upload_class_variable;
         private string SenseCam_data_directory, current_root_folder, episode_data_csv_file_obj;
         private int userID;
-        private static bool HOUR_SEGMENTATION = true;
-
-
+        
 
         public Upload_and_Segment_Images_Thread(Information_Callback param_feedback_callback, Processing_Finished_Callback param_data_processing_finished, string SC_data_directory, string PC_root_folder, int param_userID, bool uploading_direct_from_sensecam, bool is_multiple_folder_upload, string episode_data_csv_file_obj)
         {
@@ -702,7 +700,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                 
                 if (sensor_file_exists)
                     list_of_calculated_events = Fuse_And_Identify_Segments.get_boundary_times_for_all_images(
-                            manipulated_images, HOUR_SEGMENTATION);
+                            manipulated_images);
                 else list_of_calculated_events = Fuse_And_Identify_Segments.get_boundary_times_for_all_non_csv_images(
                             manipulated_images);
                                 
@@ -764,8 +762,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                 List<Segmentation_Event_Rep> user_defined_episodes = new List<Segmentation_Event_Rep>();
                 //user_defined_episodes = Segmentation_Event_Rep.read_in_list_of_user_defined_episodes_from_file(external_episode_definition_csv_file, selected_folder);
                 list_of_calculated_events = Fuse_And_Identify_Segments.SET_boundary_times_for_all_images(
-                        manipulated_images, user_defined_episodes,
-                        HOUR_SEGMENTATION);
+                        manipulated_images, user_defined_episodes);
 
                 if (list_of_calculated_events != null)
                 {
