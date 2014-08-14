@@ -42,9 +42,13 @@ namespace SenseCamBrowser1
 
             SQLiteConnection con = new SQLiteConnection(global::SenseCamBrowser1.Properties.Settings.Default.DBConnectionString);
             SQLiteCommand selectCmd = new SQLiteCommand(Database_Versioning.text_for_stored_procedures.spLog_User_Interaction(Window1.OVERALL_userID,DateTime.Now,uixaml_element,optional_parameters), con);
-            con.Open();
-            selectCmd.ExecuteNonQuery();
-            con.Close();
+            try
+            {
+                con.Open();
+                selectCmd.ExecuteNonQuery();
+                con.Close();
+            }
+            catch (Exception excep) { }
         } //end method log_interaction_to_database()
 
 
