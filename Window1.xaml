@@ -1607,6 +1607,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
                     </Canvas>
                 </Viewbox>
             </Viewbox>
+            <ListBox x:Name="lstIndividual_Journeys" FontSize="16" Height="400" HorizontalAlignment="Left" Margin="24,285,0,0" Style="{StaticResource Display_Event_Activity_Annotation_List}" VerticalAlignment="Top" Width="181" PreviewMouseLeftButtonUp="lstIndividual_Journeys_PreviewMouseLeftButtonUp" />
+            
             <Button x:Name="btnUpload_New_Images" Width="Auto" Height="Auto" Content="Add Images" FontSize="18" Cursor="Arrow" d:LayoutOverrides="Width, Height" Click="btnUpload_New_Images_Click" Style="{DynamicResource ButtonStyle6}" Margin="102.8,0,44.147,103.258" VerticalAlignment="Bottom" >
                 <Button.BitmapEffect>
                     <DropShadowBitmapEffect ShadowDepth="2" Direction="315" Softness="0.25"/>
@@ -1617,7 +1619,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
                     <DropShadowBitmapEffect ShadowDepth="2" Direction="315" Softness="0.25"/>
                 </Button.BitmapEffect>
             </Button>
-            <ListBox x:Name="lstIndividual_Journeys" FontSize="16" Height="146" HorizontalAlignment="Left" Margin="24,285,0,0" Style="{StaticResource Display_Event_Activity_Annotation_List}" VerticalAlignment="Top" Width="181" PreviewMouseLeftButtonUp="lstIndividual_Journeys_PreviewMouseLeftButtonUp" />
+            
         </Grid>
         <Grid Margin="254.7,37.689,73.7,0" VerticalAlignment="Top" Height="39.532" Grid.Row="1" x:Name="Grid_Top_Info">
             <Grid.ColumnDefinitions>
