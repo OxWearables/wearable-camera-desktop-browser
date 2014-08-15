@@ -23,8 +23,7 @@ namespace SenseCamBrowser1
 {
     class Image_Loading_Handler
     {
-        
-        private int userID, eventID; //variables we need to store initially, so we know what event to get the image paths from in the database
+        private bool isKeyframes;  //true=events, false=images
         ///////////////////////////// THREAD CALLBACK PROPERTIES /////////////////////////////////////////////
         ///////////////////////////// THREAD CALLBACK PROPERTIES /////////////////////////////////////////////
         ///////////////////////////// THREAD CALLBACK PROPERTIES /////////////////////////////////////////////
@@ -48,13 +47,12 @@ namespace SenseCamBrowser1
         /// <param name="param_userID"></param>
         /// <param name="param_eventID"></param>
         /// <param name="param_images_loaded_callback"></param>
-        public Image_Loading_Handler(int param_userID,
-                int param_eventID,
+        public Image_Loading_Handler(
+                bool isKeyframes, //true=events, false=images
                 All_Event_Images_Loaded_Callback param_images_loaded_callback,
                 Progress_Callback param_some_images_loaded_callback)
         {
-            this.userID = param_userID;
-            this.eventID = param_eventID;
+            this.isKeyframes = isKeyframes; //true=events, false=images
             this.all_images_loaded_callback = param_images_loaded_callback;
             this.some_images_loaded_callback = param_some_images_loaded_callback;
         } //close constructor()...
@@ -72,7 +70,12 @@ namespace SenseCamBrowser1
             double progressRate = 0.25; //% progress to report back to UI
 
             //get info on images bitmaps to load
-            int overallCount = Image_Rep.ImageList.Count;
+            int overallCount;
+            if (isKeyframes) {
+                overallCount = Event_Rep.EventList.Count;
+            } else {
+                overallCount = Image_Rep.ImageList.Count;
+            }
             int progressCount = (int)(overallCount * progressRate);
             int counter = 0;
             
@@ -80,8 +83,10 @@ namespace SenseCamBrowser1
             for(int c=0; c<overallCount; c++)
             {
                 //check that the UI thread is still happy to accept bitmap updates
-                if (Image_Rep.keepLoadingImages) {
+                if (!isKeyframes && Image_Rep.keepLoadingImages) {
                     Image_Rep.ImageList[c].loadImage();
+                } else if (isKeyframes && Event_Rep.keepLoadingKeyframes) {
+                    Event_Rep.EventList[c].loadImage();
                 } else {
                     break;
                 }
@@ -96,7 +101,8 @@ namespace SenseCamBrowser1
             }
 
             //return final callback to UI (if it is still happy to accept updates)
-            if (Image_Rep.keepLoadingImages) {
+            if ( (!isKeyframes && Image_Rep.keepLoadingImages) ||
+                (isKeyframes && Event_Rep.keepLoadingKeyframes) ) {
                 all_images_loaded_callback();
             }
         }

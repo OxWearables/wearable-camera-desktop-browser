@@ -129,7 +129,7 @@ namespace SenseCamBrowser1
                 update_UI_based_on_newly_loaded_images();
                 
                 //and now let's start loading all the images for this event
-                startLoadingImageBitmaps();                
+                startLoadingImageBitmaps();              
             }
 
             /// <summary>
@@ -228,8 +228,7 @@ namespace SenseCamBrowser1
         private void startLoadingImageBitmaps()
         {
             image_loading_handler_obj = new Image_Loading_Handler(
-                    Window1.OVERALL_userID,
-                    current_event.eventID,
+                    false, //i.e. not event keyframes, but event images
                     allImagesLoadedCallback,
                     someImagesLoadedCallback);
             image_loading_thread = new Thread(new ThreadStart(image_loading_handler_obj.loadImageBitmaps));

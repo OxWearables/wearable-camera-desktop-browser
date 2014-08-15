@@ -25,6 +25,8 @@ namespace SenseCamBrowser1
 {
     public class Event_Rep
     {
+        public static List<Image_Rep> EventList;
+        public static bool keepLoadingKeyframes = false; //for background thread loading
         public static string DefaultImageCaption = "     Free text annotation";
         public static string DefaultKeyframeBorderColour = "#24000000";
         private static string DbString = 
@@ -48,7 +50,8 @@ namespace SenseCamBrowser1
             DateTime startTime,
             DateTime endTime,
             string keyframePath,
-            string comment)
+            string comment,
+            bool loadImage)
         {
             this.eventID = eventID;
             this.startTime = startTime;
@@ -56,8 +59,7 @@ namespace SenseCamBrowser1
             this.eventDuration = endTime - startTime;
             this.comment = comment;
             this.shortComment = GetStringStart(comment, 15);            
-            this.keyframePath = keyframePath;
-            this.keyframeSource = Image_Rep.GetImgBitmap(keyframePath, false);
+            this.keyframePath = keyframePath;            
             this.borderColour = DefaultKeyframeBorderColour;
            
             //format time string for UI
@@ -71,8 +73,18 @@ namespace SenseCamBrowser1
             }
             this.eventLength = Daily_Annotation_Summary.SecondsToString(
                 (int)eventDuration.TotalSeconds);
+
+            if (loadImage) {
+                this.keyframeSource = Image_Rep.GetImgBitmap(keyframePath, false);
+            }
         }
 
+
+        public void loadImage()
+        {
+            //attempts to load the image's bitmap from a given path
+            this.keyframeSource = Image_Rep.GetImgBitmap(keyframePath, true);
+        }
 
         public static string GetStringStart(string example, int maxLength)
         {
@@ -97,7 +109,10 @@ namespace SenseCamBrowser1
         }
 
 
-        public static List<Event_Rep> GetDayEvents(int userID, DateTime day)
+        public static List<Event_Rep> GetDayEvents(
+                int userID,
+                DateTime day,
+                bool loadImages)
         {
             //Variables to Event_Rep attributes.
             int eventID;
@@ -105,7 +120,7 @@ namespace SenseCamBrowser1
             string keyframePath, comment;
             List<Event_Rep> eventList = new List<Event_Rep>();      
 
-            //Connect to database and retrieve all events in day.
+            //Get event info from database for day
             string query = 
                 Database_Versioning.text_for_stored_procedures.spGet_All_Events_In_Day(
                 userID,
@@ -133,9 +148,16 @@ namespace SenseCamBrowser1
                     startTime,
                     endTime,
                     keyframePath,
-                    comment));
+                    comment,
+                    false));
             }
             con.Close();
+            //now load image bitmaps
+            if (loadImages) {
+                foreach (Event_Rep evnt in eventList) {
+                    evnt.loadImage();
+                }
+            }
             return eventList;
         }
 

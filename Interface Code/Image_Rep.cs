@@ -28,7 +28,7 @@ namespace SenseCamBrowser1
     public class Image_Rep
     {
         public static List<Image_Rep> ImageList;
-        public static bool keepLoadingImages = true; //for background thread loading
+        public static bool keepLoadingImages = false; //for background thread loading
         private static string BackupImage = "Image-Unavailable.gif";
         private static int ScaledImagePixelWidth = 
                 int.Parse(ConfigurationManager.AppSettings["scaledImagePixelWidth"].ToString());
@@ -139,7 +139,10 @@ namespace SenseCamBrowser1
         }
         
         
-        public static List<Image_Rep> GetEventImages(int userID, int eventID, bool loadImages)
+        public static List<Image_Rep> GetEventImages(
+                    int userID,
+                    int eventID,
+                    bool loadImages)
         {
             List<Image_Rep> imageList = new List<Image_Rep>();
 
@@ -167,14 +170,11 @@ namespace SenseCamBrowser1
             }
             con.Close();
             //now load image bitmaps
-            if (loadImages)
-            {
-                foreach (Image_Rep img in imageList)
-                {
+            if (loadImages) {
+                foreach (Image_Rep img in imageList) {
                     img.loadImage();
                 }
             }
-
             return imageList;
         }
         
