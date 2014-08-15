@@ -405,11 +405,12 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
             } //close if (!sensor_csv_found)...
             
             //if there are images here, we'll copy them all over to the local desktop directory
-            //todo test this code...
-            //todo I'm not happy that this code assumes autographer will always write .RES files (it will also write .JPG files too!)
             if (type_of_device == DeviceType.Autographer)
             {
                 foreach (FileInfo image_file in attempt_to_retrieve_files_from_directory(SenseCam_folder, "*.RES"))
+                    attempt_to_copy_image_file(SenseCam_folder, local_machine_directory, image_file, type_of_device);
+                //Autographer firmware may not be updated, so check for JPG files too
+                foreach (FileInfo image_file in attempt_to_retrieve_files_from_directory(SenseCam_folder, "*.JPG"))
                     attempt_to_copy_image_file(SenseCam_folder, local_machine_directory, image_file, type_of_device);
             } //close if (type_of_device == DeviceType.Autographer)
             else //i.e. SenseCam or ViconRevue
