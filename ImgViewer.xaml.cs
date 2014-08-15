@@ -290,6 +290,13 @@ namespace SenseCamBrowser1
         private delegate void updateUIAfterSomeImageLoadUpdate_Delegate();
         //delegate for the above method must be called to update the UI
 
+        private void updateUiWallImageBitmaps()
+        {
+            lst_display_images.ItemsSource = null;
+            lst_display_images.Items.Clear();
+            lst_display_images.ItemsSource = list_of_event_images;
+        }
+
         /// <summary>
         /// this method is invoked via a delegate to update the Image viewer UI based on when all of the events images have been loaded into memory...
         /// </summary>
@@ -431,13 +438,6 @@ namespace SenseCamBrowser1
             } //close if (list_of_event_images.Count > 0)..
         } //close method set_to_movie_mode()...
 
-
-        private void updateUiWallImageBitmaps()
-        {
-            lst_display_images.ItemsSource = null;
-            lst_display_images.Items.Clear();
-            lst_display_images.ItemsSource = list_of_event_images; 
-        }
 
         private void set_to_image_wall_mode()
         {
