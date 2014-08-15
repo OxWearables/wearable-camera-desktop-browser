@@ -98,6 +98,7 @@ namespace SenseCamBrowser1
         public static void writeAllAnnotationsToCsv(int userID, string csvFile)
         {
             //write a participant's annotations for a given day to csv output file
+            string header = "participant,startTime,endTime,source,annotation";
             TextWriter fWriter = new StreamWriter(csvFile);
             string query =
                     Database_Versioning.text_for_stored_procedures.spGetAnnotationSummary(
@@ -106,15 +107,36 @@ namespace SenseCamBrowser1
             SQLiteCommand selectCmd = new SQLiteCommand(query, con);
             con.Open();
             SQLiteDataReader dbAnnotates = selectCmd.ExecuteReader();
-            fWriter.WriteLine("participant,startTime,endTime,annotation");
+            fWriter.WriteLine(header);
+            DateTime previousEndTime = new DateTime();
+            int counter = 0;
             while (dbAnnotates.Read())
             {
                 string participant = dbAnnotates[0].ToString();
                 DateTime startTime = DateTime.Parse(dbAnnotates[1].ToString());
                 DateTime endTime = DateTime.Parse(dbAnnotates[2].ToString());
                 string annotation = dbAnnotates[3].ToString();
+
+                //highlight (potential) nonWear gaps between annotations
+                if (counter == 0) {
+                    previousEndTime = startTime;
+                }
+                TimeSpan gapToPreviousAnnotation = startTime - previousEndTime;
+                if (gapToPreviousAnnotation.TotalMinutes >
+                        Upload_Images_and_Segment_into_Events.Upload_Manipulated_Sensor_Data.MAXIMUM_NUMBER_MINUTES_BETWEEN_IMAGES_ALLOWED_TO_STAY_IN_THE_SAME_EVENT
+                    )
+                {
+                    //write nonwear line
+                    fWriter.WriteLine(participant + ","
+                        + previousEndTime.AddSeconds(1) + ","
+                        + startTime.AddSeconds(-1) + ",nonWear, <unknown>");
+                }
+                previousEndTime = endTime;
+                counter++;
+
+                //write current event annotation to file
                 fWriter.WriteLine(participant + "," + startTime + "," + endTime
-                        + "," + annotation);
+                            + ",images," + annotation.Replace(",","-"));
             }
             con.Close();
             fWriter.Close();
