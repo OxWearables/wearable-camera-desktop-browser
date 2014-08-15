@@ -259,7 +259,7 @@ namespace SenseCamBrowser1
             //update UI to say all images are loaded
             //invoke delegate which calls the method to allow the user exit the application again...
             this.Dispatcher.BeginInvoke(
-                    new update_UI_based_on_newly_loaded_images_Delegate(
+                    new updateUIAfterAllImageLoadUpdate_Delegate(
                             updateUIAfterAllImagesLoaded));
         }
 
@@ -268,7 +268,7 @@ namespace SenseCamBrowser1
             //update UI to show some images are loaded
             //invoke delegate which calls the method to allow the user exit the application again...
             this.Dispatcher.BeginInvoke(
-                    new update_UI_based_on_newly_loaded_images_Delegate(
+                    new updateUIAfterSomeImageLoadUpdate_Delegate(
                             updateUIAfterSomeImagesLoaded));              
         }
 
@@ -280,11 +280,15 @@ namespace SenseCamBrowser1
             //wall by calling the method below?
             update_UI_based_on_newly_loaded_images();
         }
+        private delegate void updateUIAfterAllImageLoadUpdate_Delegate();
+        //delegate for the above method must be called to update the UI
 
         public void updateUIAfterSomeImagesLoaded()
         {
             updateUiWallImageBitmaps();
         }
+        private delegate void updateUIAfterSomeImageLoadUpdate_Delegate();
+        //delegate for the above method must be called to update the UI
 
         /// <summary>
         /// this method is invoked via a delegate to update the Image viewer UI based on when all of the events images have been loaded into memory...
@@ -309,8 +313,7 @@ namespace SenseCamBrowser1
             //set_to_movie_mode();
             set_to_image_wall_mode();
             //start_playback();             
-        } //close method update_UI_based_on_newly_loaded_images()...
-        private delegate void update_UI_based_on_newly_loaded_images_Delegate(); //and a delegate for the above method must be called if we want to update the UI, hence we declare this line
+        } //close method update_UI_based_on_newly_loaded_images()...        
 
         #endregion this region is all the code needed to integrate the image loading thread into the Image Viewer UI
 
