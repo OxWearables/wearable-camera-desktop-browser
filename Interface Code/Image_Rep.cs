@@ -28,7 +28,7 @@ namespace SenseCamBrowser1
     public class Image_Rep
     {
         public static List<Image_Rep> ImageList;
-        public static bool keepLoadingImages = false; //for background thread loading
+        public static int imageLoadingId = int.MinValue; //for background thread loading
         private static string BackupImage = "Image-Unavailable.gif";
         private static int ScaledImagePixelWidth = 
                 int.Parse(ConfigurationManager.AppSettings["scaledImagePixelWidth"].ToString());

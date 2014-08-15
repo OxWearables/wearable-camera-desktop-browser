@@ -24,6 +24,7 @@ namespace SenseCamBrowser1
     class Image_Loading_Handler
     {
         private bool isKeyframes;  //true=events, false=images
+        private int loadingId;
         ///////////////////////////// THREAD CALLBACK PROPERTIES /////////////////////////////////////////////
         ///////////////////////////// THREAD CALLBACK PROPERTIES /////////////////////////////////////////////
         ///////////////////////////// THREAD CALLBACK PROPERTIES /////////////////////////////////////////////
@@ -49,10 +50,12 @@ namespace SenseCamBrowser1
         /// <param name="param_images_loaded_callback"></param>
         public Image_Loading_Handler(
                 bool isKeyframes, //true=events, false=images
+                int loadingId,
                 All_Event_Images_Loaded_Callback param_images_loaded_callback,
                 Progress_Callback param_some_images_loaded_callback)
         {
             this.isKeyframes = isKeyframes; //true=events, false=images
+            this.loadingId = loadingId;
             this.all_images_loaded_callback = param_images_loaded_callback;
             this.some_images_loaded_callback = param_some_images_loaded_callback;
         } //close constructor()...
@@ -83,9 +86,9 @@ namespace SenseCamBrowser1
             for(int c=0; c<overallCount; c++)
             {
                 //check that the UI thread is still happy to accept bitmap updates
-                if (!isKeyframes && Image_Rep.keepLoadingImages) {
+                if (!isKeyframes && loadingId == Image_Rep.imageLoadingId) {
                     Image_Rep.ImageList[c].loadImage();
-                } else if (isKeyframes && Event_Rep.keepLoadingKeyframes) {
+                } else if (isKeyframes && loadingId == Event_Rep.eventLoadingId) {
                     Event_Rep.EventList[c].loadImage();
                 } else {
                     break;
@@ -101,8 +104,8 @@ namespace SenseCamBrowser1
             }
 
             //return final callback to UI (if it is still happy to accept updates)
-            if ( (!isKeyframes && Image_Rep.keepLoadingImages) ||
-                (isKeyframes && Event_Rep.keepLoadingKeyframes) ) {
+            if ((!isKeyframes && loadingId == Image_Rep.imageLoadingId) ||
+                (isKeyframes && loadingId == Event_Rep.eventLoadingId)) {
                 all_images_loaded_callback();
             }
         }

@@ -217,7 +217,7 @@ namespace SenseCamBrowser1
 
 
 
-        #region this region is all the code needed to integrate the image loading thread into the Image Viewer UI
+        #region code to integrate image loading thread into the Image Viewer UI
         //thread and handler for image bitmap loading
         private Thread image_loading_thread;
         private Image_Loading_Handler image_loading_handler_obj;
@@ -229,13 +229,15 @@ namespace SenseCamBrowser1
         {
             image_loading_handler_obj = new Image_Loading_Handler(
                     false, //i.e. not event keyframes, but event images
+                    current_event.eventID,
                     allImagesLoadedCallback,
                     someImagesLoadedCallback);
-            image_loading_thread = new Thread(new ThreadStart(image_loading_handler_obj.loadImageBitmaps));
+            image_loading_thread = new Thread(new ThreadStart(
+                image_loading_handler_obj.loadImageBitmaps));
             image_loading_thread.IsBackground = true;
             image_loading_thread.Priority = ThreadPriority.BelowNormal;
             image_loading_thread.Start();
-            Image_Rep.keepLoadingImages = true;
+            Image_Rep.imageLoadingId = current_event.eventID;
             
             //now let's disable some of the controls while the images are loading...
             txtPlease_Wait.Visibility = Visibility.Visible;
@@ -249,15 +251,15 @@ namespace SenseCamBrowser1
             PlayBtn.Opacity = 0.3;
             NextBtn.Opacity = 0.3;
             PreviousBtn.Opacity = 0.3;
-            btnDelete.Opacity = 0.3;
-            
-        } //close method Open_Heart_Rate_Sensor_Thread()...
+            btnDelete.Opacity = 0.3;            
+        }
 
 
         public void allImagesLoadedCallback()
         {
             //update UI to say all images are loaded
-            //invoke delegate which calls the method to allow the user exit the application again...
+            //invoke delegate which calls the method to allow the user exit the
+            //application again...
             this.Dispatcher.BeginInvoke(
                     new updateUIAfterAllImageLoadUpdate_Delegate(
                             updateUIAfterAllImagesLoaded));
@@ -266,7 +268,6 @@ namespace SenseCamBrowser1
         public void someImagesLoadedCallback()
         {
             //update UI to show some images are loaded
-            //invoke delegate which calls the method to allow the user exit the application again...
             this.Dispatcher.BeginInvoke(
                     new updateUIAfterSomeImageLoadUpdate_Delegate(
                             updateUIAfterSomeImagesLoaded));              
@@ -287,8 +288,7 @@ namespace SenseCamBrowser1
         {
             updateUiWallImageBitmaps();
         }
-        private delegate void updateUIAfterSomeImageLoadUpdate_Delegate();
-        //delegate for the above method must be called to update the UI
+        private delegate void updateUIAfterSomeImageLoadUpdate_Delegate();        
 
         private void updateUiWallImageBitmaps()
         {
@@ -298,7 +298,8 @@ namespace SenseCamBrowser1
         }
 
         /// <summary>
-        /// this method is invoked via a delegate to update the Image viewer UI based on when all of the events images have been loaded into memory...
+        /// this method is invoked via a delegate to update the Image viewer UI
+        /// based on when all of the events images have been loaded into memory...
         /// </summary>
         public void update_UI_based_on_newly_loaded_images()
         {
@@ -317,12 +318,10 @@ namespace SenseCamBrowser1
             array_position_of_current_image = 0;
             update_display_image();
 
-            //set_to_movie_mode();
             set_to_image_wall_mode();
-            //start_playback();             
-        } //close method update_UI_based_on_newly_loaded_images()...        
+        }
 
-        #endregion this region is all the code needed to integrate the image loading thread into the Image Viewer UI
+        #endregion code to integrate image loading thread into the Image Viewer UI
 
 
 
@@ -480,8 +479,9 @@ namespace SenseCamBrowser1
         /// <param name="e"></param>
         private void Close1_Click(object sender, RoutedEventArgs e)
         {
-            stop_playback(); //let's disable the timer, so there's no "leaked threads" running
-            Image_Rep.keepLoadingImages = false;
+            stop_playback(); //let's disable the timer
+            Image_Rep.imageLoadingId = int.MinValue; //stop "leaked threads" running
+            image_loading_thread.Abort();
             array_position_of_current_image = 0; //reset display image position
 
             //let's log this interaction

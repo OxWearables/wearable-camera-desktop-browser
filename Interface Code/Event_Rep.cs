@@ -25,8 +25,8 @@ namespace SenseCamBrowser1
 {
     public class Event_Rep
     {
-        public static List<Image_Rep> EventList;
-        public static bool keepLoadingKeyframes = false; //for background thread loading
+        public static List<Event_Rep> EventList;
+        public static int eventLoadingId = int.MinValue; //for background thread loading
         public static string DefaultImageCaption = "     Free text annotation";
         public static string DefaultKeyframeBorderColour = "#24000000";
         private static string DbString = 
