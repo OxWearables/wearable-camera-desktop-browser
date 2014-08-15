@@ -28,6 +28,7 @@ namespace SenseCamBrowser1
     public class Image_Rep
     {
         public static List<Image_Rep> ImageList;
+        public static bool keepLoadingImages = true; //for background thread loading
         private static string BackupImage = "Image-Unavailable.gif";
         private static int ScaledImagePixelWidth = 
                 int.Parse(ConfigurationManager.AppSettings["scaledImagePixelWidth"].ToString());
@@ -41,13 +42,18 @@ namespace SenseCamBrowser1
         public ImageSource scaledImgSource { get; set; }
         public int position { get; set; }
 
-        public Image_Rep(DateTime imgTime, string path, int position)
+        public Image_Rep(DateTime imgTime,
+                string path,
+                int position,
+                bool loadImage)
         {
             this.imgTime = imgTime;
             this.imgPath = path;
-            this.position = position; //array/sequence position
-            this.scaledImgSource = Image_Rep.GetImgBitmap(path, true);
+            this.position = position; //array/sequence position            
             this.shortImgTime = imgTime.ToLongTimeString();
+            if (loadImage) {
+                this.loadImage();
+            }
         }
 
 
@@ -56,6 +62,13 @@ namespace SenseCamBrowser1
             this.imgTime = imgTime;
             this.position = position;
             this.scaledImgSource = imgSource;
+        }
+
+
+        public void loadImage()
+        {
+            //attempts to load the image's bitmap from a given path
+            this.scaledImgSource = Image_Rep.GetImgBitmap(imgPath, true);
         }
 
 
@@ -126,7 +139,7 @@ namespace SenseCamBrowser1
         }
         
         
-        public static List<Image_Rep> GetEventImages(int userID, int eventID)
+        public static List<Image_Rep> GetEventImages(int userID, int eventID, bool loadImages)
         {
             List<Image_Rep> imageList = new List<Image_Rep>();
 
@@ -148,10 +161,20 @@ namespace SenseCamBrowser1
             {
                 imgTime = DateTime.Parse(read_images[0].ToString());
                 imgPath = read_images[1].ToString();
-                imageList.Add(new Image_Rep(imgTime, imgPath, counter));
+                //first get image paths from database, so don't load bitmaps yet
+                imageList.Add(new Image_Rep(imgTime, imgPath, counter, false));
                 counter++;
             }
             con.Close();
+            //now load image bitmaps
+            if (loadImages)
+            {
+                foreach (Image_Rep img in imageList)
+                {
+                    img.loadImage();
+                }
+            }
+
             return imageList;
         }
         
@@ -211,7 +234,7 @@ namespace SenseCamBrowser1
             //This method uses the BubbleSort algorithm to sort images by ID
             int i;
             int j;
-            Image_Rep temp = new Image_Rep(DateTime.Now,"",-99);
+            Image_Rep temp = new Image_Rep(DateTime.Now,"",-99, false);
 
             for (i = (imgList.Count - 1); i >= 0; i--)
             {

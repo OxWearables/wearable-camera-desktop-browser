@@ -31,8 +31,10 @@ namespace SenseCamBrowser1
         //so the callbacks are important to issue the output of images loaded into memory...
         // Delegate that defines the signature for the callback methods.
         public delegate void All_Event_Images_Loaded_Callback();
+        public delegate void Progress_Callback();
         // Delegate used to execute the callback method when the task is complete.
         private All_Event_Images_Loaded_Callback all_images_loaded_callback;
+        private Progress_Callback some_images_loaded_callback;
         ///////////////////////////// THREAD CALLBACK PROPERTIES /////////////////////////////////////////////
         ///////////////////////////// THREAD CALLBACK PROPERTIES /////////////////////////////////////////////
         ///////////////////////////// THREAD CALLBACK PROPERTIES /////////////////////////////////////////////
@@ -46,11 +48,15 @@ namespace SenseCamBrowser1
         /// <param name="param_userID"></param>
         /// <param name="param_eventID"></param>
         /// <param name="param_images_loaded_callback"></param>
-        public Image_Loading_Handler(int param_userID, int param_eventID, All_Event_Images_Loaded_Callback param_images_loaded_callback)
+        public Image_Loading_Handler(int param_userID,
+                int param_eventID,
+                All_Event_Images_Loaded_Callback param_images_loaded_callback,
+                Progress_Callback param_some_images_loaded_callback)
         {
             this.userID = param_userID;
             this.eventID = param_eventID;
             this.all_images_loaded_callback = param_images_loaded_callback;
+            this.some_images_loaded_callback = param_some_images_loaded_callback;
         } //close constructor()...
 
 
@@ -59,14 +65,41 @@ namespace SenseCamBrowser1
         /// <summary>
         /// this method is responsible for loading all the event's images into memory and then sending the list back via a callback...
         /// </summary>
-        public void load_all_event_images_into_memory()
+        public void loadImageBitmaps()
         {
+            //firstly wait so the the UI thread can display placeholder info
             System.Threading.Thread.Sleep(IMG_LOADING_WAIT_MS);
-            Image_Rep.ImageList = Image_Rep.GetEventImages(userID, eventID); ; //get all the images in the event
+            double progressRate = 0.25; //% progress to report back to UI
 
-            //and we return our callback (to the UI)
-            all_images_loaded_callback();
-        } //close method load_all_event_images_into_memory()...
+            //get info on images bitmaps to load
+            int overallCount = Image_Rep.ImageList.Count;
+            int progressCount = (int)(overallCount * progressRate);
+            int counter = 0;
+            
+            //then go through each image, and attempt to load its bitmap
+            for(int c=0; c<overallCount; c++)
+            {
+                //check that the UI thread is still happy to accept bitmap updates
+                if (Image_Rep.keepLoadingImages) {
+                    Image_Rep.ImageList[c].loadImage();
+                } else {
+                    break;
+                }
+
+                //send periodic progress updates
+                counter++;
+                if (counter % (progressCount+1) == 0) { //+1 to avoid /0 error
+                    some_images_loaded_callback();
+                    //allow UI chance to process progress update
+                    System.Threading.Thread.Sleep(IMG_LOADING_WAIT_MS);
+                }
+            }
+
+            //return final callback to UI (if it is still happy to accept updates)
+            if (Image_Rep.keepLoadingImages) {
+                all_images_loaded_callback();
+            }
+        }
 
         
 

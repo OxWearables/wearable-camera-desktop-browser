@@ -114,24 +114,23 @@ namespace SenseCamBrowser1
 
                 //update the UI to show the list of annotations associated with this event...
                 update_UI_with_list_of_annotations(param_userID, param_event.eventID);
-                
-                
+                                
                 //thereafter we'll update the caption text
                 if (current_event.comment.Equals(""))
                     txtCaption.Text = Event_Rep.DefaultImageCaption;
                 else txtCaption.Text = current_event.comment;
                 original_uploaded_comment = txtCaption.Text; //let's store this locally too, and it'll let us know if we should update the database when the user closes the event viewer (i.e. we check to see if they changed the caption)
                 
-
-                //it usually take a while to load all the images in an event, so we'll initially just show the keyframe image and a loading message...
-                list_of_event_images = new List<Image_Rep>() { new Image_Rep(current_event.startTime, current_event.keyframePath, 0) }; //the keyframe image...
+                //it usually take a while to load all the images in an event
+                //so initially load image info (but not bitmap) + loading message...
+                Image_Rep.ImageList = Image_Rep.GetEventImages(current_userID,
+                    current_event.eventID, false); //false = don't load bitmpas
+                list_of_event_images = Image_Rep.ImageList;
                 update_UI_based_on_newly_loaded_images();
                 
-
                 //and now let's start loading all the images for this event
-                Start_Loading_Event_Images();
-                                
-            } //close method update_event_on_display()...
+                startLoadingImageBitmaps();                
+            }
 
             /// <summary>
             /// this method updates the UI with the list of annotations associated with this event in the main DB...
@@ -224,14 +223,20 @@ namespace SenseCamBrowser1
         private Image_Loading_Handler image_loading_handler_obj; //this is our class which is responsible for retrieving RSS items...
 
         /// <summary>
-        /// This method is responsible for starting the thread to read the RSS feed values...
+        /// This method is responsible for starting the thread to read image bitmaps
         /// </summary>
-        private void Start_Loading_Event_Images()
+        private void startLoadingImageBitmaps()
         {
-            image_loading_handler_obj = new Image_Loading_Handler(Window1.OVERALL_userID, current_event.eventID, Event_Images_Loaded_Callback);
-            image_loading_thread = new Thread(new ThreadStart(image_loading_handler_obj.load_all_event_images_into_memory));
+            image_loading_handler_obj = new Image_Loading_Handler(
+                    Window1.OVERALL_userID,
+                    current_event.eventID,
+                    allImagesLoadedCallback,
+                    someImagesLoadedCallback);
+            image_loading_thread = new Thread(new ThreadStart(image_loading_handler_obj.loadImageBitmaps));
             image_loading_thread.IsBackground = true;
+            image_loading_thread.Priority = ThreadPriority.BelowNormal;
             image_loading_thread.Start();
+            Image_Rep.keepLoadingImages = true;
             
             //now let's disable some of the controls while the images are loading...
             txtPlease_Wait.Visibility = Visibility.Visible;
@@ -240,8 +245,7 @@ namespace SenseCamBrowser1
             PreviousBtn.IsEnabled = false;
             btnDelete.IsEnabled = false;
             txtCaption.Visibility = Visibility.Hidden;
-            
-            
+                        
             //also let's visual feedback that these controls are disabled
             PlayBtn.Opacity = 0.3;
             NextBtn.Opacity = 0.3;
@@ -251,17 +255,35 @@ namespace SenseCamBrowser1
         } //close method Open_Heart_Rate_Sensor_Thread()...
 
 
-        public void Event_Images_Loaded_Callback()
+        public void allImagesLoadedCallback()
         {
-            
-            //firstly we update the list of images belonging to this class (it's ok to do this, since we don't need to interfere with the UI thread)
-            list_of_event_images = Image_Rep.ImageList;
-            
-            //next we'll want to update the UI, so we invoke a delegate
-            this.Dispatcher.BeginInvoke(new update_UI_based_on_newly_loaded_images_Delegate(update_UI_based_on_newly_loaded_images)); //invoke the delegate which calls the method to allow the user exit the application again...
-                        
-        } //close method Event_Images_Loaded_Callback(()...
+            //update UI to say all images are loaded
+            //invoke delegate which calls the method to allow the user exit the application again...
+            this.Dispatcher.BeginInvoke(
+                    new update_UI_based_on_newly_loaded_images_Delegate(
+                            updateUIAfterAllImagesLoaded));
+        }
 
+        public void someImagesLoadedCallback()
+        {
+            //update UI to show some images are loaded
+            //invoke delegate which calls the method to allow the user exit the application again...
+            this.Dispatcher.BeginInvoke(
+                    new update_UI_based_on_newly_loaded_images_Delegate(
+                            updateUIAfterSomeImagesLoaded));              
+        }
+
+
+        public void updateUIAfterAllImagesLoaded()
+        {
+            //then update UI as normal based on image loading feedback...
+            update_UI_based_on_newly_loaded_images();
+        }
+
+        public void updateUIAfterSomeImagesLoaded()
+        {
+            updateUiWallImageBitmaps();
+        }
 
         /// <summary>
         /// this method is invoked via a delegate to update the Image viewer UI based on when all of the events images have been loaded into memory...
@@ -269,40 +291,23 @@ namespace SenseCamBrowser1
         public void update_UI_based_on_newly_loaded_images()
         {
             //now let's re-enable some of the controls after the images have loaded...
-            txtPlease_Wait.Visibility = Visibility.Hidden;            
-            //PlayBtn.IsEnabled = true;
-            //NextBtn.IsEnabled = true;
-            //PreviousBtn.IsEnabled = true;
+            txtPlease_Wait.Visibility = Visibility.Hidden;
             btnDelete.IsEnabled = true;
             txtCaption.Visibility = Visibility.Visible;
-            
+
             //also let's give visual feedback that these controls are enabled
             PlayBtn.Opacity = 1;
             NextBtn.Opacity = 1;
             PreviousBtn.Opacity = 1;
             btnDelete.Opacity = 1;
-
-            
-            //let's update the slider, which gives feedback on how far through the movie person is...
-            //EventPlaySlider.Minimum = 0;
-            //EventPlaySlider.Maximum = list_of_event_images.Count - 1;
-            //EventPlaySlider.LargeChange = (list_of_event_images.Count - 1) / 10;
-            //EventPlaySlider.Visibility = Visibility.Visible;
-
-            
+                                    
             //and now let's show the first image in the event
             array_position_of_current_image = 0;
             update_display_image();
 
-            //here we toggle the playback timer...
-            //start_playback();
-            //if (update_image_timer.IsEnabled)
-              //  stop_playback();
-            //else start_playback();
-
             //set_to_movie_mode();
             set_to_image_wall_mode();
-            //start_playback();
+            //start_playback();             
         } //close method update_UI_based_on_newly_loaded_images()...
         private delegate void update_UI_based_on_newly_loaded_images_Delegate(); //and a delegate for the above method must be called if we want to update the UI, hence we declare this line
 
@@ -382,7 +387,6 @@ namespace SenseCamBrowser1
         {
             if (list_of_event_images.Count > 0)
             {
-
                 if (lst_display_images.SelectedIndex != -1)
                     array_position_of_current_image = lst_display_images.SelectedIndex;
                 else array_position_of_current_image = 0;
@@ -424,6 +428,14 @@ namespace SenseCamBrowser1
         } //close method set_to_movie_mode()...
 
 
+        private void updateUiWallImageBitmaps()
+        {
+            lst_display_images.ItemsSource = null;
+            lst_display_images.Items.Clear();
+            lst_display_images.ItemsSource = list_of_event_images; 
+            //lst_display_images.Items.Add(list_of_event_images[array_position_of_current_image]);
+        }
+
         private void set_to_image_wall_mode()
         {
             lst_display_images.Visibility = Visibility.Visible;
@@ -452,9 +464,7 @@ namespace SenseCamBrowser1
             plus_icon.Visibility = Visibility.Collapsed;
             lblSpeed.Visibility = Visibility.Collapsed;
 
-            lst_display_images.ItemsSource = null;
-            lst_display_images.Items.Clear();
-            lst_display_images.ItemsSource = list_of_event_images;            
+            updateUiWallImageBitmaps();
             lst_display_images.SelectedIndex = array_position_of_current_image;            
             //update_display_image();
         } //close set_to_image_wall_mode()...
@@ -468,6 +478,8 @@ namespace SenseCamBrowser1
         private void Close1_Click(object sender, RoutedEventArgs e)
         {
             stop_playback(); //let's disable the timer, so there's no "leaked threads" running
+            Image_Rep.keepLoadingImages = false;
+            array_position_of_current_image = 0; //reset display image position
 
             //let's log this interaction
             play_sound();
