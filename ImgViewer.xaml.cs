@@ -218,9 +218,9 @@ namespace SenseCamBrowser1
 
 
         #region this region is all the code needed to integrate the image loading thread into the Image Viewer UI
-
-        private Thread image_loading_thread; //this thread is used to read the rss feeds...
-        private Image_Loading_Handler image_loading_handler_obj; //this is our class which is responsible for retrieving RSS items...
+        //thread and handler for image bitmap loading
+        private Thread image_loading_thread;
+        private Image_Loading_Handler image_loading_handler_obj;
 
         /// <summary>
         /// This method is responsible for starting the thread to read image bitmaps
