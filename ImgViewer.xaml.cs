@@ -277,6 +277,8 @@ namespace SenseCamBrowser1
         public void updateUIAfterAllImagesLoaded()
         {
             //then update UI as normal based on image loading feedback...
+            //todo if user is in movie view, should I force going back to image
+            //wall by calling the method below?
             update_UI_based_on_newly_loaded_images();
         }
 
@@ -433,7 +435,6 @@ namespace SenseCamBrowser1
             lst_display_images.ItemsSource = null;
             lst_display_images.Items.Clear();
             lst_display_images.ItemsSource = list_of_event_images; 
-            //lst_display_images.Items.Add(list_of_event_images[array_position_of_current_image]);
         }
 
         private void set_to_image_wall_mode()
