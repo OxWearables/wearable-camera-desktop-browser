@@ -50,6 +50,7 @@ using System.Management;
 using System.Configuration;
 using System.IO;
 using Microsoft.Win32;
+using System.Threading;
 
 namespace SenseCamBrowser1
 {
@@ -139,6 +140,9 @@ how to find where my SenseCam images are stored?
 
             private void show_new_day_on_UI(DateTime day_to_show)
             {
+                Event_Rep.eventLoadingId = int.MinValue; //stop "leaked threads" running
+                //image_loading_thread.Abort();                
+
                 //firstly update the interface to give info on how many images in the day, the start time, and end time too...
                 update_interface_with_information_on_day(day_to_show);
 
@@ -152,19 +156,25 @@ how to find where my SenseCam images are stored?
             private void update_display_page_events(DateTime day_to_display)
             {
                 //an array to store the total list of events to be displayed...
-                List<Event_Rep> all_events_to_display_in_time_period = Event_Rep.GetDayEvents(Window1.OVERALL_userID, day_to_display);
+                Event_Rep.EventList = 
+                        Event_Rep.GetDayEvents(
+                            Window1.OVERALL_userID, day_to_display, false);
                 
-                //and let's update the UI ... 
-                
-                // ... with information on how many events there are in this time period...
-                txtEventNumber.Text = all_events_to_display_in_time_period.Count + " Events";
+                // add info to UI on how many events there are in this time period...
+                txtEventNumber.Text = Event_Rep.EventList.Count + " Events";
 
-                // ... and obviously display the first page of events
-                LstDisplayEvents.ItemsSource = all_events_to_display_in_time_period;
+                // make UI display the first page of events
+                LstDisplayEvents.ItemsSource = Event_Rep.EventList;
                 if (LstDisplayEvents.Items.Count == 0)
                     No_Images.Visibility = Visibility.Visible;
-                else No_Images.Visibility = Visibility.Hidden;
+                else
+                {                    
+                    No_Images.Visibility = Visibility.Hidden;
+                    startLoadingImageBitmaps();
+                }
 
+                //in the background, start loading all the images for this event
+                //startLoadingImageBitmaps();
             } //close method update_display_page_events()...
 
 
@@ -207,8 +217,108 @@ how to find where my SenseCam images are stored?
                 lstIndividual_Journeys.ItemsSource = Interface_Code.Event_Activity_Annotation.getAnnotatedEventsDay(Window1.OVERALL_userID, day_to_display);
             } //end method display_days_events_on_interface()
 
-
+        
         #endregion displaying a day of information on the UI
+
+
+
+        #region code to integrate image loading thread into the Image Viewer UI
+            //thread and handler for image bitmap loading
+            private Thread image_loading_thread;
+            private Image_Loading_Handler image_loading_handler_obj;
+
+            /// <summary>
+            /// This method is responsible for starting the thread to read image bitmaps
+            /// </summary>
+            private void startLoadingImageBitmaps()
+            {
+                image_loading_handler_obj = new Image_Loading_Handler(
+                        true, //i.e. event keyframes
+                        current_day_on_display.DayOfYear,
+                        allImagesLoadedCallback,
+                        someImagesLoadedCallback);
+                image_loading_thread = new Thread(new ThreadStart(
+                    image_loading_handler_obj.loadImageBitmaps));
+                image_loading_thread.IsBackground = true;
+                image_loading_thread.Priority = ThreadPriority.BelowNormal;
+                image_loading_thread.Start();
+                Event_Rep.eventLoadingId = current_day_on_display.DayOfYear;
+            }
+
+
+            public void allImagesLoadedCallback()
+            {
+                Event_Rep.eventLoadingId = int.MinValue;
+                
+                //update UI to say all images are loaded
+                //invoke delegate which calls the method to allow the user exit the
+                //application again...
+                this.Dispatcher.BeginInvoke(
+                        new updateUIAfterAllImageLoadUpdate_Delegate(
+                                updateUIAfterAllImagesLoaded));
+            }
+
+            public void someImagesLoadedCallback()
+            {
+                //update UI to show some images are loaded
+                this.Dispatcher.BeginInvoke(
+                        new updateUIAfterSomeImageLoadUpdate_Delegate(
+                                updateUIAfterSomeImagesLoaded));
+            }
+
+
+            public void updateUIAfterAllImagesLoaded()
+            {
+                //then update UI as normal based on image loading feedback...
+                //todo if user is in movie view, should I force going back to image
+                //wall by calling the method below?
+                updateUiWallImageBitmaps();
+                update_UI_based_on_newly_loaded_images();
+            }
+            private delegate void updateUIAfterAllImageLoadUpdate_Delegate();
+            //delegate for the above method must be called to update the UI
+
+            public void updateUIAfterSomeImagesLoaded()
+            {
+                updateUiWallImageBitmaps();
+            }
+            private delegate void updateUIAfterSomeImageLoadUpdate_Delegate();
+
+            private void updateUiWallImageBitmaps()
+            {
+                LstDisplayEvents.ItemsSource = null;
+                LstDisplayEvents.Items.Clear();
+                LstDisplayEvents.ItemsSource = Event_Rep.EventList;
+            }
+
+            /// <summary>
+            /// this method is invoked via a delegate to update the Image viewer UI
+            /// based on when all of the events images have been loaded into memory...
+            /// </summary>
+            public void update_UI_based_on_newly_loaded_images()
+            {
+                /*
+                //now let's re-enable some of the controls after the images have loaded...
+                txtPlease_Wait.Visibility = Visibility.Hidden;
+                btnDelete.IsEnabled = true;
+                txtCaption.Visibility = Visibility.Visible;
+
+                //also let's give visual feedback that these controls are enabled
+                PlayBtn.Opacity = 1;
+                NextBtn.Opacity = 1;
+                PreviousBtn.Opacity = 1;
+                btnDelete.Opacity = 1;
+
+                //and now let's show the first image in the event
+                array_position_of_current_image = 0;
+                update_display_image();
+
+                set_to_image_wall_mode();
+                 */ 
+            }
+
+        #endregion code to integrate image loading thread into the Image Viewer UI
+
 
 
 
@@ -394,6 +504,10 @@ how to find where my SenseCam images are stored?
             /// <param name="e"></param>
             private void btnClose_App_Click(object sender, RoutedEventArgs e)
             {
+                //incase any threads have been left running
+                Event_Rep.eventLoadingId = int.MinValue;
+                image_loading_thread.Abort();
+
                 //let's log this interaction
                 Record_User_Interactions.log_interaction_to_database("Window1_appclose", current_day_on_display.ToString());
 
