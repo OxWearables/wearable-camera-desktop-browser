@@ -7,11 +7,14 @@ using System.Data;
 using System.Data.SQLite;
 using System.Data.Common;
 using System.IO;
+using System.Configuration;
 
 namespace SenseCamBrowser1
 {
     class Daily_Annotation_Summary
     {
+        public static int EXPORT_NONWEAR_PERIODS = int.Parse(
+                ConfigurationManager.AppSettings["exportNonWearPeriods"].ToString());
 
         public string annType { get; set; }
         public string dayDurationStr { get; set; }
@@ -122,7 +125,8 @@ namespace SenseCamBrowser1
                     previousEndTime = startTime;
                 }
                 TimeSpan gapToPreviousAnnotation = startTime - previousEndTime;
-                if (gapToPreviousAnnotation.TotalMinutes >
+                if (EXPORT_NONWEAR_PERIODS==1 &&
+                    gapToPreviousAnnotation.TotalMinutes >
                         Upload_Images_and_Segment_into_Events.Upload_Manipulated_Sensor_Data.MAXIMUM_NUMBER_MINUTES_BETWEEN_IMAGES_ALLOWED_TO_STAY_IN_THE_SAME_EVENT
                     )
                 {
