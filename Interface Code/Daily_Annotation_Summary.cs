@@ -101,7 +101,7 @@ namespace SenseCamBrowser1
         public static void writeAllAnnotationsToCsv(int userID, string csvFile)
         {
             //write a participant's annotations for a given day to csv output file
-            string header = "participant,startTime,endTime,source,annotation";
+            string header = "participant,startTime,endTime,source,annotations(comma-separated)";
             TextWriter fWriter = new StreamWriter(csvFile);
             string query =
                     Database_Versioning.text_for_stored_procedures.spGetAnnotationSummary(
