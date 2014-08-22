@@ -504,7 +504,7 @@ namespace SenseCamBrowser1.Database_Versioning
             endString += "\n" + "  INNER JOIN All_Events AS evnt";
             endString += "\n" + "      ON coding.[user_id] = evnt.[user_id] AND coding.event_id = evnt.event_id";
             endString += "\n" + "WHERE evnt.[user_id]=" + userId;
-            endString += "\n" + "ORDER BY u.[user_id], evnt.start_time";            
+            endString += "\n" + "ORDER BY u.[user_id], evnt.start_time, coding.annotation_name";            
             return endString;
         }
 

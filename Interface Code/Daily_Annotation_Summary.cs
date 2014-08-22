@@ -110,7 +110,7 @@ namespace SenseCamBrowser1
             SQLiteCommand selectCmd = new SQLiteCommand(query, con);
             con.Open();
             SQLiteDataReader dbAnnotates = selectCmd.ExecuteReader();
-            fWriter.WriteLine(header);
+            fWriter.Write(header);
             DateTime previousEndTime = new DateTime();
             int counter = 0;
             while (dbAnnotates.Read())
@@ -131,16 +131,22 @@ namespace SenseCamBrowser1
                     )
                 {
                     //write nonwear line
-                    fWriter.WriteLine(participant + ","
+                    fWriter.Write("\n" + participant + ","
                         + previousEndTime.AddSeconds(1) + ","
                         + startTime.AddSeconds(-1) + ",nonWear, <unknown>");
                 }
+                
+                //write current event annotation to file
+                if (endTime != previousEndTime) {
+                    fWriter.Write("\n" + participant + "," + startTime + "," + endTime
+                                + ",images," + annotation.Replace(",", "-"));
+                } else {
+                    //in case an episode has more than one annotation
+                    //we write it as an extra column
+                    fWriter.Write("," + annotation.Replace(",", "-"));
+                }
                 previousEndTime = endTime;
                 counter++;
-
-                //write current event annotation to file
-                fWriter.WriteLine(participant + "," + startTime + "," + endTime
-                            + ",images," + annotation.Replace(",","-"));
             }
             con.Close();
             fWriter.Close();
