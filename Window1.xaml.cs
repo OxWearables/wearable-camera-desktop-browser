@@ -539,8 +539,10 @@ how to find where my SenseCam images are stored?
                 int userId = User_Object.OVERALL_userID;
                 string userName = User_Object.OVERALL_USER_NAME;
                 //will suggest saving output to participant's most recent data folder
-                string suggestedPath = User_Object.get_likely_PC_destination_root(
-                        userId, userName);
+                //todo for some reason, calling User_Object below causes a problem
+                //on some computers (try testing this more thoroughly)
+                string suggestedPath = "";// User_Object.get_likely_PC_destination_root(
+                         //userId, userName);
                 
                 //prompt researcher on where to store annotations
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
