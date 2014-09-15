@@ -23,6 +23,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Data.SQLite;
 using System.Data.Common;
+using System.Configuration;
 
 namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 {
@@ -43,7 +44,8 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
         ///////////////////////////// THREAD CALLBACK PROPERTIES /////////////////////////////////////////////
         private static int MINIMUM_FILE_SIZE = 2048; //THE SMALLEST SIZE (IN BYTES) ANY SENSECAM IMAGE IS ALLOWED TO BE ... IF IT'S SMALLER THAN THIS WE DISREGARD IT
         private static int MAXIMUM_FILE_SIZE = 85002048; //THE LARGEST SIZE (IN BYTES) ANY SENSECAM IMAGE IS ALLOWED TO BE (85MB roughly) ... IF IT'S LARGER THAN THIS WE DISREGARD IT ... 
-       
+        public static int AUTO_DELETE_UPLOADED_IMAGES = int.Parse(ConfigurationManager.AppSettings["autoDeleteImagesOnUpload"].ToString());
+
         private bool upload_is_direct_from_sensecam, is_multiple_folder_upload_class_variable;
         private string SenseCam_data_directory, current_root_folder, episode_data_csv_file_obj;
         private int userID;
@@ -210,8 +212,10 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
                         //4. delete the files from the SenseCam - this is a seperate process, so we may as well kick start it as early as possible, i.e. just after uploading the images
                         //while at the same time we could have another thread/process that extracts the image features that we'd like...
-                        write_output(DateTime.Now.ToLongTimeString() + " now deleting images from SenseCam device in another process...");
-                        delete_files_on_SenseCam(SenseCam_data_directory); //we now call up a seperate process to delete the images from the SenseCam...
+                        if (AUTO_DELETE_UPLOADED_IMAGES == 1) {
+                            write_output(DateTime.Now.ToLongTimeString() + " now deleting images from SenseCam device in another process...");
+                            delete_files_on_SenseCam(SenseCam_data_directory); //we now call up a seperate process to delete the images from the SenseCam...
+                        }
 
                     } //close if (upload_is_direct_from_sensecam)...
                     else local_machine_folder_path_for_new_images = SenseCam_data_directory;
