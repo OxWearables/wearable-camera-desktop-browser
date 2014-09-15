@@ -79,7 +79,7 @@ namespace SenseCamBrowser1
             //firstly let's check that we're not currently deleting SenseCam images (i.e. make sure user hasn't opened this again due to impatience!)
             if (!Is_Deletion_Process_Currently_Running())
             {
-                txtSCPath.Text = detect_Autographer_USB_data_directory();
+                txtSCPath.Text = detect_Autographer_USB_data_directory("");
                 txtPCPath.Text = User_Object.get_likely_PC_destination_root(userID, user_name);
                 this.object_userID = userID;
                 this.object_user_name = user_name;
@@ -137,9 +137,9 @@ namespace SenseCamBrowser1
         /// this method is used to automatically detect the SenseCam drive name, and also the "DATA" directory...
         /// </summary>
         /// <returns></returns>
-        private string detect_SenseCam_USB_data_directory()
+        private string detect_SenseCam_USB_data_directory(string seed)
         {
-            string[] candidate_drives = new string[] { "D:", "E:", "F:", "G:", "H:", "I:", "J:", "K:", "L:", "M:", "N:", "O:", "P:", "Q:", "R:", "S:", "T:", "U:", "V:", "W:", "X:", "Y:", "Z:" };
+            string[] candidate_drives = new string[] { seed, "D:", "E:", "F:", "G:", "H:"};
             string data_directory_drive = "";
             string sensor_csv_file = @"\DATA\SENSOR.CSV";
 
@@ -170,9 +170,10 @@ namespace SenseCamBrowser1
         /// this method is used to automatically detect the Autographer drive name, and also the "DATA" directory...
         /// </summary>
         /// <returns></returns>
-        private string detect_Autographer_USB_data_directory()
+        private string detect_Autographer_USB_data_directory(String seed)
         {
-            string[] candidate_drives = new string[] { "D:", "E:", "F:", "G:", "H:", "I:", "J:", "K:", "L:", "M:", "N:", "O:", "P:", "Q:", "R:", "S:", "T:", "U:", "V:", "W:", "X:", "Y:", "Z:" };
+            seed = seed.Split(new String[]{@"\DATA"}, StringSplitOptions.None)[0];
+            string[] candidate_drives = new string[] { seed, "D:", "E:", "F:", "G:", "H:"};
             string data_directory_drive = "";
             string sensor_csv_file = @"\DATA\image_table.txt";
 
@@ -194,7 +195,7 @@ namespace SenseCamBrowser1
             } //close foreach (char candidate_drive in candidate_drives)...
 
             if (data_directory_drive.Equals("")) //i.e. we haven't detected Autographers's image table...
-                return detect_SenseCam_USB_data_directory(); //instead we'll check if we can detect SenseCam data instead
+                return detect_SenseCam_USB_data_directory(seed); //instead we'll check if we can detect SenseCam data instead
             return data_directory_drive; //however if we have detected an Autographer image table, let's return its path
         } //close method detect_SenseCam_USB_data_directory()...
 
@@ -389,7 +390,9 @@ namespace SenseCamBrowser1
             f.Close();
 
             //to allow user then upload images
-            if (!uploading_from_flash_drive && !txtSCPath.Text.Equals(""))
+            if ( (!uploading_from_flash_drive && !txtSCPath.Text.Equals(""))
+                        || (uploading_from_flash_drive && !detect_Autographer_USB_data_directory(txtSCPath.Text).Equals(""))
+                )
                 btnUpload.Visibility = Visibility.Visible;
 
             //let's log this interaction
@@ -503,12 +506,12 @@ namespace SenseCamBrowser1
             {
                 lblImages_Source.Content = "SenseCam or Vicon Revue path:";
                 btnSCOldImages.Content = "Download from PC...";
-                txtSCPath.Text = detect_Autographer_USB_data_directory();
+                txtSCPath.Text = detect_Autographer_USB_data_directory("");
                 txtPCPath.IsEnabled = false;
                 txtPCPath.Text = User_Object.get_likely_PC_destination_root(object_userID, object_user_name);
                 btnPCPath.Visibility = Visibility.Visible;
 
-                if (detect_Autographer_USB_data_directory().Equals(""))
+                if (detect_Autographer_USB_data_directory("").Equals(""))
                     btnUpload.Visibility = Visibility.Hidden;
                 else btnUpload.Visibility = Visibility.Visible;
 
