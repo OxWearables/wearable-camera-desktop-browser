@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Microsoft.Win32;
 
 namespace SenseCamBrowser1
 {
@@ -173,7 +174,33 @@ namespace SenseCamBrowser1
 
             //let's log this interaction
             Record_User_Interactions.log_interaction_to_database("EditListofEventTypes_Close_UserControl", "");
-        } //close method CloseBtn1_Click()...
+        }
+
+        private void btnImport_Click(object sender, RoutedEventArgs e)
+        {
+            
+        }
+
+        private void btnExport_Click(object sender, RoutedEventArgs e)
+        {
+            //todo for some reason, calling User_Object below causes a problem
+            //on some computers (try testing this more thoroughly)
+            string suggestedPath = "";// User_Object.get_likely_PC_destination_root(
+            //userId, userName);
+
+            //prompt researcher on where to store annotations
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.InitialDirectory = suggestedPath;
+            saveFileDialog.FileName = "myAnnotationSchema.csv";
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                //save annotations for this day to file
+                string fileName = saveFileDialog.FileName;
+                Daily_Annotation_Summary.writeAnnotationSchemaToCsv(fileName);
+                Record_User_Interactions.log_interaction_to_database(
+                        "EditListOfEventTypes_btnExportClick", fileName);
+            }
+        }
 
 
 

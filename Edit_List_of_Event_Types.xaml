@@ -60,9 +60,13 @@
             <Label x:Name="lblListofEventTypes" Grid.Row="0" Grid.Column="2" Content="List of Annotations:" />
             
             <TextBox x:Name="txtNew_EventType_Name" Grid.Row="1" Grid.Column="0" Height="30" VerticalAlignment="Top"/>
-            <Button x:Name="btnAdd_New_EventType_Name" Grid.Row="1" Grid.Column="1" Content="Add +" Height="30" VerticalAlignment="Top" Click="btnAdd_New_EventType_Name_Click" />
-            <Button x:Name="btnRemove_EventType_Name" Grid.Row="1" Grid.Column="1" Content="Remove -" Height="30" VerticalAlignment="Center" Click="btnRemove_EventType_Name_Click" />
-            <Button x:Name="btnRemove_All_EventType_Names" Grid.Row="1" Grid.Column="1" Content=" Remove All ---" Height="30" VerticalAlignment="Bottom" Click="btnRemove_All_EventType_Names_Click" />
+            <StackPanel Grid.Row="1" Grid.Column="1">
+                <Button x:Name="btnAdd_New_EventType_Name" Content="Add +" Height="30" VerticalAlignment="Top" Click="btnAdd_New_EventType_Name_Click" />
+                <Button x:Name="btnRemove_EventType_Name" Content="Remove -" Height="30" VerticalAlignment="Center" Click="btnRemove_EventType_Name_Click" />
+                <Button x:Name="btnRemove_All_EventType_Names" Content=" Remove All ---" Height="30" VerticalAlignment="Bottom" Click="btnRemove_All_EventType_Names_Click" />
+                <Button x:Name="btnImport" Content="Import" Height="30" VerticalAlignment="Bottom" Click="btnImport_Click"/>
+                <Button x:Name="btnExport" Content="Export" Height="30" VerticalAlignment="Bottom" Click="btnExport_Click" />
+            </StackPanel>            
 
             <!--ListBox x:Name="lst_Current_Event_Types" Grid.Row="1" Grid.Column="2" Style="{StaticResource Display_Annotations}" /-->
             <!--TreeView x:Name="lst_Current_Event_Types" Grid.Row="1" Grid.Column="2" ItemTemplate="{StaticResource annotation_rep_type_template}" /-->

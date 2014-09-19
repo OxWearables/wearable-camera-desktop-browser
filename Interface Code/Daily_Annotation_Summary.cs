@@ -152,6 +152,31 @@ namespace SenseCamBrowser1
             fWriter.Close();
         }
 
+
+        public static void writeAnnotationSchemaToCsv(string csvFile)
+        {
+            //write a participant's annotations for a given day to csv output file
+            string header = "annotation,description";
+            TextWriter fWriter = new StreamWriter(csvFile);
+                        
+            string query = Database_Versioning.text_for_stored_procedures.spGet_list_of_annotation_types();
+            SQLiteConnection con = new SQLiteConnection(DbString);
+            SQLiteCommand selectCmd = new SQLiteCommand(query, con);
+            con.Open();
+            SQLiteDataReader readAnnotations = selectCmd.ExecuteReader();
+            string annType, annDesc;
+            fWriter.WriteLine(header); //write header line first
+            while (readAnnotations.Read())
+            {
+                annType = readAnnotations[1].ToString();
+                annDesc = readAnnotations[2].ToString();
+                //write each annotation line
+                fWriter.WriteLine(annType + "," + annDesc);
+            }
+            con.Close();
+            fWriter.Close();
+        }
+
     }
 
 }
