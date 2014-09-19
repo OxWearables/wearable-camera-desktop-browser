@@ -559,6 +559,15 @@ namespace SenseCamBrowser1.Database_Versioning
             return end_string;
         } //close method spAdd_annotation_type()...
 
+        public static string spAddAnnotationType(string annType, string annDesc)
+        {
+            string end_string = "";
+            end_string += "\n" + "DELETE FROM Annotation_Types";
+            end_string += "\n" + "WHERE annotation_type = '" + annType + "';";
+            end_string += "\n" + "INSERT INTO Annotation_Types (annotation_type,description) VALUES('" + annType + "','" + annDesc + "');";
+            return end_string;
+        } //close method spAddAnnotationType()...
+
         public static string spRemove_annotation_type(string annotation_type_name)
         {
             string end_string = "";

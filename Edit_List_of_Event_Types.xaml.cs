@@ -178,7 +178,23 @@ namespace SenseCamBrowser1
 
         private void btnImport_Click(object sender, RoutedEventArgs e)
         {
-            
+            //todo for some reason, calling User_Object below causes a problem
+            //on some computers (try testing this more thoroughly)
+            string suggestedPath = "";// User_Object.get_likely_PC_destination_root(
+            //userId, userName);
+
+            //prompt researcher on where to store annotations
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.InitialDirectory = suggestedPath;
+            if (openFileDialog.ShowDialog() == true)
+            {
+                //save annotations for this day to file
+                string fileName = openFileDialog.FileName;
+                Daily_Annotation_Summary.readAnnotationSchemaCsv(fileName);
+                Record_User_Interactions.log_interaction_to_database(
+                        "EditListOfEventTypes_btnImportClick", fileName);
+                update_list_on_display_with_latest_database_snapshot();
+            }
         }
 
         private void btnExport_Click(object sender, RoutedEventArgs e)

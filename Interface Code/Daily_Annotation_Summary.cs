@@ -155,7 +155,7 @@ namespace SenseCamBrowser1
 
         public static void writeAnnotationSchemaToCsv(string csvFile)
         {
-            //write a participant's annotations for a given day to csv output file
+            //write annotation schema to csv output file
             string header = "annotation,description";
             TextWriter fWriter = new StreamWriter(csvFile);
                         
@@ -175,6 +175,27 @@ namespace SenseCamBrowser1
             }
             con.Close();
             fWriter.Close();
+        }
+
+        public static void readAnnotationSchemaCsv(string csvFile)
+        {
+            //write annotation schema from a csv file
+            TextReader fRead = new StreamReader(csvFile);
+            fRead.ReadLine(); //read header
+            String line;
+            String query = "";
+            while ((line = fRead.ReadLine()) != null)
+            {
+                query +=
+                Database_Versioning.text_for_stored_procedures.spAddAnnotationType(
+                line.Split(',')[0],line.Split(',')[1]);                
+            }
+            SQLiteConnection con = new SQLiteConnection(DbString);
+            SQLiteCommand selectCmd = new SQLiteCommand(query, con);
+            con.Open();
+            selectCmd.ExecuteNonQuery();
+            con.Close();
+            fRead.Close();
         }
 
     }
