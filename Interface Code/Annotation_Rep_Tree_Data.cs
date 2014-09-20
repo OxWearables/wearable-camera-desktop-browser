@@ -21,29 +21,37 @@ namespace SenseCamBrowser1
         private static string ROOT_NAME = "xyzgata";
 
         public string Name { get; set; }
+        public string Desc { get; set; }
         public List<Annotation_Rep_Tree_Data> Children { get; set; }
 
 
-        public Annotation_Rep_Tree_Data(string name)
+        public Annotation_Rep_Tree_Data(string name, string desc)
         {
             this.Name = name;
+            this.Desc = desc;
             this.Children = new List<Annotation_Rep_Tree_Data>();
         } //close constructor for Annotation_Rep_Tree_Data()...
 
 
         public static Annotation_Rep_Tree_Data convert_delimited_string_collection_to_tree_hierarchy(List<string> list_of_items_semicolon_delimited)
         {
-            Annotation_Rep_Tree_Data root_node = new Annotation_Rep_Tree_Data(ROOT_NAME); //firstly declare an overall root node...
+            //input items look like: <mainCategory;subCategory,description>
+            Annotation_Rep_Tree_Data root_node = new Annotation_Rep_Tree_Data(ROOT_NAME, ""); //firstly declare an overall root node...
             Annotation_Rep_Tree_Data temp_root_node; //we'll need this temporary root node when traversing down the levels allowing us to carry out a form of recursion..
 
             string[] new_tree_element; //to collect the various levels as delimited in our flat text file store...
+            string annotation = "";
+            string desc = "";
             foreach (string delimited_item in list_of_items_semicolon_delimited) //e.g. social interaction;2-4 people
             {
-                new_tree_element = delimited_item.Split(';'); //e.g. element 1 = social interaction ... element 2 = 2-4 people...
+                annotation = delimited_item.Split(',')[0];
+                desc = delimited_item.Split(',')[1];
+                new_tree_element = annotation.Split(';'); //e.g. element 1 = social interaction ... element 2 = 2-4 people...
                 
                 temp_root_node = root_node; //now let's work our way down from the root through each level of depth
                 for(int depth_counter=0; depth_counter<new_tree_element.Length; depth_counter++)
-                    temp_root_node = add_element_to_appropriate_child_node_which_is_returned(temp_root_node, new_tree_element[depth_counter]); //we insert the new element (for each level of depth) to the relevant child position below, which is then returned
+                    temp_root_node = add_element_to_appropriate_child_node_which_is_returned(
+                            temp_root_node, new_tree_element[depth_counter], desc); //we insert the new element (for each level of depth) to the relevant child position below, which is then returned
                 
             } //close foreach (string delimited_item in list_of_items_semicolon_delimited)...
 
@@ -51,7 +59,10 @@ namespace SenseCamBrowser1
         } //close method convert_delimited_string_collection_to_tree_hierarchy()...
 
 
-        private static Annotation_Rep_Tree_Data add_element_to_appropriate_child_node_which_is_returned(Annotation_Rep_Tree_Data root_node, string new_element)
+        private static Annotation_Rep_Tree_Data add_element_to_appropriate_child_node_which_is_returned(
+                Annotation_Rep_Tree_Data root_node,
+                string new_element,
+                string desc)
         {
             //let's see if this "new" element, is already recorded as a child in the root node anyways...
             foreach (Annotation_Rep_Tree_Data child in root_node.Children)
@@ -61,7 +72,7 @@ namespace SenseCamBrowser1
             } //close foreach (Annotation_Rep_Tree_Data child in root_node.Children)...
 
             //if the "new" element is unseen as a child for this root node (i.e. return call wasn't invoked above), we'll now add it to the collection of children
-            root_node.Children.Add(new Annotation_Rep_Tree_Data(new_element));
+            root_node.Children.Add(new Annotation_Rep_Tree_Data(new_element, desc));
             return root_node.Children[root_node.Children.Count - 1]; //and then return it
         } //close add_element_to_appropriate_child_node_which_is_returned()...
 
@@ -298,6 +309,11 @@ namespace SenseCamBrowser1
         public string Name
         {
             get { return _annotation.Name; }
+        }
+
+        public string Desc
+        {
+            get { return _annotation.Desc; }
         }
                 
 

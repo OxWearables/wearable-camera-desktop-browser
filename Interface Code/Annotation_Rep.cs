@@ -47,7 +47,7 @@ namespace SenseCamBrowser1
                 annID = int.Parse(readAnnotations[0].ToString());
                 annType = readAnnotations[1].ToString();
                 annDesc = readAnnotations[2].ToString();
-                annTypeList.Add(annType);
+                annTypeList.Add(annType + "," + annDesc);
             }
             con.Close();
 
