@@ -73,14 +73,18 @@ namespace SenseCamBrowser1
                 InitializeComponent();
                 SPEED_SLIDER_DEFAULT_VALUE = 950;
 
-                //credit note: ... http://weblogs.asp.net/psheriff/archive/2012/07/23/wpf-tree-view-with-multiple-levels.aspx was very helpful for a syntax template...
-                lst_event_concept_types.ItemsSource = Annotation_Rep.GetAnnotationTypes().FirstGeneration[0].Children;
+                //The following article was very helpful for a syntax template:
+                // http://weblogs.asp.net/psheriff/archive/2012/07/23/wpf-tree-view-with-multiple-levels.aspx
+                lst_event_concept_types.ItemsSource = 
+                        Annotation_Rep.GetAnnotationTypes().FirstGeneration[0].Children;
 
-                annotation_editor.prepare_annotation_type_tool(New_Annotation_Types_To_Display_Callback);
+                annotation_editor.prepare_annotation_type_tool(
+                        New_Annotation_Types_To_Display_Callback);
 
                 //and let's start our timer
                 update_image_timer = new DispatcherTimer();
-                update_image_timer.Interval = TimeSpan.FromMilliseconds(SPEED_SLIDER_DEFAULT_VALUE/2); //playback speed, with gap between images in milliseconds
+                update_image_timer.Interval = TimeSpan.FromMilliseconds(
+                        SPEED_SLIDER_DEFAULT_VALUE/2); //playback speed, milliseconds
                 update_image_timer.Tick += new EventHandler(updateImageTimer_Tick);
                 update_image_timer.Stop();
             } //close constructor()...
