@@ -91,27 +91,25 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
         /// <param name="overall_root_directory"></param>
         private void upload_wearable_camera_data(bool is_multiple_folder_upload, string selected_folder, string overall_root_directory)
         {
-            if (is_multiple_folder_upload)
-            {
-                if (selected_folder.Equals(overall_root_directory))
-                { //ELSE IF IT'S THE MAIN ROOT FOLDER WE'RE IN
+            if (is_multiple_folder_upload && selected_folder.Equals(overall_root_directory))
+            { //ELSE IF IT'S THE MAIN ROOT FOLDER WE'RE IN
                     //THEN WE'LL KICK OFF THE RECURSION PROCESS AND START READING THE SUBFOLDERS AND REPEAT
                     foreach (string subfolder in Directory.GetDirectories(overall_root_directory))
-                        upload_wearable_camera_data(is_multiple_folder_upload, subfolder+@"\", overall_root_directory); //NOTE THAT I NEED THE @"\" AT THE END SO AS TO BE ABLE TO READ FILES WITHIN THE DIRECTORY
+                        upload_wearable_camera_data(is_multiple_folder_upload, subfolder + @"\", overall_root_directory); //NOTE THAT I NEED THE @"\" AT THE END SO AS TO BE ABLE TO READ FILES WITHIN THE DIRECTORY
 
-                } //end if (selected_folder.Equals(overall_root_directory))...
             } //close if (is_multiple_folder_upload)...
+            else
+            {
+                //and let's keep updating the SenseCam_data_directory class variable to make sure we're always processing the right folder...
+                SenseCam_data_directory = selected_folder;
 
-            //and let's keep updating the SenseCam_data_directory class variable to make sure we're always processing the right folder...
-            SenseCam_data_directory = selected_folder;
+                //and to process this individual folder...
+                //1. check first line of sensor.csv file to see if we're dealing with a SenseCam or a Vicon Revue...
+                DeviceType device_type = get_type_of_device_connected();
 
-            //and to process this individual folder...
-            //1. check first line of sensor.csv file to see if we're dealing with a SenseCam or a Vicon Revue...
-            DeviceType device_type = get_type_of_device_connected();
-
-            //and then upload the data, segment it, etc.
-            upload_device_data(device_type, is_multiple_folder_upload);            
-            
+                //and then upload the data, segment it, etc.
+                upload_device_data(device_type, is_multiple_folder_upload);
+            }
             //and when we're finished the recursion (if using multiple folder upload)...
             //let's give a data processing finished call back..
             if (is_multiple_folder_upload && selected_folder.Equals(overall_root_directory))
