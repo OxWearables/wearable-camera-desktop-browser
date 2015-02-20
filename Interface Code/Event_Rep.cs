@@ -355,7 +355,8 @@ namespace SenseCamBrowser1
         public static int SplitEvent(
             int userID,
             int sourceEventID,
-            DateTime targetStartTime)
+            DateTime targetStartTime,
+            string origAnnotation)
         {            
             //This method splits an event into two separate events.
             //The new event starts at targetStartTime.
@@ -392,9 +393,40 @@ namespace SenseCamBrowser1
             //Update information of old/source event.
             UpdateDBEventInfo(userID, sourceEventID);
 
+            //add annotation to source event id (if requested)
+            if (!origAnnotation.Equals(""))
+            {
+                //search to see if multiple annotations present for this event
+                string[] anns = origAnnotation.Split(',');
+                foreach (string a in anns) {
+                    if(!a.Equals(""))
+                        Annotation_Rep.AddEventAnnotation(userID, newEventID, a);
+                }
+            }
+
             con.Close();                                
             return newEventID;
-        } //close method split_event_into_two()...
+        }
+
+
+        public static void SplitMultipleEvents(
+            int userId,
+            int sourceEventID,
+            List<DateTime> startTimeLst,
+            List<string> annotationList)
+        {
+            int sourceId = sourceEventID;
+            string annotation="";
+            for (int c = 0; c < startTimeLst.Count; c++)
+            {
+                try {
+                    annotation = annotationList[c];
+                } catch (Exception excep) {
+                    annotation = "";
+                }
+                sourceId = SplitEvent(userId, sourceId, startTimeLst[c], annotation);
+            }
+        }
 
 
         public static void UpdateDBEventInfo(int userID, int eventID)
@@ -405,7 +437,7 @@ namespace SenseCamBrowser1
             SQLiteCommand command = new SQLiteCommand(con);
             con.Open();
 
-            //Check if there any images remain in the event.
+            //Check if there any images remaining in the event.
             command.CommandText = 
                 Database_Versioning.text_for_stored_procedures.spGet_Num_Images_In_Event(
                 userID,
@@ -474,6 +506,56 @@ namespace SenseCamBrowser1
             }
             con.Close();
         }
+
+
+        public static void rewriteEventList(
+            int userId,
+            string csvFile)
+        {
+            //remove all existing annotations
+            Annotation_Rep.RmAllAnnotations(userId);
+
+            //This method rewrites the whole list of events            
+            SQLiteConnection con = new SQLiteConnection(DbString);
+            SQLiteCommand command = new SQLiteCommand(con);
+            con.Open();
+            
+            //first, for each day, merge all events into one (1st event)
+            DateTime[] dayList = calendar_control.get_list_of_available_days_for_user(userId);
+            for(int d=0; d<dayList.Length; d++)
+            {
+                //get events in day                
+                DateTime day = dayList[d];
+                List<Event_Rep> dayEvents = GetDayEvents(userId, day, false);
+                int firstEventId = dayEvents[0].eventID;
+                //set id of events 2:n to firstEventId
+                for (int e = 1; e < dayEvents.Count; e++)
+                {
+                    int currentEvent = dayEvents[e].eventID;
+                    command.CommandText =
+                        Database_Versioning.text_for_stored_procedures.spUpdate_image_sensors_tables_with_new_event_id_after_target_time(
+                        userId, firstEventId, currentEvent, day);
+                    command.ExecuteNonQuery();
+                    //now delete existing event id
+                    DeleteEvent(userId, currentEvent);
+                }
+                //update db event info (i.e. new start/end times, num images, etc.)
+                UpdateDBEventInfo(userId, firstEventId);
+                
+                //there should only be 1 event for this day...
+                Event_Rep firstEvent = Event_Rep.GetDayEvents(userId, day, false)[0];
+                                
+                //read list of boundary times from csv (i.e. episode start times)
+                List<DateTime> boundaryList = new List<DateTime>();
+                List<string> annotationList = new List<string>();
+                Daily_Annotation_Summary.getBoundInfoFromCsv(csvFile, firstEvent.startTime, firstEvent.endTime, ref boundaryList, ref annotationList);
+                
+                //split into multiple events based on list of boundary times
+                Event_Rep.SplitMultipleEvents(userId, firstEvent.eventID, boundaryList, annotationList);
+
+            }
+            con.Close();
+        } //close method split_event_into_two()...
             
     }
 }
