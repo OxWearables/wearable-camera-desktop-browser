@@ -239,8 +239,7 @@ namespace SenseCamBrowser1
         {
             //firstly let's just check if it's ok to process this folder (i.e. user is sure this is what they want)
             bool ok_to_process = false, is_multiple_folder_upload=false;
-            string episode_data_csv_file_obj = txtEpisodeCSVPath.Text;            
-
+            
             //check if this is a multiple past folder upload, ask the user if they're sure this is what they want to do
             if (!File.Exists(SenseCam_data_directory + "sensor.csv") && !File.Exists(SenseCam_data_directory + "image_table.txt")) //firstly let's see if they've selected a root folder...
             {
@@ -259,7 +258,7 @@ namespace SenseCamBrowser1
 
             if (ok_to_process)
             {
-                data_transfer_obj = new Upload_Images_and_Segment_into_Events.Upload_and_Segment_Images_Thread(Data_Transer_New_Info_Received_Callback, Data_Transfer_Processing_Finished_Callback, SenseCam_data_directory, current_root_folder, object_userID, uploading_direct_from_sensecam, is_multiple_folder_upload, episode_data_csv_file_obj);
+                data_transfer_obj = new Upload_Images_and_Segment_into_Events.Upload_and_Segment_Images_Thread(Data_Transer_New_Info_Received_Callback, Data_Transfer_Processing_Finished_Callback, SenseCam_data_directory, current_root_folder, object_userID, uploading_direct_from_sensecam, is_multiple_folder_upload);
                 data_transfer_thread = new Thread(new ThreadStart(data_transfer_obj.upload_sc_data));
                 data_transfer_thread.IsBackground = true;
                 data_transfer_thread.Start();
@@ -421,29 +420,7 @@ namespace SenseCamBrowser1
             play_sound();
             Record_User_Interactions.log_interaction_to_database("UploadNewImages_btnPCPath_click", txtPCPath.Text);
         } //close method btnPCPath_Click()...
-
-
-
-
-        /// <summary>
-        /// to help users select the destination episodes CSV file on their PC...
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>        
-        private void btnEpisodeCSVPath_Click(object sender, RoutedEventArgs e)
-        {
-            FolderSelecter f = new FolderSelecter();
-            f.select_file_rather_than_folder = true;
-            f.selected_path = txtEpisodeCSVPath.Text;
-            f.Show();
-            txtEpisodeCSVPath.Text = f.selected_path;
-            f.Close();
-
-            //let's log this interaction
-            play_sound();
-            Record_User_Interactions.log_interaction_to_database("UploadNewImages_btnEpisodeCSVPath_click", txtEpisodeCSVPath.Text);
-        } //close btnEpisodeCSVPath_Click()...
-
+        
 
         /// <summary>
         /// this methods shows the user some settings options...
