@@ -775,24 +775,25 @@ namespace SenseCamBrowser1
                         
             if (lst_display_images.SelectedItems.Count > 1)
             {
-                int current_eventID = current_event.eventID;
-
+                int current_eventID = current_event.eventID;                
                 List<Image_Rep> selected_images_for_splitting = lst_display_images.SelectedItems.Cast<Image_Rep>().ToList();
                 Image_Rep.sortImagesByID(selected_images_for_splitting);
-
+                
+                List<DateTime> dateList = new List<DateTime>();
                 foreach (Image_Rep selected_image_to_start_new_event in selected_images_for_splitting)
                 {    
                     if (selected_image_to_start_new_event.position > 0 && selected_image_to_start_new_event.position < lst_display_images.Items.Count - 1)
                     {
-                        //call this method to execute the database stored procedure to handle splitting the event into two
-                        current_eventID = Event_Rep.SplitEvent(Window1.OVERALL_userID, current_eventID, selected_image_to_start_new_event.imgTime); //current event id will be updated to be the new split event... (i.e. so next pass of loop treats it like we're now in this new event and trying to split the first image in it...)
-
+                        //add time to boundary list
+                        dateList.Add(selected_image_to_start_new_event.imgTime);
                         //let's log this interaction
                         Record_User_Interactions.log_interaction_to_database("scImgViewer_btnSplit_Event_Click_splitting_multiple", current_event.eventID + "," + selected_image_to_start_new_event.imgTime);
                     }
                     else Record_User_Interactions.log_interaction_to_database("scImgViewer_btnSplit_Event_Click_splitting_multiple_first_last_images", current_event.eventID + "," + selected_image_to_start_new_event.imgTime);
                 }
-
+                //split into multiple events based on list of boundary times
+                Event_Rep.SplitMultipleEvents(Window1.OVERALL_userID, current_eventID, dateList, null);
+                
                 //now what I'll need to do is close the current window, and then reload the day (to reflect the new images/events situation after clicking on this button)
                 current_event_merged_callback();
                 close_viewer_control(); //and then close the current viewer, to give feedback to user that the change has happened
@@ -805,7 +806,7 @@ namespace SenseCamBrowser1
                 Image_Rep selected_photo_in_event = (Image_Rep)lst_display_images.SelectedItem;
 
                 //call this method to execute the database stored procedure to handle splitting the event into two
-                Event_Rep.SplitEvent(Window1.OVERALL_userID, current_event.eventID, selected_photo_in_event.imgTime);
+                Event_Rep.SplitEvent(Window1.OVERALL_userID, current_event.eventID, selected_photo_in_event.imgTime, "");
 
                 //now what I'll need to do is close the current window, and then reload the day (to reflect the new images/events situation after clicking on this button)
                 current_event_merged_callback();
