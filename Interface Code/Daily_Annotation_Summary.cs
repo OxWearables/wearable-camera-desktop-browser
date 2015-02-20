@@ -152,6 +152,63 @@ namespace SenseCamBrowser1
             fWriter.Close();
         }
 
+        public static void getBoundInfoFromCsv(
+            string csvFile,
+            DateTime dayStart,
+            DateTime dayEnd,
+            ref List<DateTime> boundList,
+            ref List<string> annList)
+        {
+            TextReader fRead = new StreamReader(csvFile);
+            fRead.ReadLine(); //read header
+            string line;
+            string[] e;
+            DateTime epiStart = new DateTime();
+            DateTime epiEnd = new DateTime();
+            DateTime prevEnd = new DateTime();
+            string ann = "";
+            while ((line = fRead.ReadLine()) != null)
+            {
+                
+
+                e = line.Split(',');
+                epiStart = DateTime.Parse(e[1]);
+                epiEnd = DateTime.Parse(e[2]);
+                ann = e[4];
+                for (int c = 5; c < e.Length; c++)
+                    ann += "," + e[c];
+
+                //check if previous end time should be recorded
+                TimeSpan diff = epiStart - prevEnd;
+                if (prevEnd >= dayStart && prevEnd <= dayEnd && diff.TotalMinutes > 3)
+                {
+                    boundList.Add(prevEnd);
+                    annList.Add(ann);
+                }
+
+                //record if episode start time is within bounds
+                if (epiStart >= dayStart && epiStart <= dayEnd)
+                {
+                    boundList.Add(epiStart);
+                    annList.Add(ann);
+                }
+
+                prevEnd = epiEnd;
+
+                //stop reading if we're now outside requested bounds
+                if (epiEnd > dayEnd)
+                    break;
+            }
+            //check if last end time is a candidate boundary
+            if (prevEnd >= dayStart && prevEnd <= dayEnd)
+            {
+                boundList.Add(prevEnd);
+                annList.Add(ann);
+            }
+
+            fRead.Close();
+        }
+
 
         public static void writeAnnotationSchemaToCsv(string csvFile)
         {
@@ -179,7 +236,7 @@ namespace SenseCamBrowser1
 
         public static void readAnnotationSchemaCsv(string csvFile)
         {
-            //write annotation schema from a csv file
+            //read annotation schema from a csv file
             TextReader fRead = new StreamReader(csvFile);
             fRead.ReadLine(); //read header
             String line;
