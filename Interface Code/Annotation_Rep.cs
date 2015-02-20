@@ -112,6 +112,17 @@ namespace SenseCamBrowser1
             con.Close();
         }
 
+        public static void RmAllAnnotations(int userID)
+        {
+            string query =
+                Database_Versioning.text_for_stored_procedures.spClearAllAnnotations(userID);
+            SQLiteConnection con = new SQLiteConnection(DbString);
+            SQLiteCommand selectCmd = new SQLiteCommand(query, con);
+            con.Open();
+            selectCmd.ExecuteNonQuery();
+            con.Close();
+        }
+
 
         public static void RmEventAnnotation(int userID, int eventID, string individual_annotation_text)
         {
