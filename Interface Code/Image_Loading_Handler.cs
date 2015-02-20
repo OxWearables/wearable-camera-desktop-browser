@@ -86,9 +86,11 @@ namespace SenseCamBrowser1
             for(int c=0; c<overallCount; c++)
             {
                 //check that the UI thread is still happy to accept bitmap updates
-                if (!isKeyframes && loadingId == Image_Rep.imageLoadingId) {
+                if (!isKeyframes && loadingId == Image_Rep.imageLoadingId && Image_Rep.ImageList.Count>0) {
                     Image_Rep.ImageList[c].loadImage();
-                } else if (isKeyframes && loadingId == Event_Rep.eventLoadingId) {
+                }
+                else if (isKeyframes && loadingId == Event_Rep.eventLoadingId && Event_Rep.EventList.Count > 0)
+                {
                     Event_Rep.EventList[c].loadImage();
                 } else {
                     break;
