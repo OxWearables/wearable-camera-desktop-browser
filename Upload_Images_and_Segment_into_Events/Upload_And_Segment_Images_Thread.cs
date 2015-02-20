@@ -47,11 +47,11 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
         public static int AUTO_DELETE_UPLOADED_IMAGES = int.Parse(ConfigurationManager.AppSettings["autoDeleteImagesOnUpload"].ToString());
 
         private bool upload_is_direct_from_sensecam, is_multiple_folder_upload_class_variable;
-        private string SenseCam_data_directory, current_root_folder, episode_data_csv_file_obj;
+        private string SenseCam_data_directory, current_root_folder;
         private int userID;
         
 
-        public Upload_and_Segment_Images_Thread(Information_Callback param_feedback_callback, Processing_Finished_Callback param_data_processing_finished, string SC_data_directory, string PC_root_folder, int param_userID, bool uploading_direct_from_sensecam, bool is_multiple_folder_upload, string episode_data_csv_file_obj)
+        public Upload_and_Segment_Images_Thread(Information_Callback param_feedback_callback, Processing_Finished_Callback param_data_processing_finished, string SC_data_directory, string PC_root_folder, int param_userID, bool uploading_direct_from_sensecam, bool is_multiple_folder_upload)
         {
             data_feedback_callback = param_feedback_callback;
             data_processing_finished_callback = param_data_processing_finished;
@@ -60,7 +60,6 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
             this.userID = param_userID;
             this.upload_is_direct_from_sensecam = uploading_direct_from_sensecam;
             this.is_multiple_folder_upload_class_variable = is_multiple_folder_upload;
-            this.episode_data_csv_file_obj = episode_data_csv_file_obj;
         } //close method Upload_and_Segment_Images_Thread()...
 
 
@@ -111,8 +110,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
             DeviceType device_type = get_type_of_device_connected();
 
             //and then upload the data, segment it, etc.
-            if ( (episode_data_csv_file_obj.Equals("")) || (!episode_data_csv_file_obj.Equals("") && selected_folder.Equals(overall_root_directory)) )
-                upload_device_data(device_type, is_multiple_folder_upload, episode_data_csv_file_obj);            
+            upload_device_data(device_type, is_multiple_folder_upload);            
             
             //and when we're finished the recursion (if using multiple folder upload)...
             //let's give a data processing finished call back..
@@ -166,7 +164,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
 
 
-        private void upload_device_data(DeviceType device_type, bool is_part_of_multiple_folder_upload, string csv_file_of_associated_episodes)
+        private void upload_device_data(DeviceType device_type, bool is_part_of_multiple_folder_upload)
         {
             write_output(DateTime.Now.ToLongTimeString() + " processing, please wait...");
 
@@ -222,9 +220,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
                     //5. segment the data into events and upload the database...                                        
                     write_output(DateTime.Now.ToLongTimeString() + " all files have now been copied across, now segmenting data into events...");
-                    if(!csv_file_of_associated_episodes.Equals(""))
-                        segment_folder_images_into_events_and_upload_to_db(userID, local_machine_folder_path_for_new_images, device_type,csv_file_of_associated_episodes);
-                    else segment_folder_images_into_events_and_upload_to_db(userID, local_machine_folder_path_for_new_images, device_type);
+                    segment_folder_images_into_events_and_upload_to_db(userID, local_machine_folder_path_for_new_images, device_type);
                     write_output(DateTime.Now.ToLongTimeString() + " all images have now been segmented into events and uploaded to the database...");
 
                     //6. as there's a problem with the EXIF header of the SenseCam images, we'll call a method to fix this header, so WPF can display the images we've just copied across...
@@ -730,68 +726,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
             {
                 write_output(selected_folder + " -> No images detected for -> " + selected_folder);
             } //end if ... else ... if (manipulated_images.Length != 0)
-        } //end method segment_folder_images_into_events_and_upload_to_db()
-
-
-
-        private void segment_folder_images_into_events_and_upload_to_db(
-                int userID,
-                string selected_folder,
-                DeviceType device_type,
-                string external_episode_definition_csv_file)
-        {
-            selected_folder += @"\";
-            //1. READ SENSOR.CSV INFORMATION IN FOLDER
-            //MANIPULATE THAT INFORMATION
-            //write_output("start manipulated_images => " + DateTime.Now.ToString());
-            Segmentation_Image_Rep[] manipulated_images;
-            bool sensor_file_exists = File.Exists(selected_folder + "sensor.csv");
-            if (sensor_file_exists)
-                manipulated_images = Upload_Manipulated_Sensor_Data.process_csv_file(selected_folder, userID, device_type);
-            else manipulated_images = Upload_Manipulated_Sensor_Data.process_folder_with_no_csv_information(selected_folder);
-
-            if (manipulated_images.Length != 0)
-            {
-                //2. NOW NORMALISE, FUSE, THRESHOLD THE DATA SOURCES (ACC COMBINED AND ACC X)
-                //BASICALLY GET A LIST OF THE BOUNDARY TIMES (AND CHUNK BOUNDARY TIMES)
-                //READ IN THE new_images TABLE FROM THE DATABASE
-                //NORMALISE ACC X AND COMBINED ACC COLUMNS
-                //FUSE BOTH SOURCES TOGETHER
-                //THRESHOLD FUSED SCORES (KAPUR 64 BINS)
-                //REMOVE BOUNDARIES THAT OCCUR WITHIN 3 MINUTES OF A PREVIOUS BOUNDARY
-                //RETURN LIST OF BOUNDARY TIMES FOR WHOLE LIST (SO BOUNDS + CHUNK START TIMES (APART FROM CHUNK 0 OF COURSE))
-                //write_output("start list of calculated events => " + DateTime.Now.ToString());
-                Segmentation_Event_Rep[] list_of_calculated_events;
-
-                //todo create example CSV file to show correct format for: startTime, endTime, description
-                List<Segmentation_Event_Rep> user_defined_episodes = new List<Segmentation_Event_Rep>();
-                //user_defined_episodes = Segmentation_Event_Rep.read_in_list_of_user_defined_episodes_from_file(external_episode_definition_csv_file, selected_folder);
-                list_of_calculated_events = Fuse_And_Identify_Segments.SET_boundary_times_for_all_images(
-                        manipulated_images, user_defined_episodes);
-
-                if (list_of_calculated_events != null)
-                {
-                    //3. AND WRITE OUT THE LIST OF IMAGES AND EVENTS TO THE DATABASE!			
-                    upload_all_data_to_database(manipulated_images, list_of_calculated_events, selected_folder, userID);
-
-                    //4. FINALLY UPDATE THE IMAGE.DAT FILE SO AS TO REFLECT THE NEW BOUNDARIES AS BOOKMARKS!
-                    //the reason I leave this step to last is that there may be a problem in updating the database ... if there is, I don't want to update the image.dat file as that would then mean that if I try to redo this process it'll think that it's already successfully completed (going by the image.dat file being updated) ... now this will not happen as image.dat isn't updated unto after the database updating
-                    //write_output("start update image.dat => " + DateTime.Now.ToString());                    
-                    Update_Image_Dat_File.update_image_dat(selected_folder, manipulated_images, list_of_calculated_events);
-
-                    write_output(selected_folder + " -> Images segmented into distinct events/activities!");
-                } //end if (list_of_calculated_events != null)
-                else
-                {
-                    write_output(selected_folder + " -> There must be more than 1 image present to enable the calculation of events -> " + selected_folder);
-                } //end if (list_of_calculated_events != null)
-            } //end if (manipulated_images.Length != 0)
-            else
-            {
-                write_output(selected_folder + " -> No images detected for -> " + selected_folder);
-            } //end if ... else ... if (manipulated_images.Length != 0)
-        } //end method segment_folder_images_into_events_and_upload_to_db()
-
+        } 
 
 
         private void upload_all_data_to_database(Segmentation_Image_Rep[] all_images, Segmentation_Event_Rep[] all_events, string images_folder, int userID)
