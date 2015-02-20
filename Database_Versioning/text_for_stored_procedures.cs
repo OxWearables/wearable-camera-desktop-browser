@@ -69,6 +69,15 @@ namespace SenseCamBrowser1.Database_Versioning
             return end_string;
         } //close method spCreate_new_event_and_return_its_ID()...
 
+        public static string mergeDayEvents(int userId, DateTime day, int firstEventInDay)
+        {
+            //sql to get all id's in day and set to min(id) (return min(id))        
+            string end_string = "UPDATE All_Events";
+            end_string += "\n" + "SET [event_id] = " + firstEventInDay;
+            end_string += "\n" + "WHERE [user_id] = " + userId;
+            end_string += "\n" + "AND [day] = " + convert_datetime_to_sql_string(day) + ";";
+            return end_string;
+        } //close method spCreate_new_event_and_return_its_ID()...
 
         public static string spDelete_Event(int user_id, int event_id)
         {
@@ -241,6 +250,16 @@ namespace SenseCamBrowser1.Database_Versioning
             //end_string += "\n" + "AND DATEPART(YEAR, [day]) = DATEPART(YEAR, " + convert_datetime_to_sql_string(day) + ")";
             //end_string += "\n" + "AND DATEPART(DAYOFYEAR, [day]) = DATEPART(DAYOFYEAR, " + convert_datetime_to_sql_string(day) + ")";
             end_string += "\n" + "ORDER BY start_time;";
+            return end_string;
+        } //close method spGet_All_Events_In_Day()...
+
+
+        public static string spFirstEventInDay(int user_id, DateTime day)
+        {
+            string end_string = "SELECT MIN(event_id)";
+            end_string += "\n" + "FROM All_Events";
+            end_string += "\n" + "WHERE [user_id] = " + user_id;
+            end_string += "\n" + "AND day =" + convert_datetime_to_sql_string(day) + "";
             return end_string;
         } //close method spGet_All_Events_In_Day()...
 
@@ -532,6 +551,14 @@ namespace SenseCamBrowser1.Database_Versioning
             return end_string;
         } //close method spClear_event_annotations()...
 
+
+        public static string spClearAllAnnotations(int user_id)
+        {
+            string end_string = "";
+            end_string += "\n" + "DELETE FROM SC_Browser_User_Annotations";
+            end_string += "\n" + "WHERE [user_id] = " + user_id + ";";            
+            return end_string;
+        } //close method spClear_event_annotations()...
 
         public static string spClear_event_annotations(int user_id, int event_id, string individual_annotation_text)
         {
