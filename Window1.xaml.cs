@@ -548,7 +548,8 @@ how to find where my SenseCam images are stored?
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
                 saveFileDialog.InitialDirectory = suggestedPath;
                 saveFileDialog.FileName = userName + ".csv";
-                if (saveFileDialog.ShowDialog() == true)
+                saveFileDialog.ShowDialog();
+                if (!saveFileDialog.FileName.Equals(""))
                 {
                     //save annotations for this day to file
                     string fileName = saveFileDialog.FileName;
@@ -558,6 +559,28 @@ how to find where my SenseCam images are stored?
                             "Window1_btnExport_Click", fileName);
                 }
             } //close method btnExport_Click()...
+
+
+            private void btnImport_Click(object sender, RoutedEventArgs e)
+            {
+                int userId = User_Object.OVERALL_userID;
+                string userName = User_Object.OVERALL_USER_NAME;
+                //will suggest saving output to participant's most recent data folder
+                //todo for some reason, calling User_Object below causes a problem
+                //on some computers (try testing this more thoroughly)
+                string suggestedPath = "";// User_Object.get_likely_PC_destination_root(
+                //userId, userName);
+
+                //prompt researcher on where to store annotations
+                OpenFileDialog openFileDialog = new OpenFileDialog();
+                openFileDialog.InitialDirectory = suggestedPath;
+                openFileDialog.ShowDialog();
+                string fileName = openFileDialog.FileName;
+                if (!fileName.Equals("")) {
+                    Event_Rep.rewriteEventList(userId, fileName);
+                    show_new_day_on_UI(current_day_on_display);                    
+                }
+            } 
 
 
 
@@ -669,6 +692,7 @@ how to find where my SenseCam images are stored?
                 //let's record this user interaction for later analysis...
                 Record_User_Interactions.log_interaction_to_database("Window1_large_rectangle_icon_MouseLeftButtonDown", "increase_size");
             } //close method large_rectangle_icon_MouseLeftButtonDown()...
+                   
 
         #endregion interface control methods...
 
