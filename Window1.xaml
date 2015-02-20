@@ -380,7 +380,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
                                     </LinearGradientBrush>
                                 </Path.Fill>
                             </Path>
-                            <TextBlock Margin="5,11,5,6" FontSize="18" TextAlignment="Center" TextWrapping="Wrap" x:Name="textBlock" Width="90" Text="Add Photos" Foreground="Black" d:LayoutOverrides="VerticalAlignment"/>
+                            <TextBlock Margin="5,11,5,6" FontSize="15" TextAlignment="Center" TextWrapping="Wrap" x:Name="textBlock" Width="90" Text="Add photos" Foreground="Black" d:LayoutOverrides="VerticalAlignment"/>
                         </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
@@ -451,7 +451,78 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
                                     </LinearGradientBrush>
                                 </Path.Fill>
                             </Path>
-                            <TextBlock Margin="5,10.468,5,6.532" FontSize="18" TextAlignment="Center" TextWrapping="Wrap" x:Name="textBlock" Width="90" Text="Export" Foreground="Black"  d:LayoutOverrides="VerticalAlignment"/>
+                            <TextBlock Margin="5,10.468,5,6.532" FontSize="15" TextAlignment="Center" TextWrapping="Wrap" x:Name="textBlock" Width="90" Text="Export codes" Foreground="Black"  d:LayoutOverrides="VerticalAlignment"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Stroke" TargetName="path" Value="#FF505102"/>
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="true"/>
+                            <Trigger Property="ToggleButton.IsChecked" Value="true"/>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="ButtonStyle8" TargetType="{x:Type Button}">
+            <Setter Property="FocusVisualStyle" Value="{StaticResource ButtonFocusVisual}"/>
+            <Setter Property="Background" Value="{StaticResource ButtonNormalBackgroundFill}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource ButtonBorder}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Grid RenderTransformOrigin="0.5,0.5" x:Name="grid" Width="100" Height="40">
+                            <Grid.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                    <SkewTransform AngleX="0" AngleY="0"/>
+                                    <RotateTransform Angle="0"/>
+                                    <TranslateTransform X="0" Y="0"/>
+                                </TransformGroup>
+                            </Grid.RenderTransform>
+                            <Path Canvas.Left="1.48438" Canvas.Top="1.73975" Stretch="Fill" StrokeThickness="2" StrokeLineJoin="Round" Stroke="#FFBCBE00" Data="F1 M 7.48438,2.73975L 70.2733,2.73975C 73.0348,2.73975 75.2733,4.9783 75.2733,7.73975L 75.2733,47.1052C 75.2733,49.8666 73.0348,52.1052 70.2733,52.1052L 7.48438,52.1052C 4.7229,52.1052 2.48438,49.8666 2.48438,47.1052L 2.48438,7.73975C 2.48438,4.9783 4.7229,2.73975 7.48438,2.73975 Z " x:Name="path" RenderTransformOrigin="0.5,0.5" Margin="0,0.532,0,-0.532">
+                                <Path.RenderTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform ScaleX="1" ScaleY="1.2"/>
+                                        <SkewTransform AngleX="0" AngleY="0"/>
+                                        <RotateTransform Angle="0"/>
+                                        <TranslateTransform X="0" Y="0"/>
+                                    </TransformGroup>
+                                </Path.RenderTransform>
+                                <Path.Fill>
+                                    <LinearGradientBrush StartPoint="0.543822,1.03875" EndPoint="0.543822,-0.0542696">
+                                        <GradientStop Color="#FFBCBE00" Offset="0"/>
+                                        <GradientStop Color="#FFBCBE00" Offset="1"/>
+                                        <GradientStop Color="#FFF3F4C8" Offset="0.466"/>
+                                    </LinearGradientBrush>
+                                </Path.Fill>
+                                <Path.BitmapEffect>
+                                    <DropShadowBitmapEffect Softness="0.113387" ShadowDepth="0" Opacity="0.599998" Color="#FF000000" Direction="315" Noise="0"/>
+                                </Path.BitmapEffect>
+                            </Path>
+                            <Path Stretch="Fill" Data="F1 M 480.145,0L 406.822,0C 405.033,0 403.558,1.49847 403.355,3.42981C 404.757,12.5845 422.36,19.8223 443.869,19.8223C 463.472,19.8223 479.83,13.8106 483.637,5.815L 483.637,3.888C 483.637,1.74072 482.074,0 480.145,0 Z " Margin="2.54,2.5,3.053,17.678" VerticalAlignment="Stretch" x:Name="path1" RenderTransformOrigin="0.5,0.5">
+                                <Path.RenderTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform ScaleX="1" ScaleY="1.2"/>
+                                        <SkewTransform AngleX="0" AngleY="0"/>
+                                        <RotateTransform Angle="0"/>
+                                        <TranslateTransform X="0" Y="0"/>
+                                    </TransformGroup>
+                                </Path.RenderTransform>
+                                <Path.Fill>
+                                    <LinearGradientBrush StartPoint="0.459989,0.40623" EndPoint="0.459989,1.53948">
+                                        <GradientStop Color="#63FFFFFF" Offset="0.0228311"/>
+                                        <GradientStop Color="#FFDCDD79" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Path.Fill>
+                            </Path>
+                            <TextBlock Margin="5,10.468,5,6.532" FontSize="15" TextAlignment="Center" TextWrapping="Wrap" x:Name="textBlock" Width="90" Text="Import codes" Foreground="Black"  d:LayoutOverrides="VerticalAlignment"/>
                         </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
@@ -1614,7 +1685,12 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
                     <DropShadowBitmapEffect ShadowDepth="2" Direction="315" Softness="0.25"/>
                 </Button.BitmapEffect>
             </Button>
-            <Button Margin="104.3,0,42.647,40.4" VerticalAlignment="Bottom" Height="40.8" Content="Button" x:Name="btnExport" Style="{DynamicResource ButtonStyle7}" Click="btnExport_Click">
+            <Button Margin="103,0,44,0.4" VerticalAlignment="Bottom" Height="40.8" Content="Button" x:Name="btnImport" Style="{DynamicResource ButtonStyle8}" Click="btnImport_Click">
+                <Button.BitmapEffect>
+                    <DropShadowBitmapEffect ShadowDepth="2" Direction="315" Softness="0.25"/>
+                </Button.BitmapEffect>
+            </Button>
+            <Button Margin="103,0,44,51" VerticalAlignment="Bottom" Height="40.8" Content="Button" x:Name="btnExport" Style="{DynamicResource ButtonStyle7}" Click="btnExport_Click">
                 <Button.BitmapEffect>
                     <DropShadowBitmapEffect ShadowDepth="2" Direction="315" Softness="0.25"/>
                 </Button.BitmapEffect>
