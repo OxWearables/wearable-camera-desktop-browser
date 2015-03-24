@@ -129,7 +129,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
         private DeviceType get_type_of_device_connected()
         {
             //to achieve this, we'll read the first line of the sensor.csv file..
-            FileInfo[] sensor_csv = attempt_to_retrieve_files_from_directory(SenseCam_data_directory, "*.CSV", "*.txt");
+            FileInfo[] sensor_csv = attempt_to_retrieve_files_from_directory(SenseCam_data_directory, "*.txt", "*.CSV");
 
             string first_line_in_sensor_file = "";
             //so firstly check that the sensor.csv file 
