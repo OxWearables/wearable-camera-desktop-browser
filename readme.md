@@ -1,18 +1,5 @@
-To compile the following is required:
-
-Visual Studio C# 2010 (or newer)
-WPFToolkit.Design.dll
-WPFToolkit.dll
-WPFToolkit.VisualStudio.Design.dll
-Image-Unavailable.gif
-adding photos.bmp
-doherty_sensecam.db
-System.Data.SQLite.dll
-System.Data.SQLite.xml
-delete_images_from_sensecam.exe
-
-*Project Description*
-{project:description}
+wearable-camera-desktop-browser
+======================
 
 Researchers in the University of Oxford, Dublin City University, University of California San Diego, Auckland University of Technology, and University of Melbourne have extended the original SenseCam browser. It is recommended that all Autographer and SenseCam researchers use this browser.
 
@@ -43,10 +30,25 @@ eprint = {http://www.tandfonline.com/doi/pdf/10.1080/09658211.2010.509732}
 }
 
 
-[image:http://www.clarity-centre.org/sensecamwiki/images/thumb/8/8f/Dcu_sensecam_browser_screenshot.jpg/120px-Dcu_sensecam_browser_screenshot.jpg]
+(image:http://www.clarity-centre.org/sensecamwiki/images/thumb/8/8f/Dcu_sensecam_browser_screenshot.jpg/120px-Dcu_sensecam_browser_screenshot.jpg)
 
 
 If you would like to install the browser onto your computer you can follow the installation instructions in the "Downloads" section. If you have any problems installing this browser please use the "Discussions" section to explain your issue, which will be dealt with promptly. Note the browser only works on Windows PCs at the minute.
 *Please visit [url:the SenseCam wiki|http://www.clarity-centre.org/sensecamwiki/index.php/Welcome] for more information on all SenseCam related activities being carried out by the research community*
 
 Or alternatively contact [url:Aiden Doherty|http://about.me/aidendoherty] for more information
+
+
+
+To compile the following is required:
+
+Visual Studio C# 2010 (or newer)
+WPFToolkit.Design.dll
+WPFToolkit.dll
+WPFToolkit.VisualStudio.Design.dll
+Image-Unavailable.gif
+adding photos.bmp
+doherty_sensecam.db
+System.Data.SQLite.dll
+System.Data.SQLite.xml
+delete_images_from_sensecam.exe
