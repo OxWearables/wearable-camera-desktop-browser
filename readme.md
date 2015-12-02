@@ -1,7 +1,7 @@
 wearable-camera-desktop-browser
 ======================
 
-Researchers in the University of Oxford, Dublin City University, University of California San Diego, Auckland University of Technology, and University of Melbourne have extended the original SenseCam browser. It is recommended that all Autographer and SenseCam researchers use this browser.
+Researchers at the University of Oxford, Dublin City University, University of California San Diego, Auckland University of Technology, and University of Melbourne have extended the original SenseCam browser. It is recommended that all Autographer and SenseCam researchers use this browser.
 
 Advantages of this browser:
 * Multi-user functionality - useful for researchers managing data from multiple subjects
