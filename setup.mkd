@@ -1,0 +1,46 @@
+---
+title: Equipment Software Setup
+layout: default
+---
+## EQUIPMENT/SOFTWARE SETUP
+<do once for all devices before using them>
+
+### 1. INSTALL MANUFACTURER SOFTWARE (Autographer)
+* 1.  Plug the Autographer camera into your computer via the USB cable
+** a. If your computer does not acknowledge the device is plugged in, try a different port
+* 2.  Run the “Windows_Installer_13.29.11r.exe” file which is located on the main/root folder of the Autographer (e.g. E: or F:). This will install the Autographer software
+
+### 2. INSTALL RESEARCH SOFTWARE (DohertyBrowser)
+* 1.  Download ["DohertyBrowserInstaller.msi"](https://sensecambrowser.codeplex.com/downloads/get/851027)
+* 2.  Run the downloaded file “DohertyBrowserInstaller.msi”
+* 3.  If prompted to allow changes, click “yes”
+* 4.  Click next > next > next
+* 5.  Once complete, click “close”
+
+### 3. UPDATE CAMERA FIRMWARE (Using Autographer software)
+<In order to use the device for research purposes you will need to make sure you have the latest firmware on your Autographer device (version 49)>
+* 1. Plug the camera into your computer
+* 2. Open the “Autographer” software
+* 3. To find out what firmware version your device is currently using, go to Settings while your Autographer is connected to a computer, and navigate to the “Autographer” subheading to verify the firmware version. If the firmware version is 49, you can ignore the remaining steps (4-8).
+
+If the firmware version is earlier than 49, do the following:
+* 4. On the left hand menu, if updates are available for your device, you’ll see an Update button appear beneath the Import button. Click this to start the installation, and then click ‘Update Now’ on the pop up screen
+* 5. Once the screen says ‘Updates successful#’ you then need to disconnect your device.
+* 6. After plugging out the device the menu should then say “Updating”
+* 7. Once finished updating (2-5 minutes), plug the camera back in to verify the firmware update
+* 8. If you have any problems following steps a-d, this link explains the process in more detail: http://support.autographer.com/updating-your-autographer/ ... or this document https://sensecambrowser.codeplex.com/downloads/get/846533
+
+### 4. SETUP RESEARCH FIRMWARE ON CAMERA (Using Autographer software)
+<for ethics compatibility and to avoid device sleeping>
+* 1. Plug the Autographer camera into your computer via the USB cable
+** a. If your computer does not acknowledge the device is plugged in, try a different port
+* 2.  Download ["menu.config"](https://sensecambrowser.codeplex.com/downloads/get/846532)
+* 3.  Save or copy the downloaded “menu.config” file (My Computer > Downloads) to the main/root folder on the Autographer (e.g. E: or F:) (i.e. the location of “Windows_Installer_13.29.11r.exe” mentioned above)
+* 4. Copy the “Windows_Installer_13.29.11r.exe” and the “OSX_Installer_13.29.11r.dmg” files to some safe location where you store your research study protocol files. Then delete these files from the Autographer camera. *This means that research participants then cannot install this software on their PC/laptop.*
+
+It is not recommended to change the menu.config firmware options. However, if you wish to do so, [here is documentation on the menu.config options.](https://sensecambrowser.codeplex.com/downloads/get/846533)
+
+### 5. INSTALL DATABASE BROWSER SOFTWARE (Using DB Browser for SQLite software)
+* 1. Navigate to the [DB Browser for SQLite GitHub](https://github.com/sqlitebrowser/sqlitebrowser/releases)
+* 2. Scroll down to "Windows binaries" on the page, then select the relevant link to download the file ("sqlitebrowser-3.3.1-win32.exe" at time of writing on 08/10/2014)
+* 3. Install this application as normal, like any other application
