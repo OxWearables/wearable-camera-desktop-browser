@@ -1,6 +1,5 @@
 ---
 title: Equipment Software Setup
-layout: default
 ---
 ## EQUIPMENT/SOFTWARE SETUP
 <do once for all devices before using them>
