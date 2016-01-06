@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>wearable-camera-desktop-browser by computationalEpidemiology</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+<link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen"></head>
+<body>
+<section class="page-header">
+ <h1 class="project-name">wearable-camera-desktop-browser</h1>
+ <h2 class="project-tagline">Analysing wearable camera on a standalone PC</h2>
+ <a href="https://github.com/computationalEpidemiology/wearable-camera-desktop-browser" class="btn">View on GitHub</a>
+ <a href="https://github.com/computationalEpidemiology/wearable-camera-desktop-browser/zipball/master" class="btn">Download .zip</a>
+ <a href="https://github.com/computationalEpidemiology/wearable-camera-desktop-browser/tarball/master" class="btn">Download .tar.gz</a>
+</section>
+
+<section class="main-content">
+<h2 id="download-participant-images">DOWNLOAD PARTICIPANT IMAGES</h2>
+<p>&lt;do every time after getting devices back from a new research participant&gt;
+
+</p>
+<h3 id="1-download-images-from-camera-using-dohertybrowser-software-">1. DOWNLOAD IMAGES FROM CAMERA (Using DohertyBrowser software)</h3>
+<ul>
+<li><ol>
+<li>Open the software (as above)</li>
+</ol>
+</li>
+<li><ol>
+<li>Click the dropdown box in the middle of the opening screen to select a user</li>
+<li>a.    If you select “&lt;new participant&gt;”, then enter a ParticipantID in the new text box that appears</li>
+<li>b. [Click here to clean up the list of participants shown in the list box||manipulateBrowserData]</li>
+</ol>
+</li>
+<li><ol>
+<li>Click the “START” button that appears</li>
+</ol>
+</li>
+<li><ol>
+<li>Plug the camera into your computer via the USB cable</li>
+</ol>
+</li>
+<li><ol>
+<li>Click the “Add” button</li>
+</ol>
+</li>
+<li><ol>
+<li>Click the “Start” button (indicates software has identified plugged in camera)<p>&lt;it now takes a couple of minutes for the data to download&gt;
+</p>
+</li>
+</ol>
+</li>
+<li><ol>
+<li>The main screen then shows the middle image from the “chunk” of images captured each time the camera was switched on in a given day (if there are images)</li>
+</ol>
+</li>
+<li><ol>
+<li>You can click on any “chunk” image to then show all the images captured within it</li>
+<li>a.    To delete any image, press “toggle view”, move forwards/backwards to the intended image, press the “Delete” (bottom left corner of screen), then click “Close” (top right) to confirm the deletion of images from this event/chunk/grouping/episode</li>
+</ol>
+</li>
+<li><ol>
+<li>You can click the “Calendar” button to select another day of images</li>
+</ol>
+</li>
+<li><ol>
+<li>When finished, do not plug the camera out, unto the software allows you to click the application “Quit” button</li>
+</ol>
+</li>
+<li><ol>
+<li>The images will now be deleted from the camera.</li>
+</ol>
+</li>
+</ul>
+<h3 id="2-import-images-already-downloaded-to-pc-by-dohertybrowser-using-dohertybrowser-software-">2. IMPORT IMAGES ALREADY DOWNLOADED TO PC BY DohertyBrowser (Using DohertyBrowser software)</h3>
+<p>&lt;if you want to do a new type of analysis on a participant&#39;s data, it is generally helpful to create a new participantID account, and then reload the participant&#39;s data&gt;</p>
+<ul>
+<li><ol>
+<li>Open the software (as above), and navigate into the main screen</li>
+</ol>
+</li>
+<li><ol>
+<li>Click the “Add” button</li>
+</ol>
+</li>
+<li><ol>
+<li>Click “Advanced”</li>
+</ol>
+</li>
+<li><ol>
+<li>Click “Download from PC…”</li>
+</ol>
+</li>
+<li><ol>
+<li>Click “Browse” beside “Path of images already on your PC:”</li>
+</ol>
+</li>
+<li><ol>
+<li>Navigate to the folder where the images are located</li>
+</ol>
+</li>
+<li><ol>
+<li>Then click “Start”</li>
+</ol>
+</li>
+</ul>
+<h3 id="3-import-images-manually-copied-from-camera-to-disk-using-dohertybrowser-software-">3. IMPORT IMAGES MANUALLY COPIED FROM CAMERA TO DISK (Using DohertyBrowser software)</h3>
+<p>&lt;For cases where images were manually copied from the camera, rather than automatically downloaded using the DohertyBrowser. This will read the images from a specified location that is treated as if it were the camera plugged into your computer, and copy the images to the “PC Destination:” location. The images can then be used for normal analysis in the browser.&gt;</p>
+<ul>
+<li><ol>
+<li>Open the software (as above), and navigate into the main screen</li>
+</ol>
+</li>
+<li><ol>
+<li>Click the “Add” button</li>
+</ol>
+</li>
+<li><ol>
+<li>Click “Browse” beside “SenseCam or Vicon Revue path:”</li>
+</ol>
+</li>
+<li><ol>
+<li>Navigate to the location on disk where you manually copied the participant’s images to, and click on the “DATA” folder</li>
+</ol>
+</li>
+<li><ol>
+<li>Then click “Start”</li>
+</ol>
+</li>
+</ul>
+<p><em>Note that the image directory structure should be the same as on the Vicon Autographer device. i.e.<br>DATA / &lt;dateFolderContainingImages&gt; &amp; image_table.txt</em></p>
+<ul>
+<li>Optionally, you can choose where to store the re-structured image directory too. After step 6, and before step 7, click &quot;Browse&quot; beside &quot;PC Destination:&quot;, and then navigate to the desired location.</li>
+<li>If you wish, you can set the browser to not delete the images from your source file structure/directory. Open the “C:\AidenDoherty\DohertyBrowser\SenseCamBrowser1.exe.config” file, and edit the &lt;add key=&quot;autoDeleteImagesOnUpload&quot; value=&quot;1&quot;/&gt;” line. The value 1 means the source images will be deleted, the value 0 means they will not be deleted.</li>
+</ul>
+<h3 id="4-import-and-relate-external-data-to-wearable-camera-images-using-dohertybrowser-software-">4. IMPORT AND RELATE EXTERNAL DATA TO WEARABLE CAMERA IMAGES (Using DohertyBrowser software)</h3>
+<ul>
+<li><ol>
+<li>Prepare your heartRate/GPS/accelerometer episodes into a CSV file the same format as:</li>
+<li>a.    Navigate to <a href="https://sensecambrowser.codeplex.com/">https://sensecambrowser.codeplex.com/</a> </li>
+<li>b.    Click “Downloads” along the top menu bar</li>
+<li>c.    Download “episodeDefsEg.csv”</li>
+</ol>
+</li>
+<li><ol>
+<li>Open the software</li>
+</ol>
+</li>
+<li><ol>
+<li>Create a new user, e.g. “P001Accelerometer”</li>
+</ol>
+</li>
+<li><ol>
+<li>Navigate into the main screen</li>
+</ol>
+</li>
+<li><ol>
+<li>Click the “Add” button</li>
+</ol>
+</li>
+<li><ol>
+<li>Click “Advanced”</li>
+</ol>
+</li>
+<li><ol>
+<li>Click “Download from PC” if downloading images from PC (generally this will be the case)</li>
+</ol>
+</li>
+<li><ol>
+<li>Click “Browse” beside “Path of images already on your PC:”</li>
+</ol>
+</li>
+<li><ol>
+<li>Navigate to the folder where the images are located</li>
+</ol>
+</li>
+<li><ol>
+<li>Click “Browse” beside “Episode definitions:”</li>
+</ol>
+</li>
+<li><ol>
+<li>Navigate to the .csv file you prepared in step 1</li>
+</ol>
+</li>
+<li><ol>
+<li>Then click “Start”</li>
+</ol>
+</li>
+</ul>
+</section">
+<footer class="site-footer">
+<span class="site-footer-owner"><a href="https://github.com/computationalEpidemiology/wearable-camera-desktop-browser">wearable-camera-desktop-browser</a> is maintained by <a href="https://github.com/computationalEpidemiology">computationalEpidemiology</a>.</span>
+<span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+</footer>
+</section>
+
+ </body>
+<html>

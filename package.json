@@ -1,0 +1,22 @@
+{
+  "name": "wiki-html-converter",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "node render.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/computationalEpidemiology/wearable-camera-desktop-browser.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/computationalEpidemiology/wearable-camera-desktop-browser/issues"
+  },
+  "homepage": "https://github.com/computationalEpidemiology/wearable-camera-desktop-browser",
+  "dependencies": {
+    "markdown-to-html": "0.0.11"
+  }
+}

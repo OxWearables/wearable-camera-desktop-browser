@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>wearable-camera-desktop-browser by computationalEpidemiology</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+<link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen"></head>
+<body>
+<section class="page-header">
+ <h1 class="project-name">wearable-camera-desktop-browser</h1>
+ <h2 class="project-tagline">Analysing wearable camera on a standalone PC</h2>
+ <a href="https://github.com/computationalEpidemiology/wearable-camera-desktop-browser" class="btn">View on GitHub</a>
+ <a href="https://github.com/computationalEpidemiology/wearable-camera-desktop-browser/zipball/master" class="btn">Download .zip</a>
+ <a href="https://github.com/computationalEpidemiology/wearable-camera-desktop-browser/tarball/master" class="btn">Download .tar.gz</a>
+</section>
+
+<section class="main-content">
+<h2 id="equipment-software-setup">EQUIPMENT/SOFTWARE SETUP</h2>
+<p>&lt;do once for all devices before using them&gt;
+
+</p>
+<h3 id="1-install-manufacturer-software-autographer-">1. INSTALL MANUFACTURER SOFTWARE (Autographer)</h3>
+<ul>
+<li><ol>
+<li>Plug the Autographer camera into your computer via the USB cable<br>** a.    If your computer does not acknowledge the device is plugged in, try a different port</li>
+</ol>
+</li>
+<li><ol>
+<li>Run the “Windows_Installer_13.29.11r.exe” file which is located on the main/root folder of the Autographer (e.g. E: or F:). This will install the Autographer software</li>
+</ol>
+</li>
+</ul>
+<h3 id="2-install-research-software-dohertybrowser-">2. INSTALL RESEARCH SOFTWARE (DohertyBrowser)</h3>
+<ul>
+<li><ol>
+<li>Download <a href="https://sensecambrowser.codeplex.com/downloads/get/851027">&quot;DohertyBrowserInstaller.msi&quot;</a></li>
+</ol>
+</li>
+<li><ol>
+<li>Run the downloaded file “DohertyBrowserInstaller.msi”</li>
+</ol>
+</li>
+<li><ol>
+<li>If prompted to allow changes, click “yes”</li>
+</ol>
+</li>
+<li><ol>
+<li>Click next &gt; next &gt; next</li>
+</ol>
+</li>
+<li><ol>
+<li>Once complete, click “close”</li>
+</ol>
+</li>
+</ul>
+<h3 id="3-update-camera-firmware-using-autographer-software-">3. UPDATE CAMERA FIRMWARE (Using Autographer software)</h3>
+<p>&lt;In order to use the device for research purposes you will need to make sure you have the latest firmware on your Autographer device (version 49)&gt;</p>
+<ul>
+<li><ol>
+<li>Plug the camera into your computer</li>
+</ol>
+</li>
+<li><ol>
+<li>Open the “Autographer” software</li>
+</ol>
+</li>
+<li><ol>
+<li>To find out what firmware version your device is currently using, go to Settings while your Autographer is connected to a computer, and navigate to the “Autographer” subheading to verify the firmware version. If the firmware version is 49, you can ignore the remaining steps (4-8).</li>
+</ol>
+</li>
+</ul>
+<p>If the firmware version is earlier than 49, do the following:</p>
+<ul>
+<li><ol>
+<li>On the left hand menu, if updates are available for your device, you’ll see an Update button appear beneath the Import button. Click this to start the installation, and then click ‘Update Now’ on the pop up screen</li>
+</ol>
+</li>
+<li><ol>
+<li>Once the screen says ‘Updates successful#’ you then need to disconnect your device.</li>
+</ol>
+</li>
+<li><ol>
+<li>After plugging out the device the menu should then say “Updating”</li>
+</ol>
+</li>
+<li><ol>
+<li>Once finished updating (2-5 minutes), plug the camera back in to verify the firmware update</li>
+</ol>
+</li>
+<li><ol>
+<li>If you have any problems following steps a-d, this link explains the process in more detail: <a href="http://support.autographer.com/updating-your-autographer/">http://support.autographer.com/updating-your-autographer/</a> ... or this document <a href="https://sensecambrowser.codeplex.com/downloads/get/846533">https://sensecambrowser.codeplex.com/downloads/get/846533</a></li>
+</ol>
+</li>
+</ul>
+<h3 id="4-setup-research-firmware-on-camera-using-autographer-software-">4. SETUP RESEARCH FIRMWARE ON CAMERA (Using Autographer software)</h3>
+<p>&lt;for ethics compatibility and to avoid device sleeping&gt;</p>
+<ul>
+<li><ol>
+<li>Plug the Autographer camera into your computer via the USB cable<br>** a.    If your computer does not acknowledge the device is plugged in, try a different port</li>
+</ol>
+</li>
+<li><ol>
+<li>Download <a href="https://sensecambrowser.codeplex.com/downloads/get/846532">&quot;menu.config&quot;</a></li>
+</ol>
+</li>
+<li><ol>
+<li>Save or copy the downloaded “menu.config” file (My Computer &gt; Downloads) to the main/root folder on the Autographer (e.g. E: or F:) (i.e. the location of “Windows_Installer_13.29.11r.exe” mentioned above)</li>
+</ol>
+</li>
+<li><ol>
+<li>Copy the “Windows_Installer_13.29.11r.exe” and the “OSX_Installer_13.29.11r.dmg” files to some safe location where you store your research study protocol files. Then delete these files from the Autographer camera. <em>This means that research 
