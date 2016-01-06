@@ -47,6 +47,7 @@ function renderFile(i) {
   console.log(i, file)
   var fileName = 'readmes/' + file + '.md';
   var outputFile = file + '.html';
+  if (file=='Home') outputFile = 'index.html'
   var outStream = fs.createWriteStream(outputFile);
   outStream.on('close', function() {renderFile(i+1);})
 

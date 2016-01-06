@@ -1,28 +1,28 @@
 # Researcher Wearable Camera User Guide
 
 ## STEP 1: Setup
-* [Equipment/software setup](1-Equipment-software-setup) 
+* [Equipment/software setup](http://computationalepidemiology.github.io/wearable-camera-desktop-browser/1-Equipment-software-setup.html) 
 
 *do once for all devices before using them*
-* [Set devices to start recording](2-Set-devices-to-start-recording) 
+* [Set devices to start recording](http://computationalepidemiology.github.io/wearable-camera-desktop-browser/2-Set-devices-to-start-recording.html) 
 
 *do every time before giving devices to a new research participant*
-* [Download participant images](3-Downloading-participant-data) 
+* [Download participant images](http://computationalepidemiology.github.io/wearable-camera-desktop-browser/3-Downloading-participant-data.html) 
 
 *do every time after getting devices back from a new research participant*
-* [Annotate participant images](4-Analyse-participant-data) 
+* [Annotate participant images](http://computationalepidemiology.github.io/wearable-camera-desktop-browser/4-Analyse-participant-data.html) 
 
 *can be done anytime after participant data has been downloaded*
-* [Using images to add context to other data](5-Using-images-to-add-context-to-other-data) 
+* [Using images to add context to other data](http://computationalepidemiology.github.io/wearable-camera-desktop-browser/5-Using-images-to-add-context-to-other-data.html) 
 
 *can be done anytime after participant image data has been downloaded*
-* [Export annotated participant data for analysis](6-Export-annotated-image-data-for-analysis) 
+* [Export annotated participant data for analysis](http://computationalepidemiology.github.io/wearable-camera-desktop-browser/6-Export-annotated-image-data-for-analysis.html) 
 
 *when you want to analyse participant data in any statistical package (Excel, R, SPSS, Stata, etc.)*
-* [Video tutorials for using the browser](7-Browser-video-tutorial)
-* [How to define the annotation schema](8-Import-export-annotation-schema)
-* [How to manipulate the browser database](9-Manipulate-browser-data)
-* [More detailed query information](9a-Database-queries)
+* [Video tutorials for using the browser](http://computationalepidemiology.github.io/wearable-camera-desktop-browser/7-Browser-video-tutorial.html)
+* [How to define the annotation schema](http://computationalepidemiology.github.io/wearable-camera-desktop-browser/8-Import-export-annotation-schema.html)
+* [How to manipulate the browser database](http://computationalepidemiology.github.io/wearable-camera-desktop-browser/9-Manipulate-browser-data.html)
+* [More detailed query information](http://computationalepidemiology.github.io/wearable-camera-desktop-browser/9a-Database-queries.html)
 
 
 ## STEP 2: Look at Your Photos
