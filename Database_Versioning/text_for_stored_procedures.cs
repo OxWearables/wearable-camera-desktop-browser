@@ -33,6 +33,7 @@ namespace SenseCamBrowser1.Database_Versioning
 
         public static string spInsert_New_User_Into_Database_and_Return_ID(string new_user_name)
         {
+            new_user_name = new_user_name.Replace("'", "''");
             string end_string = "";
             end_string += "\n" + "insert into Users (username,password,name) values ('" + new_user_name + "','" + new_user_name + "','" + new_user_name + "');";
             end_string += "\n" + "";
@@ -102,6 +103,7 @@ namespace SenseCamBrowser1.Database_Versioning
 
         public static string spUpdateEventComment(int user_id, int event_id, string comment)
         {
+            comment = comment.Replace("'", "''");
             string end_string = "UPDATE All_Events";
             end_string += "\n" + "SET comment = '" + comment + "'";
             end_string += "\n" + "WHERE [user_id] = " + user_id;
@@ -112,6 +114,7 @@ namespace SenseCamBrowser1.Database_Versioning
 
         public static string spUpdate_Event_Keyframe_Path(int user_id, int event_id, string keyframe_path)
         {
+            keyframe_path = keyframe_path.Replace("'", "''");
             string end_string = "UPDATE All_Events";
             end_string += "\n" + "SET keyframe_path = '" + keyframe_path + "'";
             end_string += "\n" + "WHERE [user_id] = " + user_id;
@@ -122,6 +125,7 @@ namespace SenseCamBrowser1.Database_Versioning
 
         public static string spUpdate_Event_time_keyframe_info(int user_id, int event_id, DateTime start_time, DateTime end_time, string new_keyframe_path)
         {
+            new_keyframe_path = new_keyframe_path.Replace("'", "''");
             string end_string = "UPDATE All_Events";
             end_string += "\n" + "SET start_time = " + convert_datetime_to_sql_string(start_time) + ",";
             end_string += "\n" + "end_time = " + convert_datetime_to_sql_string(end_time) + ",";
@@ -468,6 +472,7 @@ namespace SenseCamBrowser1.Database_Versioning
 
         public static string spGet_event_ids_in_day_for_specific_activity(int user_id, DateTime day, string annotation_type)
         {
+            annotation_type = annotation_type.Replace("'", "''");
             string end_string = "";
             end_string += "\n" + "SELECT annotations.event_id";
             end_string += "\n" + "FROM SC_Browser_User_Annotations AS annotations";
@@ -536,6 +541,7 @@ namespace SenseCamBrowser1.Database_Versioning
 
         public static string spAdd_event_annotation(int user_id, int event_id, string event_annotation_name)
         {
+            event_annotation_name = event_annotation_name.Replace("'", "''");
             string end_string = "";
             end_string += "\n" + "INSERT INTO SC_Browser_User_Annotations";
             end_string += "\n" + "VALUES (" + user_id + "," + event_id + "," + convert_datetime_to_sql_string(DateTime.Now) + ",'" + event_annotation_name + "');";
@@ -562,6 +568,7 @@ namespace SenseCamBrowser1.Database_Versioning
 
         public static string spClear_event_annotations(int user_id, int event_id, string individual_annotation_text)
         {
+            individual_annotation_text = individual_annotation_text.Replace("'", "''");
             string end_string = "";
             end_string += "\n" + "DELETE FROM SC_Browser_User_Annotations";
             end_string += "\n" + "WHERE [user_id] = " + user_id;
@@ -579,6 +586,7 @@ namespace SenseCamBrowser1.Database_Versioning
 
         public static string spAdd_annotation_type(string annotation_type_name)
         {
+            annotation_type_name = annotation_type_name.Replace("'", "''");
             string end_string = "";
             end_string += "\n" + "DELETE FROM Annotation_Types";
             end_string += "\n" + "WHERE annotation_type = '" + annotation_type_name + "';";
@@ -588,6 +596,7 @@ namespace SenseCamBrowser1.Database_Versioning
 
         public static string spAddAnnotationType(string annType, string annDesc)
         {
+            annDesc = annDesc.Replace("'", "''");
             string end_string = "";
             end_string += "\n" + "DELETE FROM Annotation_Types";
             end_string += "\n" + "WHERE annotation_type = '" + annType + "';";
@@ -618,6 +627,7 @@ namespace SenseCamBrowser1.Database_Versioning
 
         public static string spLog_User_Interaction(int user_id, DateTime interaction_time, string uixaml_element, string comma_seperated_parameters)
         {
+            uixaml_element = uixaml_element.Replace("'", "''");
             string end_string = "INSERT INTO User_Interaction_Log";
             end_string += "\n" + "VALUES(" + user_id + ", " + convert_datetime_to_sql_string(interaction_time) + ", '" + uixaml_element + "', '" + comma_seperated_parameters + "');";
             return end_string;
