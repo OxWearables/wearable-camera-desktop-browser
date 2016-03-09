@@ -943,8 +943,28 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
 
                     //get the current image_time which is needed to calculate the chunk_id...
                     current_image_time = current_image.LastWriteTime;
+                    //Console.WriteLine(jpg_path);
+                    string jpg_filename = Path.GetFileNameWithoutExtension(jpg_path);
+                    //Console.WriteLine(jpg_filename);
+                    // now parse filenames if they're in this format "B00000745_21I58R_20140724_182629E"
+                    if (jpg_filename.Length == "B00000745_21I58R_20140724_182629E".Length) {
 
+                        bool underscores_in_all_the_right_places = (jpg_filename[9] == '_' && jpg_filename[16] == '_' && jpg_filename[25] == '_');
 
+                        int n1, year, month, day, hour, minute, second;
+                        bool integer_at_start = int.TryParse(jpg_filename.Substring(1,8), out n1);
+                        bool good_year = int.TryParse(jpg_filename.Substring(17,4), out year);
+                        bool good_month = int.TryParse(jpg_filename.Substring(21,2), out month);
+                        bool good_day = int.TryParse(jpg_filename.Substring(23,2), out day);
+                        bool good_hour = int.TryParse(jpg_filename.Substring(26,2), out hour);
+                        bool good_minute = int.TryParse(jpg_filename.Substring(28,2), out minute);
+                        bool good_second = int.TryParse(jpg_filename.Substring(30,2), out second);
+                        
+                        if (underscores_in_all_the_right_places && integer_at_start && good_year && good_month && good_day && good_hour && good_minute && good_second) {
+                            current_image_time = new DateTime(year, month, day, hour, minute, second);
+                        }
+
+                    }
                     //////////////////// CHUNK ID STUFF ///////////////////////
                     //now let's determine the chunk_id
                     if (first_reading)

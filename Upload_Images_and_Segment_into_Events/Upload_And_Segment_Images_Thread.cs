@@ -91,6 +91,8 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
         /// <param name="overall_root_directory"></param>
         private void upload_wearable_camera_data(bool is_multiple_folder_upload, string selected_folder, string overall_root_directory)
         {
+            // Sven : not fully sure, but the is_multiple_folder simply means there's no sensor.csv or image_list.txt..
+            // But this will fire mistakenly for a folder with only images inside
             if (is_multiple_folder_upload && selected_folder.Equals(overall_root_directory))
             { //ELSE IF IT'S THE MAIN ROOT FOLDER WE'RE IN
                     //THEN WE'LL KICK OFF THE RECURSION PROCESS AND START READING THE SUBFOLDERS AND REPEAT
@@ -108,6 +110,14 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                 DeviceType device_type = get_type_of_device_connected();
 
                 //and then upload the data, segment it, etc.
+                upload_device_data(device_type, is_multiple_folder_upload);
+            }
+            // Sven : need to add an alternate method here, since the previous will never fire
+            // So if there's no sensor.csv file
+            if (is_multiple_folder_upload) {
+                // set a default device_type (since we don't know)
+                DeviceType device_type = DeviceType.Autographer;
+                // this 
                 upload_device_data(device_type, is_multiple_folder_upload);
             }
             //and when we're finished the recursion (if using multiple folder upload)...
@@ -132,6 +142,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
             FileInfo[] sensor_csv = attempt_to_retrieve_files_from_directory(SenseCam_data_directory, "*.txt", "*.CSV");
 
             string first_line_in_sensor_file = "";
+            DeviceType unknown_device_default = DeviceType.Autographer;
             //so firstly check that the sensor.csv file 
             if (sensor_csv.Length >= 1) //to see if we've found any csv files in the directory...
             {
@@ -141,7 +152,9 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                     first_line_in_sensor_file = txt_reader.ReadLine();
                     txt_reader.Close(); //and close our reader object...
                 } //close if (sensor_csv[0].Length >= MINIMUM_FILE_SIZE / 2)....
-            } //close if(sensor_csv.Length>=1)...
+                else return unknown_device_default;
+            }
+            else return unknown_device_default; //close if(sensor_csv.Length>=1)...
 
             //Vicon Revue if looks like this -> VER,2010/05/11 12:17:39,4,0,0
             //SenseCam if looks like this ----> VER,2,6,7
