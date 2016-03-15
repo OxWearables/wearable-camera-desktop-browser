@@ -91,13 +91,19 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
         /// <param name="overall_root_directory"></param>
         private void upload_wearable_camera_data(bool is_multiple_folder_upload, string selected_folder, string overall_root_directory)
         {
-            // Sven : not fully sure, but the is_multiple_folder simply means there's no sensor.csv or image_list.txt..
-            // But this will fire mistakenly for a folder with only images inside
+            // is_multiple_folder simply means there's no sensor.csv or image_list.txt..
             if (is_multiple_folder_upload && selected_folder.Equals(overall_root_directory))
-            { //ELSE IF IT'S THE MAIN ROOT FOLDER WE'RE IN
-                    //THEN WE'LL KICK OFF THE RECURSION PROCESS AND START READING THE SUBFOLDERS AND REPEAT
-                    foreach (string subfolder in Directory.GetDirectories(overall_root_directory))
-                        upload_wearable_camera_data(is_multiple_folder_upload, subfolder + @"\", overall_root_directory); //NOTE THAT I NEED THE @"\" AT THE END SO AS TO BE ABLE TO READ FILES WITHIN THE DIRECTORY
+            { 
+                //ELSE IF IT'S THE MAIN ROOT FOLDER WE'RE IN
+                //THEN WE'LL KICK OFF THE RECURSION PROCESS AND START READING THE SUBFOLDERS AND REPEAT
+                foreach (string subfolder in Directory.GetDirectories(overall_root_directory))
+                    upload_wearable_camera_data(is_multiple_folder_upload, subfolder + @"\", overall_root_directory); //NOTE THAT I NEED THE @"\" AT THE END SO AS TO BE ABLE TO READ FILES WITHIN THE DIRECTORY
+                                                                                                                      //and let's keep updating the SenseCam_data_directory class variable to make sure we're always processing the right folder...
+
+                // set a default device_type (since we don't know)
+                DeviceType device_type = DeviceType.Autographer;
+                // this should find files in format "B00002098_21I765_20150612_215430E.JPG"
+                upload_device_data(device_type, is_multiple_folder_upload);
 
             } //close if (is_multiple_folder_upload)...
             else
@@ -112,14 +118,7 @@ namespace SenseCamBrowser1.Upload_Images_and_Segment_into_Events
                 //and then upload the data, segment it, etc.
                 upload_device_data(device_type, is_multiple_folder_upload);
             }
-            // Sven : need to add an alternate method here, since the previous will never fire
-            // So if there's no sensor.csv file
-            if (is_multiple_folder_upload) {
-                // set a default device_type (since we don't know)
-                DeviceType device_type = DeviceType.Autographer;
-                // this 
-                upload_device_data(device_type, is_multiple_folder_upload);
-            }
+
             //and when we're finished the recursion (if using multiple folder upload)...
             //let's give a data processing finished call back..
             if (is_multiple_folder_upload && selected_folder.Equals(overall_root_directory))
